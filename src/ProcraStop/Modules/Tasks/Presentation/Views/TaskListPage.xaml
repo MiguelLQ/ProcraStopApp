@@ -1,0 +1,360 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProcraStop.Modules.Tasks.Presentation.Views.TaskListPage"
+             >
+
+    <!--
+        Usamos un Grid de 2 filas:
+          Row 0 = Header (altura fija)
+          Row 1 = Contenido scrolleable
+        La card de progreso vive FUERA del ScrollView, flotando entre ambas filas
+        gracias a Grid.Row="0" + VerticalOptions="End" + un Margin negativo inferior,
+        combinado con un Padding superior en el ScrollView para dejarle espacio.
+    -->
+    
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- ═══════════════════════════════════════════
+             HEADER
+        ═══════════════════════════════════════════ -->
+        <Grid Grid.Row="0" Padding="20,1,20,80">
+            <!-- 80 px de padding inferior para que la card pueda solaparse -->
+            <Grid.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Offset="0" Color="DarkBlue"/>
+                    <GradientStop Offset="1" Color="LightBlue"/>
+                </LinearGradientBrush>
+            </Grid.Background>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <VerticalStackLayout Grid.Column="0" Spacing="4">
+                <Label Text="Your Tasks" FontSize="26" FontAttributes="Bold" TextColor="White"/>
+                <Label Text="Bienvenido a la Aplicación" FontSize="14" TextColor="#BFC8FF"/>
+            </VerticalStackLayout>
+
+            <!-- Avatar -->
+            <Border Grid.Column="1"
+            WidthRequest="44" HeightRequest="44"
+            StrokeShape="RoundRectangle 22"
+            BackgroundColor="#7986E7"
+            Stroke="#FFFFFF" StrokeThickness="2"
+            VerticalOptions="Center">
+            </Border>
+        </Grid>
+
+        <!-- ═══════════════════════════════════════════
+             WEEKLY PROGRESS CARD  (superpuesta al header)
+             Vive en Row 0, pegada al fondo del header,
+             con Margin negativo para que invada Row 1.
+        ═══════════════════════════════════════════ -->
+        <Border Grid.Row="0"
+                VerticalOptions="End"
+                Margin="16,-20,16,-90"
+                ZIndex="10"
+                BackgroundColor="White"
+                StrokeShape="RoundRectangle 18"
+                Padding="16,14"
+                Shadow="{Shadow Brush=Black, Offset='0,4', Radius=16, Opacity=0.10}">
+            <VerticalStackLayout Spacing="10">
+                <!-- Fila superior: título + contadores -->
+                <Grid ColumnDefinitions="*,Auto">
+                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                        <Label Text="Today, April 24" FontSize="13" FontAttributes="Bold" TextColor="#888"/>
+                    </VerticalStackLayout>
+                    <!-- Icono calendario -->
+                    <Border Grid.Column="1"
+                            BackgroundColor="#F0F2FF"
+                            StrokeShape="RoundRectangle 8"
+                            Stroke="Transparent"
+                            Padding="8,6"
+                            VerticalOptions="Center">
+                        <Label Text="📅" FontSize="16"/>
+                    </Border>
+                </Grid>
+
+                <!-- Barra de progreso con fondo degradado -->
+                <Border BackgroundColor="#5C6BC0"
+                        StrokeShape="RoundRectangle 12"
+                        Stroke="Transparent"
+                        Padding="14,12">
+                    <!-- Fondo con gradiente difuminado -->
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Offset="0" Color="#5C6BC0"/>
+                            <GradientStop Offset="1" Color="LightBlue"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <VerticalStackLayout Spacing="8">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Grid.Column="0"
+                                   Text="Weekly Progress"
+                                   FontSize="14" FontAttributes="Bold" TextColor="White"/>
+                            <HorizontalStackLayout Grid.Column="1" Spacing="6">
+                                <HorizontalStackLayout Spacing="2">
+                                    <Label Text="5" FontSize="15" FontAttributes="Bold" TextColor="White"/>
+                                    <Label Text="Done" FontSize="12" TextColor="#BFC8FF" VerticalOptions="Center"/>
+                                </HorizontalStackLayout>
+                                <HorizontalStackLayout Spacing="2">
+                                    <Label Text="3" FontSize="15" FontAttributes="Bold" TextColor="White"/>
+                                    <Label Text="Left" FontSize="12" TextColor="#BFC8FF" VerticalOptions="Center"/>
+                                </HorizontalStackLayout>
+                            </HorizontalStackLayout>
+                        </Grid>
+                        <ProgressBar Progress="0.62"
+                                     ProgressColor="White"
+                                     BackgroundColor="#3D4DB0"
+                                     HeightRequest="7"/>
+                        <Label Text="60% Completed This Week"
+                               FontSize="12" TextColor="#D0D5FF"
+                               HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </Border>
+     
+        <!-- ═══════════════════════════════════════════
+             CONTENIDO SCROLLEABLE (Row 1)
+             PaddingTop alto para dejar espacio a la card superpuesta
+        ═══════════════════════════════════════════ -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="0">
+
+                <!-- Espaciador para que la card superpuesta no tape contenido -->
+                <BoxView HeightRequest="100" BackgroundColor="White"/>
+
+                <!-- ───────────────────────────────────────
+                     FILTROS  —  estilo TAB con underline
+                ─────────────────────────────────────────── -->
+                <Grid ColumnDefinitions="*,*,*,*"
+                      Margin="16,0,16,16"
+                      ColumnSpacing="0">
+
+                    <!-- TODAY (activo) -->
+                    <VerticalStackLayout Grid.Column="0" Spacing="6" HorizontalOptions="Center">
+                        <Label Text="Today"
+                               FontSize="14" FontAttributes="Bold"
+                               TextColor="#4B5BDB"
+                               HorizontalOptions="Center"/>
+                        <!-- Indicador underline activo -->
+                        <BoxView HeightRequest="3"
+                                 WidthRequest="36"
+                                 Color="#4B5BDB"
+                                 HorizontalOptions="Center"
+                                 CornerRadius="2"/>
+                    </VerticalStackLayout>
+
+                    <!-- UPCOMING -->
+                    <VerticalStackLayout Grid.Column="1" Spacing="6" HorizontalOptions="Center">
+                        <Label Text="Upcoming"
+                               FontSize="14"
+                               TextColor="#AAAAAA"
+                               HorizontalOptions="Center"/>
+                        <BoxView HeightRequest="3"
+                                 WidthRequest="36"
+                                 Color="#AAAAAA"
+                                 HorizontalOptions="Center"
+                                 CornerRadius="2"/>
+                    </VerticalStackLayout>
+
+                    <!-- OVERDUE -->
+                    <VerticalStackLayout Grid.Column="2" Spacing="6" HorizontalOptions="Center">
+                        <Label Text="Overdue"
+                               FontSize="14"
+                               TextColor="#AAAAAA"
+                               HorizontalOptions="Center"/>
+                        <BoxView HeightRequest="3"
+                                 WidthRequest="36"
+                                 Color="#AAAAAA"
+                                 HorizontalOptions="Center"
+                                 CornerRadius="2"/>
+                    </VerticalStackLayout>
+
+                    <!-- COMPLETED -->
+                    <VerticalStackLayout Grid.Column="3" Spacing="6" HorizontalOptions="Center">
+                        <Label Text="Completed"
+                               FontSize="14"
+                               TextColor="#AAAAAA"
+                               HorizontalOptions="Center"/>
+                        <BoxView HeightRequest="3"
+                                 WidthRequest="36"
+                                 Color="#AAAAAA"
+                                 HorizontalOptions="Center"
+                                 CornerRadius="2"/>
+                    </VerticalStackLayout>
+                </Grid>
+
+                <!-- Línea separadora debajo de los tabs -->
+                <BoxView HeightRequest="1" Color="#EBEBF0" Margin="16,0,16,12"/>
+
+                <!-- ───────────────────────────────────────
+                     TAREA 1 — History Essay (High)
+                ─────────────────────────────────────────── -->
+                <Border Margin="16,4" BackgroundColor="White"
+                        StrokeShape="RoundRectangle 14"
+                        Stroke="#E8EAF0" StrokeThickness="1"
+                        Padding="14">
+                    <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto" ColumnSpacing="10">
+                        <!-- Icono bookmark rojo -->
+                        <Label Grid.Column="0" Text="🔖" FontSize="20"
+                               VerticalOptions="Center" TextColor="#E53935"/>
+
+                        <VerticalStackLayout Grid.Column="1" Spacing="2">
+                            <Label Text="History Essay" FontSize="15" FontAttributes="Bold" TextColor="#666"/>
+                            <HorizontalStackLayout Spacing="4">
+                                <Label Text="⚡" FontSize="11" TextColor="#E53935" VerticalOptions="Center"/>
+                                <Label Text="Today, 4:00 PM" FontSize="12" TextColor="#888"/>
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+
+                        <!-- Badge High -->
+                        <Border Grid.Column="2"
+                                BackgroundColor="#FFEBEE"
+                                StrokeShape="RoundRectangle 8"
+                                Stroke="Transparent" Padding="10,5"
+                                VerticalOptions="Center">
+                            <Label Text="High" TextColor="#E53935" FontSize="12" FontAttributes="Bold"/>
+                        </Border>
+
+                        <!-- Check completado (azul) -->
+                        <Border Grid.Column="3"
+                                BackgroundColor="#4B5BDB"
+                                StrokeShape="RoundRectangle 8"
+                                Stroke="Transparent"
+                                WidthRequest="34" HeightRequest="34"
+                                VerticalOptions="Center">
+                            <Label Text="✓" TextColor="White" FontSize="16"
+                                   HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </Border>
+
+                        <!-- Menú 3 puntos -->
+                        <Label Grid.Column="4" Text="···" FontSize="18"
+                               TextColor="#BBBBBB" VerticalOptions="Center"
+                               Rotation="90"/>
+                    </Grid>
+                </Border>
+
+                <!-- ───────────────────────────────────────
+                     TAREA 2 — Physics Homework
+                ─────────────────────────────────────────── -->
+                <Border Margin="16,4" BackgroundColor="White"
+                        StrokeShape="RoundRectangle 14"
+                        Stroke="#E8EAF0" StrokeThickness="1"
+                        Padding="14">
+                    <Grid RowDefinitions="Auto,Auto"
+                          ColumnDefinitions="Auto,*,Auto,Auto,Auto"
+                          ColumnSpacing="10" RowSpacing="6">
+
+                        <Label Grid.Column="0" Grid.RowSpan="2" Text="🔖" FontSize="20"
+                               VerticalOptions="Center" TextColor="#3949AB"/>
+
+                        <Label Grid.Row="0" Grid.Column="1"
+                               Text="Physics Homework" FontSize="15" FontAttributes="Bold" TextColor="#666"/>
+
+                        <!-- Badge Physics (pill azul) -->
+                        <Border Grid.Row="0" Grid.Column="2"
+                                BackgroundColor="#3949AB"
+                                StrokeShape="RoundRectangle 8"
+                                Stroke="Transparent" Padding="10,5"
+                                VerticalOptions="Center">
+                            <Label Text="Physics" TextColor="White" FontSize="11" FontAttributes="Bold"/>
+                        </Border>
+
+                        <!-- Check parcial (borde gris) -->
+                        <Border Grid.Row="0" Grid.Column="3"
+                                BackgroundColor="White"
+                                StrokeShape="RoundRectangle 8"
+                                Stroke="#BDBDBD" StrokeThickness="1.5"
+                                WidthRequest="34" HeightRequest="34"
+                                VerticalOptions="Center">
+                            <Label Text="✓" TextColor="#BDBDBD" FontSize="16"
+                                   HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </Border>
+
+                        <!-- Menú 3 puntos -->
+                        <Label Grid.Row="0" Grid.Column="4"
+                               Text="···" FontSize="18"
+                               TextColor="#BBBBBB" VerticalOptions="Center"
+                               Rotation="90"/>
+
+                        <!-- Subtasks -->
+                        <HorizontalStackLayout Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="4" Spacing="4">
+                            <Label Text="📋" FontSize="12"/>
+                            <Label Text="2/4 Subtasks" FontSize="12" TextColor="#4B5BDB" FontAttributes="Bold"/>
+                        </HorizontalStackLayout>
+                    </Grid>
+                </Border>
+
+                <!-- ───────────────────────────────────────
+                     TAREA 3 — Group Presentation (Low)
+                ─────────────────────────────────────────── -->
+                <Border Margin="16,4" BackgroundColor="White"
+                        StrokeShape="RoundRectangle 14"
+                        Stroke="#E8EAF0" StrokeThickness="1"
+                        Padding="14">
+                    <Grid RowDefinitions="Auto,Auto"
+                          ColumnDefinitions="Auto,*,Auto,Auto,Auto"
+                          ColumnSpacing="10" RowSpacing="6">
+
+                        <Label Grid.Column="0" Grid.RowSpan="2" Text="🔖" FontSize="20"
+                               VerticalOptions="Center" TextColor="#43A047"/>
+
+                        <Label Grid.Row="0" Grid.Column="1"
+                               Text="Group Presentation" FontSize="15" FontAttributes="Bold" TextColor="#666"/>
+
+                        <!-- Badge Low -->
+                        <Border Grid.Row="0" Grid.Column="2"
+                                BackgroundColor="#E8F5E9"
+                                StrokeShape="RoundRectangle 8"
+                                Stroke="Transparent" Padding="10,5"
+                                VerticalOptions="Center">
+                            <Label Text="Low" TextColor="#43A047" FontSize="12" FontAttributes="Bold"/>
+                        </Border>
+
+                        <!-- Check verde -->
+                        <Border Grid.Row="0" Grid.Column="3"
+                                BackgroundColor="#43A047"
+                                StrokeShape="RoundRectangle 8"
+                                Stroke="Transparent"
+                                WidthRequest="34" HeightRequest="34"
+                                VerticalOptions="Center">
+                            <Label Text="✓" TextColor="White" FontSize="16"
+                                   HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </Border>
+
+                        <!-- Menú 3 puntos -->
+                        <Label Grid.Row="0" Grid.Column="4"
+                               Text="···" FontSize="18"
+                               TextColor="#BBBBBB" VerticalOptions="Center"
+                               Rotation="90"/>
+
+                        <!-- Fecha -->
+                        <HorizontalStackLayout Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="4" Spacing="4">
+                            <Label Text="📋" FontSize="12"/>
+                            <Label Text="Apr 26, 2:00 PM" FontSize="12" TextColor="#888"/>
+                        </HorizontalStackLayout>
+                    </Grid>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+        <!-- Botón flotante fijo arriba a la derecha -->
+        <Button
+            Text="+"
+            Command="{Binding IrAAgregarTareaCommand}"
+            BackgroundColor="{DynamicResource Primary}"
+            TextColor="White"
+            FontSize="28"
+            WidthRequest="60"
+            HeightRequest="60"
+            CornerRadius="30"
+            HorizontalOptions="End"
+            VerticalOptions="End"
+            Margin="0,20,20,-510"
+            ZIndex="10" />
+
+    </Grid>
+</ContentPage>

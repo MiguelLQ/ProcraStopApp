@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProcraStop.Modules.Tasks.Presentation.Views.TaskDetailPage"
+             Title="TaskDetailPage">
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- CONTENIDO -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="0" BackgroundColor="#F0F2F8">
+
+                <!-- Tarjeta principal -->
+                <Border Margin="0" BackgroundColor="White"
+                        Padding="20,20,20,16">
+                    <!-- Título -->
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Study for Exam"
+                               FontSize="24" FontAttributes="Bold" TextColor="#1A1A2E"/>
+
+                        <!-- Badges -->
+                        <HorizontalStackLayout Spacing="170">
+                            <Border BackgroundColor="#E8EAF6" StrokeShape="RoundRectangle 8"
+                                    Stroke="Transparent" Padding="10,6">
+                                <HorizontalStackLayout Spacing="4">
+                                    <Label Text="📘" FontSize="13"/>
+                                    <Label Text="Math" FontSize="13" TextColor="#3949AB" FontAttributes="Bold"/>
+                                </HorizontalStackLayout>
+                            </Border>
+                            <Border BackgroundColor="#FFEBEE" StrokeShape="RoundRectangle 8"
+                                    Stroke="Transparent" Padding="10,6" >
+                                <Label Text="High Priority" FontSize="13" TextColor="#E53935" FontAttributes="Bold"/>
+                            </Border>
+                        </HorizontalStackLayout>
+
+                        <!-- Due date con progress -->
+                        <Border BackgroundColor="#F8F9FF" StrokeShape="RoundRectangle 12"
+                                Stroke="#E8EAF0" Padding="14,12">
+                            <VerticalStackLayout Spacing="8">
+                                <HorizontalStackLayout Spacing="8">
+                                    <Label Text="📅" FontSize="16"/>
+                                    <Label Text="Due Tomorrow, 3:00 PM"
+                                           FontSize="14" FontAttributes="Bold" TextColor="#1A1A2E"
+                                           VerticalOptions="Center"/>
+                                </HorizontalStackLayout>
+                                <ProgressBar Progress="0.75"
+                                             ProgressColor="#4B5BDB"
+                                             BackgroundColor="#E0E0E0"
+                                             HeightRequest="6"/>
+                            </VerticalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Separador -->
+                <BoxView HeightRequest="8" BackgroundColor="#F0F2F8"/>
+
+                <!-- Subtareas -->
+                <Border Margin="0" BackgroundColor="White" Padding="20,16">
+                    <VerticalStackLayout Spacing="14">
+
+                        <!-- Review Chapter 5 (completada) -->
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                            <Border Grid.Column="0"
+                                    BackgroundColor="#4B5BDB" StrokeShape="RoundRectangle 10"
+                                    Stroke="Transparent"
+                                    WidthRequest="28" HeightRequest="28">
+                                <Label Text="✓" TextColor="White" FontSize="14"
+                                       HorizontalOptions="Center" VerticalOptions="Center"/>
+                            </Border>
+                            <Label Grid.Column="1" Text="Review Chapter 5"
+                                   FontSize="15" TextColor="#1A1A2E"
+                                   VerticalOptions="Center"/>
+                            <Border Grid.Column="2"
+                                    BackgroundColor="#4B5BDB" StrokeShape="RoundRectangle 10"
+                                    Stroke="Transparent"
+                                    WidthRequest="28" HeightRequest="28">
+                                <Label Text="✓" TextColor="White" FontSize="14"
+                                       HorizontalOptions="Center" VerticalOptions="Center"/>
+                            </Border>
+                        </Grid>
+
+                        <!-- Practice Quiz (completada) -->
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                            <Border Grid.Column="0"
+                                    BackgroundColor="#4B5BDB" StrokeShape="RoundRectangle 10"
+                                    Stroke="Transparent"
+                                    WidthRequest="28" HeightRequest="28">
+                                <Label Text="✓" TextColor="White" FontSize="14"
+                                       HorizontalOptions="Center" VerticalOptions="Center"/>
+                            </Border>
+                            <Label Grid.Column="1" Text="Practice Quiz"
+                                   FontSize="15" TextColor="#1A1A2E" VerticalOptions="Center"/>
+                            <Border Grid.Column="2"
+                                    BackgroundColor="#4B5BDB" StrokeShape="RoundRectangle 10"
+                                    Stroke="Transparent"
+                                    WidthRequest="28" HeightRequest="28">
+                                <Label Text="✓" TextColor="White" FontSize="14"
+                                       HorizontalOptions="Center" VerticalOptions="Center"/>
+                            </Border>
+                        </Grid>
+
+                        <!-- Read Chapter 6 (pendiente) -->
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <Border Grid.Column="0"
+                                    BackgroundColor="#E8EAF6" StrokeShape="RoundRectangle 10"
+                                    Stroke="Transparent"
+                                    WidthRequest="28" HeightRequest="28">
+                                <Label Text="✓" TextColor="#9FA8DA" FontSize="14"
+                                       HorizontalOptions="Center" VerticalOptions="Center"/>
+                            </Border>
+                            <Label Grid.Column="1" Text="Read Chapter 6"
+                                   FontSize="15" TextColor="#555" VerticalOptions="Center"/>
+                        </Grid>
+
+                        <!-- Make Study Notes (pendiente) -->
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <Border Grid.Column="0"
+                                    BackgroundColor="#E8EAF6" StrokeShape="RoundRectangle 10"
+                                    Stroke="Transparent"
+                                    WidthRequest="28" HeightRequest="28">
+                                <Label Text="✓" TextColor="#9FA8DA" FontSize="14"
+                                       HorizontalOptions="Center" VerticalOptions="Center"/>
+                            </Border>
+                            <Label Grid.Column="1" Text="Make Study Notes"
+                                   FontSize="15" TextColor="#555" VerticalOptions="Center"/>
+                        </Grid>
+
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Separador -->
+                <BoxView HeightRequest="8" BackgroundColor="#F0F2F8"/>
+
+                <!-- Notes & Links -->
+                <Border Margin="0" BackgroundColor="White" Padding="20,16">
+                    <VerticalStackLayout Spacing="0">
+                        <HorizontalStackLayout Spacing="10" Margin="0,0,0,14">
+                            <Label Text="📝" FontSize="18"/>
+                            <Label Text="Notes &amp; Links"
+                                   FontSize="16" FontAttributes="Bold" TextColor="#1A1A2E"
+                                   VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+
+                        <!-- Exam guide PDF -->
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12"
+                              Padding="0,10">
+                            <Label Grid.Column="0" Text="📄" FontSize="18" VerticalOptions="Center"/>
+                            <Label Grid.Column="1" Text="Exam guide.pdf"
+                                   FontSize="15" TextColor="#333" VerticalOptions="Center"/>
+                            <Label Grid.Column="2" Text="›" FontSize="22" TextColor="#4B5BDB" VerticalOptions="Center"/>
+                        </Grid>
+                        <BoxView HeightRequest="1" BackgroundColor="#F0F2F8"/>
+
+                        <!-- Flashcards Link -->
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12"
+                              Padding="0,10">
+                            <Label Grid.Column="0" Text="🔗" FontSize="18" VerticalOptions="Center"/>
+                            <Label Grid.Column="1" Text="Flashcards Link"
+                                   FontSize="15" TextColor="#333" VerticalOptions="Center"/>
+                            <Label Grid.Column="2" Text="›" FontSize="22" TextColor="#4B5BDB" VerticalOptions="Center"/>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <BoxView HeightRequest="16" BackgroundColor="#F0F2F8"/>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- BOTONES INFERIORES -->
+        <Grid Grid.Row="2" ColumnDefinitions="*,*,Auto"
+              ColumnSpacing="10" Padding="16,12,16,40"
+              BackgroundColor="White">
+            <BoxView Grid.ColumnSpan="3" HeightRequest="1" BackgroundColor="#EEEEEE" VerticalOptions="Start"/>
+
+            <Button Grid.Column="0"
+                    Text="Mark Complete"
+                    BackgroundColor="#4B5BDB"
+                    TextColor="White"
+                    FontSize="15" FontAttributes="Bold"
+                    CornerRadius="12"
+                    HeightRequest="52"/>
+            <Button Grid.Column="1"
+                    Text="Edit Task"
+                    BackgroundColor="White"
+                    TextColor="#4B5BDB"
+                    FontSize="15"
+                    BorderColor="#4B5BDB"
+                    BorderWidth="1.5"
+                    CornerRadius="12"
+                    HeightRequest="52"/>
+            <Border Grid.Column="2"
+                    BackgroundColor="#F0F2F8"
+                    StrokeShape="RoundRectangle 12"
+                    Stroke="#E0E0E0"
+                    WidthRequest="52" HeightRequest="52"
+                    VerticalOptions="Center">
+                <Label Text="›" FontSize="22" TextColor="#4B5BDB"
+                       HorizontalOptions="Center" VerticalOptions="Center"/>
+            </Border>
+        </Grid>
+
+    </Grid>
+
+</ContentPage>

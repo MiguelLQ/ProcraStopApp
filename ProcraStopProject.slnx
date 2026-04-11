@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ProcraStop/ProcraStopApp.csproj">
+      <Deploy Solution="Debug|*" />
+    </Project>
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ProcraStop.UnitTests/ProcraStop.UnitTests.csproj" />
+  </Folder>
+</Solution>

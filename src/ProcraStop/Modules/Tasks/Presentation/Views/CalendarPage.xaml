@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProcraStop.Modules.Tasks.Presentation.Views.CalendarPage"
+             Title="CalendarPage">
+     <Grid RowDefinitions="Auto,*,Auto">
+
+        
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="0" BackgroundColor="White">
+
+                <!-- Navegación de mes -->
+                <Grid ColumnDefinitions="Auto,*,Auto" Padding="20,12,20,8">
+                    <Label Grid.Column="0" Text="‹" FontSize="26" TextColor="#4B5BDB" VerticalOptions="Center"/>
+                    <Label Grid.Column="1" Text="April 2024"
+                           FontSize="18" FontAttributes="Bold" TextColor="#4B5BDB"
+                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                    <Label Grid.Column="2" Text="›" FontSize="26" TextColor="#4B5BDB" VerticalOptions="Center"/>
+                </Grid>
+
+                <!-- Encabezados días -->
+                <Grid ColumnDefinitions="*,*,*,*,*,*,*" Padding="8,4" Margin="0,0,0,4">
+                    <Label Grid.Column="0" Text="Sun" FontSize="13" TextColor="#E53935"
+                           HorizontalOptions="Center" FontAttributes="Bold"/>
+                    <Label Grid.Column="1" Text="Mon" FontSize="13" TextColor="#555"
+                           HorizontalOptions="Center"/>
+                    <Label Grid.Column="2" Text="Tue" FontSize="13" TextColor="#555"
+                           HorizontalOptions="Center"/>
+                    <Label Grid.Column="3" Text="Wed" FontSize="13" TextColor="#555"
+                           HorizontalOptions="Center"/>
+                    <Label Grid.Column="4" Text="Thu" FontSize="13" TextColor="#555"
+                           HorizontalOptions="Center"/>
+                    <Label Grid.Column="5" Text="Fri" FontSize="13" TextColor="#555"
+                           HorizontalOptions="Center"/>
+                    <Label Grid.Column="6" Text="Sat" FontSize="13" TextColor="#555"
+                           HorizontalOptions="Center"/>
+                </Grid>
+
+                <!-- Semana 1 -->
+                <Grid ColumnDefinitions="*,*,*,*,*,*,*" Padding="8,4">
+                    <Label Grid.Column="0" Text="" HorizontalOptions="Center"/>
+                    <Label Grid.Column="1" Text="1" FontSize="15" TextColor="#333" HorizontalOptions="Center"/>
+                    <Label Grid.Column="2" Text="2" FontSize="15" TextColor="#333" HorizontalOptions="Center"/>
+                    <Label Grid.Column="3" Text="3" FontSize="15" TextColor="#333" HorizontalOptions="Center"/>
+                    <Label Grid.Column="4" Text="4" FontSize="15" TextColor="#333" HorizontalOptions="Center"/>
+                    <Label Grid.Column="5" Text="5" FontSize="15" TextColor="#333" HorizontalOptions="Center"/>
+                    <Label Grid.Column="6" Text="6" FontSize="15" TextColor="#333" HorizontalOptions="Center"/>
+                </Grid>
+
+                <!-- Semana 2 -->
+                <Grid ColumnDefinitions="*,*,*,*,*,*,*" Padding="8,4">
+                    <Label Grid.Column="0" Text="7" FontSize="15" TextColor="#E53935" HorizontalOptions="Center"/>
+                    <Label Grid.Column="1" Text="8" FontSize="15" TextColor="#333" HorizontalOptions="Center"/>
+                    <Label Grid.Column="2" Text="9" FontSize="15" TextColor="#333" HorizontalOptions="Center"/>
+                    <Label Grid.Column="3" Text="10" FontSize="15" TextColor="#333" HorizontalOptions="Center"/>
+                    <Label Grid.Column="4" Text="11" FontSize="15" TextColor="#333" HorizontalOptions="Center"/>
+                    <Label Grid.Column="5" Text="12" FontSize="15" TextColor="#333" HorizontalOptions="Center"/>
+                    <Label Grid.Column="6" Text="13" FontSize="15" TextColor="#333" HorizontalOptions="Center"/>
+                </Grid>
+
+                <!-- Semana 3 -->
+                <Grid ColumnDefinitions="*,*,*,*,*,*,*" Padding="8,4">
+                    <Label Grid.Column="0" Text="14" FontSize="15" TextColor="#E53935" HorizontalOptions="Center"/>
+                    <Label Grid.Column="1" Text="15" FontSize="15" TextColor="#333" HorizontalOptions="Center"/>
+                    <Label Grid.Column="2" Text="16" FontSize="15" TextColor="#333" HorizontalOptions="Center"/>
+                    <Label Grid.Column="3" Text="17" FontSize="15" TextColor="#333" HorizontalOptions="Center"/>
+                    <Label Grid.Column="4" Text="18" FontSize="15" TextColor="#333" HorizontalOptions="Center"/>
+                    <Label Grid.Column="5" Text="19" FontSize="15" TextColor="#333" HorizontalOptions="Center"/>
+                    <Label Grid.Column="6" Text="20" FontSize="15" TextColor="#333" HorizontalOptions="Center"/>
+                </Grid>
+
+                <!-- Semana 4 — DÍA 24 ACTIVO -->
+                <Grid ColumnDefinitions="*,*,*,*,*,*,*" Padding="8,4">
+                    <Label Grid.Column="0" Text="21" FontSize="15" TextColor="#E53935" HorizontalOptions="Center"/>
+                    <Label Grid.Column="1" Text="22" FontSize="15" TextColor="#333" HorizontalOptions="Center"/>
+                    <Label Grid.Column="2" Text="23" FontSize="15" TextColor="#333" HorizontalOptions="Center"/>
+                    <!-- Día 24 activo -->
+                    <Border Grid.Column="3"
+                            BackgroundColor="#4B5BDB"
+                            StrokeShape="RoundRectangle 18"
+                            Stroke="Transparent"
+                            WidthRequest="36" HeightRequest="36"
+                            HorizontalOptions="Center">
+                        <Label Text="24" FontSize="15" TextColor="White"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center" VerticalOptions="Center"/>
+                    </Border>
+                    <Label Grid.Column="4" Text="25" FontSize="15" TextColor="#333" HorizontalOptions="Center"/>
+                    <Label Grid.Column="5" Text="26" FontSize="15" TextColor="#333" HorizontalOptions="Center"/>
+                    <Label Grid.Column="6" Text="27" FontSize="15" TextColor="#333" HorizontalOptions="Center"/>
+                </Grid>
+
+                <!-- Semana 5 -->
+                <Grid ColumnDefinitions="*,*,*,*,*,*,*" Padding="8,4" Margin="0,0,0,16">
+                    <Label Grid.Column="0" Text="28" FontSize="15" TextColor="#E53935" HorizontalOptions="Center"/>
+                    <Label Grid.Column="1" Text="29" FontSize="15" TextColor="#333" HorizontalOptions="Center"/>
+                    <Label Grid.Column="2" Text="30" FontSize="15" TextColor="#333" HorizontalOptions="Center"/>
+                    <Label Grid.Column="3" Text="1" FontSize="15" TextColor="#BDBDBD" HorizontalOptions="Center"/>
+                    <Label Grid.Column="4" Text="2" FontSize="15" TextColor="#BDBDBD" HorizontalOptions="Center"/>
+                    <Label Grid.Column="5" Text="" HorizontalOptions="Center"/>
+                    <Label Grid.Column="6" Text="" HorizontalOptions="Center"/>
+                </Grid>
+
+                <!-- Separador -->
+                <BoxView HeightRequest="8" BackgroundColor="#F0F2F8"/>
+
+                <!-- TODAY'S TASKS -->
+                <VerticalStackLayout Padding="20,16" Spacing="14" BackgroundColor="White">
+                    <Label Text="Today's Tasks"
+                           FontSize="16" FontAttributes="Bold" TextColor="#1A1A2E"/>
+
+                    <!-- History Essay -->
+                    <Border BackgroundColor="White"
+                            StrokeShape="RoundRectangle 12"
+                            Stroke="#E8EAF0" StrokeThickness="1"
+                            Padding="14,12">
+                        <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="10">
+                            <Label Grid.Column="0" Text="🔖" FontSize="18" TextColor="#E53935" VerticalOptions="Center"/>
+                            <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                <Label Text="History Essay" FontSize="15" FontAttributes="Bold" TextColor="#1A1A2E"/>
+                                <Label Text="4:00 PM" FontSize="12" TextColor="#888"/>
+                            </VerticalStackLayout>
+                            <Border Grid.Column="2"
+                                    BackgroundColor="#EEF0FF"
+                                    StrokeShape="RoundRectangle 6"
+                                    Stroke="Transparent" Padding="8,4"
+                                    VerticalOptions="Center">
+                                <Label Text="History" TextColor="#3949AB" FontSize="11" FontAttributes="Bold"/>
+                            </Border>
+                            <Label Grid.Column="3" Text="···" FontSize="16" TextColor="#BDBDBD" VerticalOptions="Center"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Research Outline -->
+                    <Border BackgroundColor="White"
+                            StrokeShape="RoundRectangle 12"
+                            Stroke="#E8EAF0" StrokeThickness="1"
+                            Padding="14,12">
+                        <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="10">
+                            <Label Grid.Column="0" Text="🔖" FontSize="18" TextColor="#3949AB" VerticalOptions="Center"/>
+                            <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                <Label Text="Research Outline" FontSize="15" FontAttributes="Bold" TextColor="#1A1A2E"/>
+                                <Label Text="6:00 PM" FontSize="12" TextColor="#888"/>
+                            </VerticalStackLayout>
+                            <Border Grid.Column="2"
+                                    BackgroundColor="#E8F5E9"
+                                    StrokeShape="RoundRectangle 6"
+                                    Stroke="Transparent" Padding="8,4"
+                                    VerticalOptions="Center">
+                                <Label Text="Biology" TextColor="#43A047" FontSize="11" FontAttributes="Bold"/>
+                            </Border>
+                            <Label Grid.Column="3" Text="···" FontSize="16" TextColor="#BDBDBD" VerticalOptions="Center"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Read Chapter 2 -->
+                    <Border BackgroundColor="White"
+                            StrokeShape="RoundRectangle 12"
+                            Stroke="#E8EAF0" StrokeThickness="1"
+                            Padding="14,12">
+                        <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="10">
+                            <Label Grid.Column="0" Text="🔖" FontSize="18" TextColor="#FB8C00" VerticalOptions="Center"/>
+                            <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                <Label Text="Read Chapter 2" FontSize="15" FontAttributes="Bold" TextColor="#1A1A2E"/>
+                                <Label Text="In Progress" FontSize="12" TextColor="#4B5BDB"/>
+                            </VerticalStackLayout>
+                            <Border Grid.Column="2"
+                                    BackgroundColor="#FFF3E0"
+                                    StrokeShape="RoundRectangle 6"
+                                    Stroke="Transparent" Padding="8,4"
+                                    VerticalOptions="Center">
+                                <Label Text="Literature" TextColor="#FB8C00" FontSize="11" FontAttributes="Bold"/>
+                            </Border>
+                            <Label Grid.Column="3" Text="···" FontSize="16" TextColor="#BDBDBD" VerticalOptions="Center"/>
+                        </Grid>
+                    </Border>
+                </VerticalStackLayout>
+
+                <BoxView HeightRequest="16" BackgroundColor="#F0F2F8"/>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        
+
+    </Grid>
+</ContentPage>

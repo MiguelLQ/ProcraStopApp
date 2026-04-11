@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProcraStop.Modules.Tasks.Presentation.Views.CreateTaskPage"
+             Title="CreateTaskPage">
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="16">
+
+            <Label Text="Crear tarea"
+                   FontSize="24"
+                   FontAttributes="Bold" />
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Título"
+                       FontAttributes="Bold" />
+                <Entry Placeholder="Ej. Resolver ejercicios de integrales"
+                       Text="{Binding Title}" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Descripción"
+                       FontAttributes="Bold" />
+                <Editor Placeholder="Agrega detalles importantes..."
+                        AutoSize="TextChanges"
+                        HeightRequest="120"
+                        Text="{Binding Description}" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="8">
+                <Grid ColumnDefinitions="*,Auto"
+                      VerticalOptions="Center">
+                    <Label Text="Fecha límite"
+                           FontAttributes="Bold"
+                           VerticalOptions="Center" />
+                    <Switch Grid.Column="1"
+                            IsToggled="{Binding HasDueDate}" />
+                </Grid>
+
+                <VerticalStackLayout Spacing="10"
+                                     IsVisible="{Binding HasDueDate}">
+                    <Grid ColumnDefinitions="*,*"
+                          ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0" Spacing="4">
+                            <Label Text="Fecha"
+                                   FontSize="12"
+                                   Opacity="0.8" />
+                            <DatePicker Date="{Binding SelectedDueDate}" />
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Grid.Column="1" Spacing="4">
+                            <Label Text="Hora"
+                                   FontSize="12"
+                                   Opacity="0.8" />
+                            <TimePicker Time="{Binding SelectedDueTime}" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <Label Text="{Binding DueDatePreviewText}"
+                           FontSize="13"
+                           TextColor="{AppThemeBinding Light=#4B5563, Dark=#D1D5DB}" />
+                    <!--RECORDATORIO -->
+                    <VerticalStackLayout Spacing="6" Margin="0,8,0,0">
+
+                        <Label Text="Recordatorio"
+                           FontAttributes="Bold" />
+
+                           <Picker Title="Selecciona cuándo avisarte"
+                                ItemsSource="{Binding ReminderOffsets}"
+                                SelectedIndex="{Binding SelectedReminderOffsetIndex}" />
+
+                                    <!-- Preview del recordatorio -->
+                            <Label Text="{Binding ReminderPreviewText}"
+                                       FontSize="13"
+                                       TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />
+
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Minutos estimados"
+                       FontAttributes="Bold" />
+                <Entry Placeholder="Ej. 30"
+                       Keyboard="Numeric"
+                       Text="{Binding EstimatedMinutesText}" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Prioridad"
+                       FontAttributes="Bold" />
+                <Picker Title="Selecciona prioridad"
+                        ItemsSource="{Binding Priorities}"
+                        SelectedItem="{Binding SelectedPriority}" />
+            </VerticalStackLayout>
+
+            <Button Text="Guardar tarea"
+                    Command="{Binding SaveCommand}"
+                    HeightRequest="50"
+                    IsEnabled="{Binding CanSave}" />
+
+            <ActivityIndicator IsRunning="{Binding IsSaving}"
+                               IsVisible="{Binding IsSaving}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
