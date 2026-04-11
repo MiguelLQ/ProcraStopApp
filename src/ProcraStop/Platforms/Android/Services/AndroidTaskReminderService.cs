@@ -28,7 +28,8 @@ public class AndroidTaskReminderService : ITaskReminderService
             return Task.CompletedTask;
         }
 
-        // 🔥 CONTEXTO CORRECTO (sin ambigüedad)
+        // En Android, el contexto es necesario para programar el WorkManager.
+        // Usamos el contexto actual de la actividad o el contexto de la aplicación.
         var context = Platform.CurrentActivity ?? AndroidApp.Context;
 
         var data = new Data.Builder()
@@ -39,7 +40,7 @@ public class AndroidTaskReminderService : ITaskReminderService
             .PutInt("priority", 2) // luego lo conectas al enum
             .Build();
 
-        // 🔥 FIX PARA ANDROIDX 2.11.x
+        // Creamos un OneTimeWorkRequest para programar la tarea de recordatorio.
         var request = (OneTimeWorkRequest)new OneTimeWorkRequest.Builder(typeof(Workers.TaskReminderWorker))
             .SetInitialDelay((long)delay.TotalMilliseconds, TimeUnit.Milliseconds)
             .SetInputData(data)
@@ -51,11 +52,11 @@ public class AndroidTaskReminderService : ITaskReminderService
                 ExistingWorkPolicy.Replace,
                 request);
 
-        Console.WriteLine("🔥 WorkManager programado");
+        Console.WriteLine("WorkManager programado");
 
         return Task.CompletedTask;
     }
-
+    // Para cancelar una tarea programada, simplemente cancelamos el trabajo único con el ID de la tarea.
     public Task CancelAsync(Guid taskId, CancellationToken cancellationToken = default)
     {
         var context = Platform.CurrentActivity ?? AndroidApp.Context;
