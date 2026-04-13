@@ -1,8 +1,6 @@
 ﻿using ProcraStop.Modules.Tasks.Domain.Entities;
 using ProcraStop.Modules.Tasks.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 
 namespace ProcraStop.Modules.Tasks.Infraestructure.Persistence
 {

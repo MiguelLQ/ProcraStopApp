@@ -198,7 +198,25 @@
                                                LineBreakMode="TailTruncation"
                                                TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
                                     </HorizontalStackLayout>
+                                    <!-- curso -->
+                                    <Border IsVisible="{Binding HasCourse}"
+                                         Padding="6"
+                                         StrokeShape="RoundRectangle 10"
+                                         BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource Gray900}}">
 
+                                        <HorizontalStackLayout Spacing="6">
+
+                                            <BoxView WidthRequest="8"
+                                                  HeightRequest="8"
+                                                  CornerRadius="4"
+                                                     Background="Transparent"
+                                                  Color="{Binding CourseColor}" />
+
+                                            <Label Text="{Binding CourseName}"
+                                                FontSize="11"
+                                                TextColor="#555" />
+                                        </HorizontalStackLayout>
+                                    </Border>
                                     <!-- Overdue -->
                                     <Label Text="{Binding OverdueText}"
                                            FontSize="12"
@@ -206,6 +224,8 @@
                                            LineBreakMode="TailTruncation"
                                            TextColor="#DC2626"
                                            IsVisible="{Binding ShowOverdue}" />
+
+                                   
                                 </VerticalStackLayout>
 
                                 <!-- ACTIONS -->

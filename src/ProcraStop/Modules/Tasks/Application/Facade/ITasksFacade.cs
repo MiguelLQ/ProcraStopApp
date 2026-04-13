@@ -19,5 +19,7 @@ namespace ProcraStop.Modules.Tasks.Application.Facade
         Task ArchiveTaskAsync(
             Guid taskId,
             CancellationToken ct = default);
+        Task<IReadOnlyList<CourseDto>> GetCoursesAsync(
+        CancellationToken ct = default);
     }
 }

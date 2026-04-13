@@ -32,7 +32,10 @@ public partial class CreateTaskPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-
+        if (BindingContext is CreateTaskPageViewModel vm)
+        {
+            await vm.LoadAsync();
+        }
         await RequestNotificationPermissionAsync();
         var request = new NotificationRequest
         {

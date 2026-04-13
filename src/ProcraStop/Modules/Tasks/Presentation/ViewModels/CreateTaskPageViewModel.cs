@@ -11,6 +11,15 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
         private readonly ITasksFacade _tasksFacade;
 
         [ObservableProperty]
+        private Guid? selectedCourseId;
+
+        [ObservableProperty]
+        private CourseDto? selectedCourse;
+
+        [ObservableProperty]
+        private List<CourseDto> courses = new();
+
+        [ObservableProperty]
         private string title = string.Empty;
 
         [ObservableProperty]
@@ -78,6 +87,12 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
         partial void OnSelectedReminderOffsetIndexChanged(int value)
         {
             OnPropertyChanged(nameof(ReminderPreviewText));
+        }
+        // Cuando se cambia el curso seleccionado,
+        // actualizamos el SelectedCourseId para que el comando SaveAsync lo use al crear la tarea.
+        partial void OnSelectedCourseChanged(CourseDto? value)
+        {
+            SelectedCourseId = value?.Id == Guid.Empty ? null : value?.Id;
         }
         public event Action? TaskCreated;
 
@@ -198,7 +213,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
                     ReminderDate = null, // se ignora en backend
                     EstimatedMinutes = estimatedMinutes,
                     Priority = SelectedPriority,
-                    CourseId = null
+                    CourseId = selectedCourseId
                 };
 
                 await _tasksFacade.CreateTaskAsync(request);
@@ -211,6 +226,23 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             {
                 IsSaving = false;
             }
+        }
+        public async Task LoadAsync()
+        {
+            var list = (await _tasksFacade.GetCoursesAsync()).ToList();
+
+            //Insertamos opción "Sin curso"
+            list.Insert(0, new CourseDto
+            {
+                Id = Guid.Empty,
+                Name = "Sin curso",
+                Color = null
+            });
+
+            Courses = list;
+
+            //default seleccionado
+            SelectedCourse = Courses.FirstOrDefault();
         }
     }
 }

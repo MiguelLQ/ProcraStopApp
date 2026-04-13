@@ -1,0 +1,189 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProcraStop.Modules.Tasks.Presentation.Views.CoursesView.CoursesPage"
+             x:Name="PageRoot"
+             BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- ========================= -->
+        <!-- FORM -->
+        <!-- ========================= -->
+
+        <Border Grid.Row="0"
+                Margin="16,16,16,8"
+                Padding="14"
+                Stroke="{StaticResource Gray300}"
+                BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource DarkSecondaryBackground}}"
+                StrokeShape="RoundRectangle 14">
+
+            <VerticalStackLayout Spacing="10">
+
+                <Entry Placeholder="Nombre"
+                       Text="{Binding Name}" />
+
+                <Entry Placeholder="Descripción"
+                       Text="{Binding Description}" />
+
+                <!-- TU SELECTOR (NO TOCADO) -->
+                <Label Text="Selecciona un color de etiqueta"
+                       FontSize="12"/>
+
+                <Label Text="{Binding SelectedColor}"
+                       FontSize="12"/>
+
+                <CollectionView ItemsSource="{Binding ColorOptions}"
+                                ItemsLayout="HorizontalList"
+                                SelectionMode="None">
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Padding="4">
+
+                                <BoxView WidthRequest="32"
+                                         HeightRequest="32"
+                                         CornerRadius="16"
+                                         Background="Transparent"
+                                         Color="{Binding Hex}" />
+
+                                <Border Stroke="Blue"
+                                        StrokeThickness="2"
+                                        StrokeShape="RoundRectangle 20"
+                                      
+                                        IsVisible="{Binding IsSelected}" />
+
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer 
+                                        Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.SelectColorCommand}"
+                                        CommandParameter="{Binding}" />
+                                </Grid.GestureRecognizers>
+
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!-- BOTONES -->
+                <Grid ColumnDefinitions="*,*"
+                      ColumnSpacing="10">
+
+                    <Button Text="Guardar"
+                            HeightRequest="40"
+                            FontSize="13"
+                            BackgroundColor="{StaticResource Primary}"
+                            TextColor="White"
+                            CornerRadius="10"
+                            Command="{Binding SaveCommand}" />
+
+                    <Button Grid.Column="1"
+                            Text="Limpiar"
+                            HeightRequest="40"
+                            FontSize="13"
+                            BackgroundColor="{StaticResource Gray200}"
+                            TextColor="{StaticResource Black}"
+                            CornerRadius="10"
+                            Command="{Binding CancelEditCommand}" />
+
+                </Grid>
+
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- ========================= -->
+        <!-- LISTA -->
+        <!-- ========================= -->
+
+        <CollectionView Grid.Row="1"
+                        Margin="16,0,16,16"
+                        ItemsSource="{Binding Courses}"
+                        SelectionMode="Single"
+                        BackgroundColor="Transparent"
+                        SelectedItem="{Binding SelectedCourse}">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+
+                    <Border Margin="0,6"
+                            Padding="12"
+                            Stroke="{StaticResource Gray300}"
+                            BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource DarkSecondaryBackground}}"
+                            StrokeShape="RoundRectangle 12" >
+                        
+
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup Name="CommonStates">
+
+                                    <VisualState Name="Normal">
+                                        <VisualState.Setters>
+                                            <Setter Property="Stroke" Value="{StaticResource Gray300}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+
+                                    <VisualState Name="Selected">
+                                        <VisualState.Setters>
+                                            <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                            <Setter Property="StrokeThickness" Value="2" />
+                                            <Setter Property="BackgroundColor"
+                            Value="{AppThemeBinding Light=#EEF2FF, Dark=#1E1B4B}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid ColumnDefinitions="6,*,Auto"
+                              ColumnSpacing="12">
+
+                            <!-- COLOR STRIP -->
+                            <BoxView Color="{Binding Color}" />
+
+                            <!-- TEXTO -->
+                            <VerticalStackLayout Grid.Column="1"
+                                                 Spacing="2">
+
+                                <Label Text="{Binding Name}"
+                                       FontAttributes="Bold"
+                                       FontSize="14"
+                                       TextColor="{AppThemeBinding Light=Black, Dark=White}" />
+
+                                <Label Text="{Binding Description}"
+                                       FontSize="12"
+                                       TextColor="{StaticResource Gray500}"
+                                       LineBreakMode="TailTruncation" />
+
+                            </VerticalStackLayout>
+
+                            <!-- BOTONES -->
+                            <HorizontalStackLayout Grid.Column="2"
+                                                   Spacing="6"
+                                                   VerticalOptions="Center">
+
+                                <Button Text="Editar"
+                                    FontSize="12"
+                                    HeightRequest="32"
+                                    Command="{Binding BindingContext.EditCommand, 
+                                              Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                    CommandParameter="{Binding}" />
+
+                                <Button Text="Eliminar"
+                                    FontSize="12"
+                                    HeightRequest="32"
+                                    BackgroundColor="#EF4444"
+                                    TextColor="White"
+                                    Command="{Binding BindingContext.DeleteCommand, 
+                                              Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                    CommandParameter="{Binding}" />
+
+                            </HorizontalStackLayout>
+
+                        </Grid>
+
+                    </Border>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+    </Grid>
+
+</ContentPage>

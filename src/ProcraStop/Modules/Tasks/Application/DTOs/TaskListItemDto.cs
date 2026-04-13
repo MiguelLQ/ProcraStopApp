@@ -16,5 +16,9 @@ namespace ProcraStop.Modules.Tasks.Application.DTOs
         public bool IsArchived { get; init; }
         public int? EstimatedMinutes { get; init; }
         public bool IsOverdue { get; init; }
+        // conexion con curso para ui listado
+        public Guid? CourseId { get; set; }
+        public string? CourseName { get; set; }
+        public string? CourseColor { get; set; }
     }
 }

@@ -92,7 +92,10 @@
                         ItemsSource="{Binding Priorities}"
                         SelectedItem="{Binding SelectedPriority}" />
             </VerticalStackLayout>
-
+            <Picker Title="Curso"
+                ItemsSource="{Binding Courses}"
+                ItemDisplayBinding="{Binding Name}"
+                SelectedItem="{Binding SelectedCourse}" />
             <Button Text="Guardar tarea"
                     Command="{Binding SaveCommand}"
                     HeightRequest="50"

@@ -2,6 +2,7 @@
 using ProcraStop.Modules.Tasks.Application.Commands.CompleteTask;
 using ProcraStop.Modules.Tasks.Application.Commands.CreateTask;
 using ProcraStop.Modules.Tasks.Application.DTOs;
+using ProcraStop.Modules.Tasks.Application.Queries.GetCourses;
 using ProcraStop.Modules.Tasks.Application.Queries.GetTasks;
 using System;
 using System.Collections.Generic;
@@ -15,17 +16,20 @@ namespace ProcraStop.Modules.Tasks.Application.Facade
         private readonly CreateTaskCommandHandler _createTaskHandler;
         private readonly CompleteTaskCommandHandler _completeTaskHandler;
         private readonly ArchiveTaskCommandHandler _archiveTaskHandler;
+        private readonly GetCoursesQueryHandler _getCoursesHandler;
 
         public TasksFacade(
             GetTasksQueryHandler getTasksHandler,
             CreateTaskCommandHandler createTaskHandler,
             CompleteTaskCommandHandler completeTaskHandler,
-            ArchiveTaskCommandHandler archiveTaskHandler)
+            ArchiveTaskCommandHandler archiveTaskHandler,
+             GetCoursesQueryHandler getCoursesHandler)
         {
             _getTasksHandler = getTasksHandler;
             _createTaskHandler = createTaskHandler;
             _completeTaskHandler = completeTaskHandler;
             _archiveTaskHandler = archiveTaskHandler;
+            _getCoursesHandler = getCoursesHandler;
         }
 
         public Task<IReadOnlyList<TaskListItemDto>> GetTasksAsync(
@@ -66,5 +70,8 @@ namespace ProcraStop.Modules.Tasks.Application.Facade
             => _archiveTaskHandler.HandleAsync(
                 new ArchiveTaskCommand { TaskId = taskId },
                 ct);
+        public Task<IReadOnlyList<CourseDto>> GetCoursesAsync(
+            CancellationToken ct = default)
+            => _getCoursesHandler.HandleAsync(new GetCoursesQuery(), ct);
     }
 }

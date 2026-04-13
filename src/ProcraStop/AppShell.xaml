@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"
     xmlns:task="clr-namespace:ProcraStop.Modules.Tasks.Presentation.Views"
+    xmlns:course="clr-namespace:ProcraStop.Modules.Tasks.Presentation.Views.CoursesView"
     Shell.FlyoutBehavior="Flyout"
     Title="ProcraStop">
 
@@ -30,6 +31,11 @@
         Icon="{StaticResource IconMeta}"
         ContentTemplate="{DataTemplate task:TasksPage}"
         Route="TasksPage" />
+    <ShellContent
+        Title="Cursos"
+        Icon="{StaticResource IconProjects}"
+        ContentTemplate="{DataTemplate course:CoursesPage}"
+        Route="CoursesPage" />
 
     <Shell.FlyoutFooter>
         <Grid Padding="15">

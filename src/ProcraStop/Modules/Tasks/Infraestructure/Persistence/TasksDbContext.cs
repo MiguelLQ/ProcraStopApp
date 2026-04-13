@@ -1,7 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ProcraStop.Modules.Tasks.Infraestructure.Persistence
 {
@@ -12,13 +9,15 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Persistence
         {
 
         }
-
+        // DbSet para las tareas
         public DbSet<StudyTaskEntity> Tasks => Set<StudyTaskEntity>();
-
+        // DbSet para los cursos
+        public DbSet<CourseEntity> Courses => Set<CourseEntity>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
+            // Configuración de la entidad StudyTaskEntity
             modelBuilder.Entity<StudyTaskEntity>(entity =>
             {
                 entity.ToTable("Tasks");
@@ -45,9 +44,34 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Persistence
                     .IsRequired();
                 entity.Property(x => x.DueDate);
                 entity.Property(x => x.ReminderDate);
-                entity.Property(x => x.CourseId);
+                // Configuración de la relación con CourseEntity
+                entity.HasOne<CourseEntity>()
+                    .WithMany()
+                    .HasForeignKey(x => x.CourseId)
+                    .OnDelete(DeleteBehavior.SetNull);
+
                 entity.Property(x => x.EstimatedMinutes);
                 entity.Property(x => x.CompletedAtUtc);
+            });
+            // Configuración de la entidad CourseEntity
+            modelBuilder.Entity<CourseEntity>(entity =>
+            {
+                entity.ToTable("Courses");
+
+                entity.HasKey(x => x.Id);
+
+                entity.Property(x => x.Name)
+                    .IsRequired()
+                    .HasMaxLength(150);
+
+                entity.Property(x => x.Description)
+                    .HasMaxLength(500);
+
+                entity.Property(x => x.Color)
+                    .HasMaxLength(20);
+
+                entity.Property(x => x.CreatedAtUtc)
+                    .IsRequired();
             });
         }
 

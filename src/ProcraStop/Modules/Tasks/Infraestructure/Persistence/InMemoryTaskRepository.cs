@@ -4,7 +4,7 @@ using ProcraStop.Modules.Tasks.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text;
-
+// este archivo es de prueba para simular un repositorio en memoria, no es parte de la solución final
 namespace ProcraStop.Modules.Tasks.Infraestructure.Persistence
 {
     public sealed class InMemoryTaskRepository : ITaskRepository

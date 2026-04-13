@@ -1,7 +1,5 @@
 ﻿using ProcraStop.Modules.Tasks.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 
 namespace ProcraStop.Modules.Tasks.Domain.Entities
 {
@@ -19,7 +17,8 @@ namespace ProcraStop.Modules.Tasks.Domain.Entities
         public int? EstimatedMinutes { get; init; }
         public DateTime CreatedAtUtc { get; init; }
         public DateTime? CompletedAtUtc { get; init; }
-
+        // 
+       
         public bool IsOverdue =>
             DueDate.HasValue &&
             DueDate.Value < DateTime.Now &&

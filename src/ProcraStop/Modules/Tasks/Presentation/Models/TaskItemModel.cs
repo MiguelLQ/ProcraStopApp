@@ -13,7 +13,9 @@ namespace ProcraStop.Modules.Tasks.Presentation.Models
         public TaskPriority Priority { get; init; }
         public TaskItemStatus Status { get; init; }
         public bool IsOverdue { get; init; }
-
+        public string? CourseName { get; set; }
+        public string? CourseColor { get; set; }
+        public bool HasCourse => !string.IsNullOrWhiteSpace(CourseName);
         public string StatusText => Status switch
         {
             TaskItemStatus.Pending => "Pendiente",
@@ -150,7 +152,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.Models
             DueDate.Value < DateTime.Now;
 
         public bool ShowOverdue => IsActuallyOverdue;
-
+        
         public static TaskItemModel FromDto(TaskListItemDto dto)
         {
             return new TaskItemModel
@@ -163,7 +165,10 @@ namespace ProcraStop.Modules.Tasks.Presentation.Models
                 Priority = dto.Priority,
                 Status = dto.Status,
                 IsOverdue = dto.IsOverdue,
-            };
+                // mapear curso
+                CourseName = dto.CourseName,
+                CourseColor = dto.CourseColor ?? "#6B7280"
+            };  
         }
 
         private static string GetShortDayName(DayOfWeek dayOfWeek)
