@@ -114,6 +114,11 @@
                                 StrokeShape="RoundRectangle 18"
                                 MinimumHeightRequest="245">
 
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer
+        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.OpenDetailCommand}"
+        CommandParameter="{Binding Id}" />
+                            </Border.GestureRecognizers>
                             <Grid RowDefinitions="Auto,Auto,Auto,*,Auto"
                                   RowSpacing="8">
 
@@ -225,36 +230,8 @@
                                            TextColor="#DC2626"
                                            IsVisible="{Binding ShowOverdue}" />
 
-                                   
+
                                 </VerticalStackLayout>
-
-                                <!-- ACTIONS -->
-                                <Grid Grid.Row="4"
-                                      ColumnDefinitions="*,*"
-                                      ColumnSpacing="8"
-                                      Margin="0,4,0,0">
-
-                                    <Button Grid.Column="0"
-                                            Text="Completar"
-                                            IsVisible="{Binding CanComplete}"
-                                            HeightRequest="38"
-                                            FontSize="12"
-                                            CornerRadius="14"
-                                            BackgroundColor="{StaticResource Primary}"
-                                            TextColor="{StaticResource White}"
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.CompleteCommand}"
-                                            CommandParameter="{Binding Id}" />
-
-                                    <Button Grid.Column="1"
-                                            Text="Archivar"
-                                            HeightRequest="38"
-                                            FontSize="12"
-                                            CornerRadius="14"
-                                            BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource Gray600}}"
-                                            TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource White}}"
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ArchiveCommand}"
-                                            CommandParameter="{Binding Id}" />
-                                </Grid>
 
                             </Grid>
                         </Border>

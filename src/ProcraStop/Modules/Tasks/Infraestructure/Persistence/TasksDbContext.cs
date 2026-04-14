@@ -13,6 +13,8 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Persistence
         public DbSet<StudyTaskEntity> Tasks => Set<StudyTaskEntity>();
         // DbSet para los cursos
         public DbSet<CourseEntity> Courses => Set<CourseEntity>();
+        // DbSet para las subtareas
+        public DbSet<SubtaskEntity> Subtasks => Set<SubtaskEntity>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -72,6 +74,25 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Persistence
 
                 entity.Property(x => x.CreatedAtUtc)
                     .IsRequired();
+            });
+            // Configuración de la entidad SubtaskEntity
+            modelBuilder.Entity<SubtaskEntity>(entity =>
+            {
+                entity.ToTable("Subtasks");
+
+                entity.HasKey(x => x.Id);
+
+                entity.Property(x => x.Title)
+                    .IsRequired()
+                    .HasMaxLength(200);
+
+                entity.Property(x => x.IsCompleted)
+                    .IsRequired();
+
+                entity.HasOne(x => x.Task)
+                    .WithMany(t => t.Subtasks)
+                    .HasForeignKey(x => x.TaskId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
 

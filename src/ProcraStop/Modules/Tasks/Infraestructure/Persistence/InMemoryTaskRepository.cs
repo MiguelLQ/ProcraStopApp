@@ -11,30 +11,30 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Persistence
     {
         private readonly List<StudyTask> _tasks = new()
     {
-        new StudyTask
-        {
-            Id = Guid.NewGuid(),
-            Title = "Resolver ejercicios de cálculo",
-            Description = "Capítulo 3 - derivadas",
-            DueDate = DateTime.Now.AddDays(1),
-            Priority = TaskPriority.High,
-            Status = TaskItemStatus.Pending,
-            IsArchived = false,
-            EstimatedMinutes = 90,
-            CreatedAtUtc = DateTime.UtcNow
-        },
-        new StudyTask
-        {
-            Id = Guid.NewGuid(),
-            Title = "Leer resumen de arquitectura",
-            Description = "Repasar Clean + CQRS",
-            DueDate = DateTime.Now.AddHours(-3),
-            Priority = TaskPriority.Medium,
-            Status = TaskItemStatus.Pending,
-            IsArchived = false,
-            EstimatedMinutes = 45,
-            CreatedAtUtc = DateTime.UtcNow.AddDays(-1)
-        }
+        //new StudyTask
+        //{
+        //    Id = Guid.NewGuid(),
+        //    Title = "Resolver ejercicios de cálculo",
+        //    Description = "Capítulo 3 - derivadas",
+        //    DueDate = DateTime.Now.AddDays(1),
+        //    Priority = TaskPriority.High,
+        //    Status = TaskItemStatus.Pending,
+        //    IsArchived = false,
+        //    EstimatedMinutes = 90,
+        //    CreatedAtUtc = DateTime.UtcNow
+        //},
+        //new StudyTask
+        //{
+        //    Id = Guid.NewGuid(),
+        //    Title = "Leer resumen de arquitectura",
+        //    Description = "Repasar Clean + CQRS",
+        //    DueDate = DateTime.Now.AddHours(-3),
+        //    Priority = TaskPriority.Medium,
+        //    Status = TaskItemStatus.Pending,
+        //    IsArchived = false,
+        //    EstimatedMinutes = 45,
+        //    CreatedAtUtc = DateTime.UtcNow.AddDays(-1)
+        //}
     };
 
         public Task<IReadOnlyList<StudyTask>> GetAllAsync(CancellationToken cancellationToken = default)

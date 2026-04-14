@@ -19,6 +19,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
         [ObservableProperty]
         private bool isBusy;
 
+
         [ObservableProperty]
         private TaskFilterOption selectedFilter = TaskFilterOption.All;
 
@@ -63,28 +64,13 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
                 IsBusy = false;
             }
         }
-
         [RelayCommand]
-        public async Task CompleteAsync(Guid taskId)
+        private async Task OpenDetail(Guid taskId)
         {
-            if (IsBusy)
-                return;
+            Console.WriteLine($"🔥 CLICK TASK: {taskId}");
 
-            await _tasksFacade.CompleteTaskAsync(taskId);
-            await LoadAsync();
+            await Shell.Current.GoToAsync($"task-detail?taskId={taskId}");
         }
-
-        [RelayCommand]
-        public async Task ArchiveAsync(Guid taskId)
-        {
-            if (IsBusy)
-                return;
-
-            await _tasksFacade.ArchiveTaskAsync(taskId);
-            await LoadAsync();
-        }
-
-       
         private void ApplyFilter()
         {
             IEnumerable<TaskItemModel> filtered = SelectedFilter switch

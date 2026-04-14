@@ -80,12 +80,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="Modules\Tasks\Presentation\Views\AddTaskPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Modules\Tasks\Presentation\Views\CalendarPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
 	  <MauiXaml Update="Modules\Tasks\Presentation\Views\CoursesView\CoursesPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -93,9 +87,6 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Modules\Tasks\Presentation\Views\TaskDetailPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Modules\Tasks\Presentation\Views\TaskListPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Modules\Tasks\Presentation\Views\TasksPage.xaml">

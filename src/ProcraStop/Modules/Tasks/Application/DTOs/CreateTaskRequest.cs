@@ -15,5 +15,7 @@ namespace ProcraStop.Modules.Tasks.Application.DTOs
         public Guid? CourseId { get; init; }
         public int? EstimatedMinutes { get; init; }
         public ReminderOffset ReminderOffset { get; set; }
+        // NUEVO: Subtasks
+        public List<string>? Subtasks { get; set; }
     }
 }

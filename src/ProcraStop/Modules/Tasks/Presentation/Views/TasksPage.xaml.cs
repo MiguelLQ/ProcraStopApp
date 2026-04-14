@@ -5,12 +5,13 @@ namespace ProcraStop.Modules.Tasks.Presentation.Views;
 public partial class TasksPage : ContentPage
 {
     private readonly TasksPageViewModel _viewModel;
+    private readonly IServiceProvider _serviceProvider;
 
     public TasksPage(TasksPageViewModel viewModel, IServiceProvider serviceProvider)
     {
         InitializeComponent();
         BindingContext = _viewModel = viewModel;
-       
+        _serviceProvider = serviceProvider;
     }
 
     protected override async void OnAppearing() 
@@ -23,4 +24,5 @@ public partial class TasksPage : ContentPage
     {
         await Shell.Current.GoToAsync(nameof(CreateTaskPage));
     }
+
 }

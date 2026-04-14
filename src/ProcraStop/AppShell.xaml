@@ -9,26 +9,10 @@
     Shell.FlyoutBehavior="Flyout"
     Title="ProcraStop">
 
-    <ShellContent
-        Title="home"
-        Icon="{StaticResource IconDashboard}"
-        ContentTemplate="{DataTemplate task:TaskListPage}"
-        Route="task" />
         
     <ShellContent
-        Title="Detail"
-        Icon="{StaticResource IconProjects}"
-        ContentTemplate="{DataTemplate task:TaskDetailPage}"
-        Route="TaskDetailPage" />
-    
-    <ShellContent
-        Title="Manage Meta"
-        Icon="{StaticResource IconMeta}"
-        ContentTemplate="{DataTemplate task:CalendarPage}"
-        Route="CalendarPage" />
-    <ShellContent
-        Title="Task Page"
-        Icon="{StaticResource IconMeta}"
+        Title="Tareas"
+        Icon="{StaticResource IconDashboard}"
         ContentTemplate="{DataTemplate task:TasksPage}"
         Route="TasksPage" />
     <ShellContent

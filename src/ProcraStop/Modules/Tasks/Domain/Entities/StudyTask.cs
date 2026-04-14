@@ -5,20 +5,178 @@ namespace ProcraStop.Modules.Tasks.Domain.Entities
 {
     public sealed class StudyTask
     {
-        public Guid Id { get; init; }
-        public string Title { get; init; } = string.Empty;
-        public string? Description { get; init; }
-        public DateTime? DueDate { get; init; }
-        public DateTime? ReminderDate { get; init; }
-        public TaskPriority Priority { get; init; }
-        public TaskItemStatus Status { get; init; }
-        public bool IsArchived { get; init; }
-        public Guid? CourseId { get; init; }
-        public int? EstimatedMinutes { get; init; }
-        public DateTime CreatedAtUtc { get; init; }
-        public DateTime? CompletedAtUtc { get; init; }
+        public Guid Id { get; private set; }
+        public string Title { get; private set; } = string.Empty;
+        public string? Description { get; private set; }
+        public DateTime? DueDate { get; private set; }
+        public DateTime? ReminderDate { get; private set; }
+        public TaskPriority Priority { get; private set; }
+        public TaskItemStatus Status { get; private set; }
+        public bool IsArchived { get; private set; }
+        public Guid? CourseId { get; private set; }
+        public int? EstimatedMinutes { get; private set; }
+        public DateTime CreatedAtUtc { get; private set; }
+        public DateTime? CompletedAtUtc { get; private set; }
         // 
-       
+
+        //NUEVO: Subtasks
+        private readonly List<Subtask> _subtasks = new();
+        public IReadOnlyCollection<Subtask> Subtasks => _subtasks;
+
+        private StudyTask() { } // EF
+
+        // Factory method (mejor que constructor público)
+        public static StudyTask Create(
+            string title,
+            string? description,
+            DateTime? dueDate,
+            TaskPriority priority,
+            Guid? courseId)
+        {
+            if (string.IsNullOrWhiteSpace(title))
+                throw new ArgumentException("El título es requerido");
+         
+            return new StudyTask    
+            {
+                Id = Guid.NewGuid(),
+                Title = title,
+                Description = description,
+                DueDate = dueDate,
+                Priority = priority,
+                CourseId = courseId,
+                Status = TaskItemStatus.Pending,
+                CreatedAtUtc = DateTime.UtcNow
+            };
+        }
+
+        // =========================
+        // SUBTASKS
+        // =========================
+
+        public void AddSubtask(string title)
+        {
+            if (string.IsNullOrWhiteSpace(title))
+                throw new ArgumentException("La subtarea necesita título");
+
+            _subtasks.Add(new Subtask(Guid.NewGuid(), title));
+        }
+
+        public void RemoveSubtask(Guid subtaskId)
+        {
+            var subtask = _subtasks.FirstOrDefault(s => s.Id == subtaskId);
+            if (subtask is null) return;
+
+            _subtasks.Remove(subtask);
+        }
+
+        public void CompleteSubtask(Guid subtaskId)
+        {
+            var subtask = _subtasks.FirstOrDefault(s => s.Id == subtaskId);
+            if (subtask is null)
+                throw new Exception("Subtarea no encontrada");
+
+            subtask.MarkAsCompleted();
+        }
+
+        // =========================
+        // REGLAS DE NEGOCIO
+        // =========================
+
+        public void Complete()
+        {
+            if (_subtasks.Any() && _subtasks.Any(s => !s.IsCompleted))
+                throw new Exception("Debes completar todas las subtareas");
+
+            Status = TaskItemStatus.Completed;
+            CompletedAtUtc = DateTime.UtcNow;
+        }
+
+        public void Reopen()
+        {
+            Status = TaskItemStatus.InProgress;
+            CompletedAtUtc = null;
+        }
+
+        // =========================
+        // MÉTRICAS
+        // =========================
+
+        public double GetProgress()
+        {
+            if (!_subtasks.Any()) return 0;
+
+            var completed = _subtasks.Count(s => s.IsCompleted);
+            return (double)completed / _subtasks.Count;
+        }
+        // Permite establecer o actualizar la fecha de recordatorio, con validaciones
+        public void SetReminder(DateTime? reminderDate)
+        {
+            if (reminderDate.HasValue)
+            {
+                if (DueDate.HasValue && reminderDate > DueDate)
+                    throw new InvalidOperationException("El recordatorio no puede ser posterior a la fecha límite.");
+
+                if (reminderDate <= DateTime.Now)
+                    throw new InvalidOperationException("El recordatorio no puede ser en el pasado.");
+            }
+
+            ReminderDate = reminderDate;
+        }
+        // Permite establecer o actualizar el tiempo estimado, con validaciones
+        public void SetEstimatedMinutes(int? minutes)
+        {
+            if (minutes is < 0)
+                throw new InvalidOperationException("El tiempo estimado no puede ser negativo.");
+
+            EstimatedMinutes = minutes;
+        }
+        // Permite cargar las subtareas desde la persistencia, manteniendo la encapsulación
+        internal void LoadSubtasks(List<Subtask> subtasks)
+        {
+            _subtasks.Clear();
+            _subtasks.AddRange(subtasks);
+        }
+        // Permite reconstruir una tarea desde la persistencia, incluyendo sus subtareas
+        internal static StudyTask FromPersistence(
+            Guid id,
+            string title,
+            string? description,
+            DateTime? dueDate,
+            DateTime? reminderDate,
+            TaskPriority priority,
+            TaskItemStatus status,
+            bool isArchived,
+            Guid? courseId,
+            int? estimatedMinutes,
+            DateTime createdAtUtc,
+            DateTime? completedAtUtc,
+            List<Subtask> subtasks)
+        {
+            var task = new StudyTask
+            {
+                Id = id,
+                Title = title,
+                Description = description,
+                DueDate = dueDate,
+                ReminderDate = reminderDate,
+                Priority = priority,
+                Status = status,
+                IsArchived = isArchived,
+                CourseId = courseId,
+                EstimatedMinutes = estimatedMinutes,
+                CreatedAtUtc = createdAtUtc,
+                CompletedAtUtc = completedAtUtc
+            };
+
+            task.LoadSubtasks(subtasks);
+
+            return task;
+        }
+
+        // =========================
+        // HELPERS
+        // =========================
+
         public bool IsOverdue =>
             DueDate.HasValue &&
             DueDate.Value < DateTime.Now &&

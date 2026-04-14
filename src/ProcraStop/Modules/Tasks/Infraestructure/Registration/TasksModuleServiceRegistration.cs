@@ -7,6 +7,7 @@ using ProcraStop.Modules.Tasks.Application.Commands.DeleteCourse;
 using ProcraStop.Modules.Tasks.Application.Commands.UpdateCourse;
 using ProcraStop.Modules.Tasks.Application.Facade;
 using ProcraStop.Modules.Tasks.Application.Queries.GetCourses;
+using ProcraStop.Modules.Tasks.Application.Queries.GetTaskById;
 using ProcraStop.Modules.Tasks.Application.Queries.GetTasks;
 using ProcraStop.Modules.Tasks.Infraestructure.Persistence;
 using ProcraStop.Modules.Tasks.Infraestructure.Repositories;
@@ -41,6 +42,7 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Registration
             services.AddTransient<CreateTaskCommandHandler>();
             services.AddTransient<CompleteTaskCommandHandler>();
             services.AddTransient<ArchiveTaskCommandHandler>();
+            services.AddTransient<GetTaskByIdQueryHandler>();
             // CQRS handlers para cursos
             services.AddTransient<UpdateCourseCommandHandler>();
             services.AddTransient<CreateCourseCommandHandler>();
@@ -53,10 +55,12 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Registration
             services.AddTransient<TasksPageViewModel>();
             services.AddTransient<CreateTaskPageViewModel>();
             services.AddTransient<CoursesPageViewModel>();
+            services.AddTransient<TaskDetailViewModel>();
             //// Views
             services.AddTransient<TasksPage>();
             services.AddTransient<CreateTaskPage>();
             services.AddTransient<CoursesPage>();
+            services.AddTransient<TaskDetailPage>();
 
             return services;
         }

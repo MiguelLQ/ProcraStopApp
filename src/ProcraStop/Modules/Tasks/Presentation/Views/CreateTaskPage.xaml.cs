@@ -60,4 +60,9 @@ public partial class CreateTaskPage : ContentPage
             await Permissions.RequestAsync<Permissions.PostNotifications>();
         }
     }
+    private void OnSubtaskCompleted(object sender, EventArgs e)
+    {
+        if (BindingContext is CreateTaskPageViewModel vm)
+            vm.AddSubtaskCommand.Execute(null);
+    }
 }

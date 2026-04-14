@@ -58,11 +58,6 @@ namespace ProcraStop
             // =========================
             builder.Services.AddTasksModule();
 
-            builder.Services.AddTransientWithShellRoute<TaskListPage, TaskListViewModel>("tasks");
-            builder.Services.AddTransientWithShellRoute<TaskDetailPage, TaskDetailViewModel>("TaskDetailPage");
-            builder.Services.AddTransientWithShellRoute<AddTaskPage , AddTaskViewModel>("AddTaskPage");
-            builder.Services.AddTransientWithShellRoute<CalendarPage, CalendarViewModel>("CalendarPage");
-
             var app = builder.Build();
             // =========================
             // Crear la base de datos y tabla Tasks al iniciar

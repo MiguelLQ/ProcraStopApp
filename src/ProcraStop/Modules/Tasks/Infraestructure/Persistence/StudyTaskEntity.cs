@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace ProcraStop.Modules.Tasks.Infraestructure.Persistence
 {
     public sealed class StudyTaskEntity
@@ -18,5 +15,6 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Persistence
         public int? EstimatedMinutes { get; set; }
         public DateTime CreatedAtUtc { get; set; }
         public DateTime? CompletedAtUtc { get; set; }
+        public List<SubtaskEntity> Subtasks { get; set; } = new();
     }
 }

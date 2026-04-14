@@ -1,8 +1,5 @@
 ﻿using ProcraStop.Modules.Tasks.Application.Abstractions;
 using ProcraStop.Modules.Tasks.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ProcraStop.Modules.Tasks.Application.Commands.ArchiveTask
 {
@@ -24,23 +21,23 @@ namespace ProcraStop.Modules.Tasks.Application.Commands.ArchiveTask
             if (task is null)
                 return;
 
-            var updated = new StudyTask
-            {
-                Id = task.Id,
-                Title = task.Title,
-                Description = task.Description,
-                DueDate = task.DueDate,
-                ReminderDate = task.ReminderDate,
-                Priority = task.Priority,
-                Status = task.Status,
-                IsArchived = true,
-                CourseId = task.CourseId,
-                EstimatedMinutes = task.EstimatedMinutes,
-                CreatedAtUtc = task.CreatedAtUtc,
-                CompletedAtUtc = task.CompletedAtUtc
-            };
+            //var updated = new StudyTask
+            //{
+            //    Id = task.Id,
+            //    Title = task.Title,
+            //    Description = task.Description,
+            //    DueDate = task.DueDate,
+            //    ReminderDate = task.ReminderDate,
+            //    Priority = task.Priority,
+            //    Status = task.Status,
+            //    IsArchived = true,
+            //    CourseId = task.CourseId,
+            //    EstimatedMinutes = task.EstimatedMinutes,
+            //    CreatedAtUtc = task.CreatedAtUtc,
+            //    CompletedAtUtc = task.CompletedAtUtc
+            //};
 
-            await _repository.UpdateAsync(updated, cancellationToken);
+            //await _repository.UpdateAsync(updated, cancellationToken);
         }
     }
 }

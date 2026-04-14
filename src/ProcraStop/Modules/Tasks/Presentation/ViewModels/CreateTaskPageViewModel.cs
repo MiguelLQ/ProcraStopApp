@@ -3,12 +3,19 @@ using CommunityToolkit.Mvvm.Input;
 using ProcraStop.Modules.Tasks.Application.DTOs;
 using ProcraStop.Modules.Tasks.Application.Facade;
 using ProcraStop.Modules.Tasks.Domain.Enums;
+using System.Collections.ObjectModel;
 
 namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
 {
     public partial class CreateTaskPageViewModel : ObservableObject
     {
         private readonly ITasksFacade _tasksFacade;
+        // subtareas
+        [ObservableProperty]
+        private ObservableCollection<string> subtasks = new();
+        
+        [ObservableProperty]
+        private string newSubtaskText = string.Empty;
 
         [ObservableProperty]
         private Guid? selectedCourseId;
@@ -213,7 +220,8 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
                     ReminderDate = null, // se ignora en backend
                     EstimatedMinutes = estimatedMinutes,
                     Priority = SelectedPriority,
-                    CourseId = selectedCourseId
+                    CourseId = selectedCourseId,
+                    Subtasks = Subtasks.ToList()
                 };
 
                 await _tasksFacade.CreateTaskAsync(request);
@@ -226,6 +234,24 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             {
                 IsSaving = false;
             }
+        }
+        // commands para subtareas
+        [RelayCommand]
+        private void AddSubtask()
+        {
+            if (string.IsNullOrWhiteSpace(NewSubtaskText))
+                return;
+
+            Subtasks.Add(NewSubtaskText.Trim());
+
+            NewSubtaskText = string.Empty;
+
+        }
+        [RelayCommand]
+        private void RemoveSubtask(string subtask)
+        {
+            if (Subtasks.Contains(subtask))
+                Subtasks.Remove(subtask);
         }
         public async Task LoadAsync()
         {

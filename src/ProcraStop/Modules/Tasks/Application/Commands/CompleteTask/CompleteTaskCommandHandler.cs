@@ -25,23 +25,23 @@ namespace ProcraStop.Modules.Tasks.Application.Commands.CompleteTask
             if (task is null)
                 return;
 
-            var updated = new StudyTask
-            {
-                Id = task.Id,
-                Title = task.Title,
-                Description = task.Description,
-                DueDate = task.DueDate,
-                ReminderDate = task.ReminderDate,
-                Priority = task.Priority,
-                Status = TaskItemStatus.Completed,
-                IsArchived = task.IsArchived,
-                CourseId = task.CourseId,
-                EstimatedMinutes = task.EstimatedMinutes,
-                CreatedAtUtc = task.CreatedAtUtc,
-                CompletedAtUtc = DateTime.UtcNow
-            };
+            //var updated = new StudyTask
+            //{
+            //    Id = task.Id,
+            //    Title = task.Title,
+            //    Description = task.Description,
+            //    DueDate = task.DueDate,
+            //    ReminderDate = task.ReminderDate,
+            //    Priority = task.Priority,
+            //    Status = TaskItemStatus.Completed,
+            //    IsArchived = task.IsArchived,
+            //    CourseId = task.CourseId,
+            //    EstimatedMinutes = task.EstimatedMinutes,
+            //    CreatedAtUtc = task.CreatedAtUtc,
+            //    CompletedAtUtc = DateTime.UtcNow
+            //};
 
-            await _repository.UpdateAsync(updated, cancellationToken);
+            //await _repository.UpdateAsync(updated, cancellationToken);
         }   
     }
 }

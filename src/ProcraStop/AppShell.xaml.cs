@@ -12,10 +12,7 @@ namespace ProcraStop
         {
             InitializeComponent();
             // registrar ruta 
-            Routing.RegisterRoute(nameof(TaskListPage), typeof(TaskListPage));
-            Routing.RegisterRoute(nameof(AddTaskPage), typeof(AddTaskPage));
-            Routing.RegisterRoute(nameof(TaskDetailPage), typeof(TaskDetailPage));
-            Routing.RegisterRoute(nameof(CalendarPage), typeof(CalendarPage));
+            Routing.RegisterRoute("task-detail", typeof(TaskDetailPage));
             Routing.RegisterRoute(nameof(CreateTaskPage), typeof(CreateTaskPage));
             Routing.RegisterRoute(nameof(CoursesPage), typeof(CoursesPage));
 

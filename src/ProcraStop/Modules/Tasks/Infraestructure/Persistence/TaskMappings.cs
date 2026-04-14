@@ -6,6 +6,7 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Persistence
 {
     public static class TaskMappings
     {
+        // Método para convertir de dominio a entidad, incluyendo subtareas
         public static StudyTaskEntity ToEntity(this StudyTask task)
         {
             return new StudyTaskEntity
@@ -21,27 +22,43 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Persistence
                 CourseId = task.CourseId,
                 EstimatedMinutes = task.EstimatedMinutes,
                 CreatedAtUtc = task.CreatedAtUtc,
-                CompletedAtUtc = task.CompletedAtUtc
+                CompletedAtUtc = task.CompletedAtUtc,
+                // SUBTASKS
+                Subtasks = task.Subtasks.Select(s => new SubtaskEntity
+                {
+                    Id = s.Id,
+                    Title = s.Title,
+                    IsCompleted = s.IsCompleted,
+                    TaskId = task.Id
+                }).ToList()
             };
         }
-
+        // Método para convertir de entidad a dominio, incluyendo subtareas
         public static StudyTask ToDomain(this StudyTaskEntity entity)
         {
-            return new StudyTask
-            {
-                Id = entity.Id,
-                Title = entity.Title,
-                Description = entity.Description,
-                DueDate = entity.DueDate,
-                ReminderDate = entity.ReminderDate,
-                Priority = (TaskPriority)entity.Priority,
-                Status = (TaskItemStatus)entity.Status,
-                IsArchived = entity.IsArchived,
-                CourseId = entity.CourseId,
-                EstimatedMinutes = entity.EstimatedMinutes,
-                CreatedAtUtc = entity.CreatedAtUtc,
-                CompletedAtUtc = entity.CompletedAtUtc
-            };
+            var subtasks = entity.Subtasks
+                .Select(s => new Subtask(
+                    s.Id,
+                    s.Title,
+                    s.IsCompleted
+                ))
+                .ToList();
+
+            return StudyTask.FromPersistence(
+                entity.Id,
+                entity.Title,
+                entity.Description,
+                entity.DueDate,
+                entity.ReminderDate,
+                (TaskPriority)entity.Priority,
+                (TaskItemStatus)entity.Status,
+                entity.IsArchived,
+                entity.CourseId,
+                entity.EstimatedMinutes,
+                entity.CreatedAtUtc,
+                entity.CompletedAtUtc,
+                subtasks
+            );
         }
     }
 }

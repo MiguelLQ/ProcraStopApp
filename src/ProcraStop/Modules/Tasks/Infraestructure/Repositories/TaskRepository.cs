@@ -27,6 +27,8 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Repositories
         public async Task<StudyTask?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
             var entity = await _dbContext.Tasks
+               
+                .Include(x => x.Subtasks)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
@@ -45,11 +47,13 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Repositories
         public async Task UpdateAsync(StudyTask task, CancellationToken cancellationToken = default)
         {
             var existing = await _dbContext.Tasks
+                .Include(x => x.Subtasks) //IMPORTANTE
                 .FirstOrDefaultAsync(x => x.Id == task.Id, cancellationToken);
 
             if (existing is null)
                 return;
 
+            // Update propiedades simples
             existing.Title = task.Title;
             existing.Description = task.Description;
             existing.DueDate = task.DueDate;
@@ -59,8 +63,44 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Repositories
             existing.IsArchived = task.IsArchived;
             existing.CourseId = task.CourseId;
             existing.EstimatedMinutes = task.EstimatedMinutes;
-            existing.CreatedAtUtc = task.CreatedAtUtc;
+            //existing.CreatedAtUtc = task.CreatedAtUtc;
             existing.CompletedAtUtc = task.CompletedAtUtc;
+
+            //SUBTASKS (LO IMPORTANTE)
+
+            // 1. Eliminar las que ya no existen
+            var incomingIds = task.Subtasks.Select(s => s.Id).ToHashSet();
+
+            var toRemove = existing.Subtasks
+                .Where(s => !incomingIds.Contains(s.Id))
+                .ToList();
+
+            _dbContext.Subtasks.RemoveRange(toRemove);
+
+            // 2. Actualizar o agregar
+            foreach (var subtask in task.Subtasks)
+            {
+                var existingSubtask = existing.Subtasks
+                    .FirstOrDefault(s => s.Id == subtask.Id);
+
+                if (existingSubtask is null)
+                {
+                    // nueva
+                    existing.Subtasks.Add(new SubtaskEntity
+                    {
+                        Id = subtask.Id,
+                        Title = subtask.Title,
+                        IsCompleted = subtask.IsCompleted,
+                        TaskId = task.Id
+                    });
+                }
+                else
+                {
+                    // update
+                    existingSubtask.Title = subtask.Title;
+                    existingSubtask.IsCompleted = subtask.IsCompleted;
+                }
+            }
 
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
