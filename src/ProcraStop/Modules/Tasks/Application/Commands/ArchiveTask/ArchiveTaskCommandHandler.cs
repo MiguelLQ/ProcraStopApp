@@ -16,9 +16,9 @@ namespace ProcraStop.Modules.Tasks.Application.Commands.ArchiveTask
             ArchiveTaskCommand command,
             CancellationToken cancellationToken = default)
         {
-            var task = await _repository.GetByIdAsync(command.TaskId, cancellationToken);
-
-            if (task is null)
+            /*ar task = await _repository.GetByIdAsync(command.TaskId, cancellationToken);
+*/
+            //if (task is null)
                 return;
 
             //var updated = new StudyTask

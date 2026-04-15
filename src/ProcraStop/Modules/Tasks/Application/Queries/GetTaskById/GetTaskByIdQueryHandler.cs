@@ -7,35 +7,19 @@ namespace ProcraStop.Modules.Tasks.Application.Queries.GetTaskById
 {
     public sealed class GetTaskByIdQueryHandler
     {
-        private readonly ITaskRepository _taskRepository;
-        private readonly ICourseRepository _courseRepository;
+        private readonly ITaskReadService _readService;
 
-        public GetTaskByIdQueryHandler(
-            ITaskRepository taskRepository,
-            ICourseRepository courseRepository)
+        public GetTaskByIdQueryHandler(ITaskReadService readService)
         {
-            _taskRepository = taskRepository;
-            _courseRepository = courseRepository;
+            _readService = readService;
         }
 
-        public async Task<TaskDetailDto?> HandleAsync(
+        public Task<TaskDetailDto?> HandleAsync(
             GetTaskByIdQuery query,
             CancellationToken ct = default)
         {
-            var task = await _taskRepository.GetByIdAsync(query.TaskId, ct);
-
-            if (task is null)
-                return null;
-
-            string? courseName = null;
-
-            if (task.CourseId.HasValue)
-            {
-                var course = await _courseRepository.GetByIdAsync(task.CourseId.Value, ct);
-                courseName = course?.Name;
-            }
-
-            return TaskDetailDto.FromDomain(task, courseName);
+            return _readService.GetByIdAsync(query.TaskId, ct);
         }
+
     }
 }

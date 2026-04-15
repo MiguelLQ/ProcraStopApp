@@ -24,16 +24,16 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Repositories
             return items.Select(x => x.ToDomain()).ToList();
         }
         // metodo para obtener una tarea por su id
-        public async Task<StudyTask?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
-        {
-            var entity = await _dbContext.Tasks
+        //public async Task<StudyTask?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        //{
+        //    var entity = await _dbContext.Tasks
                
-                .Include(x => x.Subtasks)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        //        .Include(x => x.Subtasks)
+        //        .AsNoTracking()
+        //        .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
-            return entity?.ToDomain();
-        }
+        //    return entity?.ToDomain();
+        //}
         // metodo para agregar una nueva tarea a la base de datos
 
         public async Task AddAsync(StudyTask task, CancellationToken cancellationToken = default)

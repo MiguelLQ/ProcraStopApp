@@ -98,7 +98,6 @@
 	  <Folder Include="Modules\Habits\" />
 	  <Folder Include="Modules\Tasks\Domain\Rules\" />
 	  <Folder Include="Shared\Abstractions\" />
-	  <Folder Include="Shared\UI\" />
 	  <Folder Include="Shared\Services\" />
 	</ItemGroup>
 

@@ -1,3 +1,5 @@
+using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Core.Platform;
 using Plugin.LocalNotification;
 using Plugin.LocalNotification.Core.Models;
 using ProcraStop.Modules.Tasks.Presentation.ViewModels;
@@ -48,6 +50,7 @@ public partial class CreateTaskPage : ContentPage
 
             }
         };
+        
 
         await LocalNotificationCenter.Current.Show(request);
     }

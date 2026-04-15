@@ -94,6 +94,10 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Persistence
                     .HasForeignKey(x => x.TaskId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
+            modelBuilder.Entity<StudyTaskEntity>()
+            .HasOne(t => t.Course)
+            .WithMany()
+            .HasForeignKey(t => t.CourseId);
         }
 
     }

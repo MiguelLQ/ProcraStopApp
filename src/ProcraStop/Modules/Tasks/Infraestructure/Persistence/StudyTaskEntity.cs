@@ -12,6 +12,8 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Persistence
         public int Status { get; set; }
         public bool IsArchived { get; set; }
         public Guid? CourseId { get; set; }
+        // Navigation property
+        public CourseEntity? Course { get; set; }
         public int? EstimatedMinutes { get; set; }
         public DateTime CreatedAtUtc { get; set; }
         public DateTime? CompletedAtUtc { get; set; }

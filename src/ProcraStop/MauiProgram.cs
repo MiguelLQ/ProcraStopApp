@@ -1,12 +1,9 @@
-﻿
-using CommunityToolkit.Maui;
+﻿using CommunityToolkit.Maui;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Plugin.LocalNotification;
 using ProcraStop.Modules.Tasks.Infraestructure.Persistence;
 using ProcraStop.Modules.Tasks.Infraestructure.Registration;
-using ProcraStop.Modules.Tasks.Presentation.ViewModels;
-using ProcraStop.Modules.Tasks.Presentation.Views;
 using Syncfusion.Maui.Toolkit.Hosting;
 
 namespace ProcraStop
@@ -24,16 +21,37 @@ namespace ProcraStop
                 .ConfigureMauiHandlers(handlers =>
                 {
 #if WINDOWS
-    				Microsoft.Maui.Controls.Handlers.Items.CollectionViewHandler.Mapper.AppendToMapping("KeyboardAccessibleCollectionView", (handler, view) =>
-    				{
-    					handler.PlatformView.SingleSelectionFollowsFocus = false;
-    				});
+                    Microsoft.Maui.Controls.Handlers.Items.CollectionViewHandler.Mapper
+                        .AppendToMapping("KeyboardAccessibleCollectionView", (handler, view) =>
+                        {
+                            handler.PlatformView.SingleSelectionFollowsFocus = false;
+                        });
+#endif
 
- 
+#if ANDROID
+                    // Elimina el underline nativo de Android en Entry
+                    Microsoft.Maui.Handlers.EntryHandler.Mapper
+                        .AppendToMapping("NoUnderline", (handler, view) =>
+                        {
+                            handler.PlatformView.BackgroundTintList =
+                                Android.Content.Res.ColorStateList.ValueOf(
+                                    Android.Graphics.Color.Transparent);
+                        });
+
+                    // Elimina el underline nativo de Android en Editor
+                    Microsoft.Maui.Handlers.EditorHandler.Mapper
+                        .AppendToMapping("NoUnderline", (handler, view) =>
+                        {
+                            handler.PlatformView.BackgroundTintList =
+                                Android.Content.Res.ColorStateList.ValueOf(
+                                    Android.Graphics.Color.Transparent);
+                        });
 #endif
                 })
                 .ConfigureFonts(fonts =>
                 {
+                    fonts.AddFont("Inter_18pt-Regular.ttf", "InterRegular");
+                    fonts.AddFont("Inter_18pt-SemiBold.ttf", "InterSemiBold");
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                     fonts.AddFont("SegoeUI-Semibold.ttf", "SegoeSemibold");
@@ -41,9 +59,10 @@ namespace ProcraStop
                 });
 
 #if DEBUG
-    		builder.Logging.AddDebug();
-    		builder.Services.AddLogging(configure => configure.AddDebug());
+            builder.Logging.AddDebug();
+            builder.Services.AddLogging(configure => configure.AddDebug());
 #endif
+
             // =========================
             // Base de datos SQLite (EF Core)
             // =========================
@@ -54,20 +73,19 @@ namespace ProcraStop
 
             // =========================
             // Registro encapsulado del módulo Tasks
-            // (Aquí van repo, handlers, facade, VMs, Views del módulo)
             // =========================
             builder.Services.AddTasksModule();
 
             var app = builder.Build();
+
             // =========================
-            // Crear la base de datos y tabla Tasks al iniciar
+            // Crear la base de datos al iniciar
             // =========================
             using (var scope = app.Services.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<TasksDbContext>();
                 dbContext.Database.EnsureCreated();
             }
-           
 
             return app;
         }

@@ -2,143 +2,279 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ProcraStop.Modules.Tasks.Presentation.Views.CreateTaskPage"
-             Title="CreateTaskPage"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             Title="Crear Tarea"
+             Shell.TitleColor="White"
+             Shell.ForegroundColor="White"
+             Shell.BackgroundColor="{StaticResource primarioS}"
              x:Name="PageRoot">
-    <ScrollView>
-        <VerticalStackLayout Padding="16" Spacing="16">
+    <ContentPage.Behaviors>
+        <toolkit:StatusBarBehavior 
+            StatusBarColor="{StaticResource cabecera}"
+            StatusBarStyle="LightContent" />
+    </ContentPage.Behaviors>
+    <!-- ROOT -->
+    <Grid RowDefinitions="50,*" >
 
-            <Label Text="Crear tarea"
-                   FontSize="24"
-                   FontAttributes="Bold" />
+        <!-- ========================= -->
+        <!-- HEADER BACKGROUND (AZUL) -->
+        <!-- ========================= -->
+        <Grid BackgroundColor="{StaticResource primarioS}" />
+        <ScrollView Grid.RowSpan="2">
+            <VerticalStackLayout Spacing="2">
+                <!-- ========================= -->
+                <!-- CARD PRINCIPAL (FLOAT) -->
+                <!-- ========================= -->
+                <Border Margin="0,0,0,5"
+                        Padding="18"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}"
+                        StrokeShape="RoundRectangle 28">
+                    <VerticalStackLayout>
+                        <!-- HEADER -->
+                        <VerticalStackLayout Spacing="1">
+                            <Label Text="Crear tarea"
+                               FontSize="20"
+                               FontFamily="InterSemiBold"
+                               TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
 
-            <VerticalStackLayout Spacing="6">
-                <Label Text="Título"
-                       FontAttributes="Bold" />
-                <Entry Placeholder="Ej. Resolver ejercicios de integrales"
-                       Text="{Binding Title}" />
-            </VerticalStackLayout>
-
-            <VerticalStackLayout Spacing="6">
-                <Label Text="Descripción"
-                       FontAttributes="Bold" />
-                <Editor Placeholder="Agrega detalles importantes..."
-                        AutoSize="TextChanges"
-                        HeightRequest="120"
-                        Text="{Binding Description}" />
-            </VerticalStackLayout>
-
-            <VerticalStackLayout Spacing="8">
-                <Grid ColumnDefinitions="*,Auto"
-                      VerticalOptions="Center">
-                    <Label Text="Fecha límite"
-                           FontAttributes="Bold"
-                           VerticalOptions="Center" />
-                    <Switch Grid.Column="1"
-                            IsToggled="{Binding HasDueDate}" />
-                </Grid>
-
-                <VerticalStackLayout Spacing="10"
-                                     IsVisible="{Binding HasDueDate}">
-                    <Grid ColumnDefinitions="*,*"
-                          ColumnSpacing="12">
-                        <VerticalStackLayout Grid.Column="0" Spacing="4">
-                            <Label Text="Fecha"
-                                   FontSize="12"
-                                   Opacity="0.8" />
-                            <DatePicker Date="{Binding SelectedDueDate}" />
+                            <Label Text="Completa la información"
+                               FontSize="12"
+                               FontFamily="InterRegular"
+                               TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
                         </VerticalStackLayout>
+                        <!-- Campo: Nombre -->
+                        <VerticalStackLayout Spacing="6" Margin="0,5,0,5">
+                            <Label Text="Nombre"
+                                FontFamily="InterSemiBold"
+                                FontSize="14"
+                                TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
 
-                        <VerticalStackLayout Grid.Column="1" Spacing="4">
-                            <Label Text="Hora"
-                                   FontSize="12"
-                                   Opacity="0.8" />
-                            <TimePicker Time="{Binding SelectedDueTime}" />
+                            <Border Padding="12,2"
+                                 BackgroundColor="{AppThemeBinding Light={StaticResource EntryClar}, Dark={StaticResource EntryDark}}"
+                                 StrokeShape="RoundRectangle 10">
+                                <Entry Placeholder="Ej. Resolver ejercicios de integrales"
+                                    Text="{Binding Title}"
+                                    BackgroundColor="Transparent"
+                                    PlaceholderColor="{AppThemeBinding Light={StaticResource PlaceHolderClar},  Dark={StaticResource PlaceHolderDarck}}"
+                                    TextColor="{AppThemeBinding Light=#111827, Dark=White}"
+                                    FontFamily="InterRegular"
+                                    FontSize="14" />
+                            </Border>
                         </VerticalStackLayout>
-                    </Grid>
+                        <!-- Campo: Descripción -->
+                        <VerticalStackLayout Spacing="6" Margin="0,0,0,5">
+                            <Label Text="Descripción"
+                               FontFamily="InterSemiBold"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                            <Border Padding="12,2"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource EntryClar}, Dark={StaticResource EntryDark}}"
+                                StrokeShape="RoundRectangle 10">
+                                <Editor Placeholder="Opcional..."
+                                    Text="{Binding Description}"
+                                    AutoSize="TextChanges"
+                                    BackgroundColor="Transparent"
+                                    PlaceholderColor="{AppThemeBinding Light={StaticResource PlaceHolderClar}, Dark={StaticResource PlaceHolderDarck}}"
+                                    TextColor="{AppThemeBinding Light=#111827, Dark=White}"
+                                    FontFamily="InterRegular"
+                                    FontSize="14" />
+                            </Border>
+                        </VerticalStackLayout>
+                        <!-- fecha limite y recordatorio-->
+                        <VerticalStackLayout Spacing="2"  Margin="0,0,0,2">
+                            <Grid ColumnDefinitions="*,Auto"
+                                VerticalOptions="Center">
+                                <Label Text="Establecer fecha límite"
+                                        FontFamily="InterSemiBold"
+                                    FontSize="14"
+                                    TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}"
+                                    VerticalOptions="Center" />
+                                <Switch Grid.Column="1"
+                                    IsToggled="{Binding HasDueDate}" />
+                            </Grid>
 
-                    <Label Text="{Binding DueDatePreviewText}"
-                           FontSize="13"
-                           TextColor="{AppThemeBinding Light=#4B5563, Dark=#D1D5DB}" />
-                    <!--RECORDATORIO -->
-                    <VerticalStackLayout Spacing="6" Margin="0,8,0,0">
+                            <VerticalStackLayout Spacing="2" 
+                                IsVisible="{Binding HasDueDate}">
+                                <Grid ColumnDefinitions="*,*"
+                                    ColumnSpacing="12">
+                                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                        <Label Text="Fecha"
+                                               FontFamily="InterRegular"
+                                              TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}"
+                                           FontSize="13"
+                                           />
+                                        <DatePicker Date="{Binding SelectedDueDate}" FontAttributes="Bold" TextColor="{StaticResource primarioO}" />
+                                    </VerticalStackLayout>
 
-                        <Label Text="Recordatorio"
-                           FontAttributes="Bold" />
+                                    <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                        <Label Text="Hora"
+                                           FontSize="13"
+                                                FontFamily="InterRegular"
+                                                TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}"
+                                            />
+                                        <TimePicker Time="{Binding SelectedDueTime}" FontAttributes="Bold" TextColor="{StaticResource primarioO}"/>
+                                    </VerticalStackLayout>
+                                </Grid>
 
-                           <Picker Title="Selecciona cuándo avisarte"
-                                ItemsSource="{Binding ReminderOffsets}"
-                                SelectedIndex="{Binding SelectedReminderOffsetIndex}" />
+                                <Label Text="{Binding DueDatePreviewText}"
+                                       FontSize="13"
+                                       FontFamily="InterRegular"
+                                       Padding="10,0,0,0"
+                                       TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                                <!--RECORDATORIO -->
+                                <VerticalStackLayout Spacing="1" Margin="0,4,0,0">
+
+                                    <Label Text="Recordatorio"
+                                           FontFamily="InterSemiBold"
+                                            FontSize="14"
+                                            TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}"
+                                         />
+                                    <Picker Title="Selecciona cuándo avisarte"
+                                        ItemsSource="{Binding ReminderOffsets}"
+                                        SelectedIndex="{Binding SelectedReminderOffsetIndex}" TextColor="{StaticResource primarioO}" />
 
                                     <!-- Preview del recordatorio -->
-                            <Label Text="{Binding ReminderPreviewText}"
+                                    <Label Text="{Binding ReminderPreviewText}"
                                        FontSize="13"
-                                       TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />
+                                           Padding="10,0,0,0"
+                                       TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
 
-                    </VerticalStackLayout>
-                </VerticalStackLayout>
-            </VerticalStackLayout>
+                                </VerticalStackLayout>
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                        <!--Minutos estimados-->
+                        <VerticalStackLayout Spacing="4" Margin="0,0,0,5" HorizontalOptions="Start">
+                            <Label Text="Minutos estimados"
+                                FontFamily="InterSemiBold"
+                                FontSize="14"
+                                TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
 
-            <VerticalStackLayout Spacing="6">
-                <Label Text="Minutos estimados"
-                       FontAttributes="Bold" />
-                <Entry Placeholder="Ej. 30"
-                       Keyboard="Numeric"
-                       Text="{Binding EstimatedMinutesText}" />
-            </VerticalStackLayout>
+                            <Border Padding="12,2"
+                                     BackgroundColor="{AppThemeBinding Light={StaticResource EntryClar}, Dark={StaticResource EntryDark}}"
+                                     StrokeShape="RoundRectangle 10" WidthRequest="160">
+                                <Entry Placeholder="Ej. 30"
+                                        Text="{Binding EstimatedMinutesText}"
+                                        BackgroundColor="Transparent"
+                                        Keyboard="Numeric"
+                                        PlaceholderColor="{AppThemeBinding Light={StaticResource PlaceHolderClar},  Dark={StaticResource PlaceHolderDarck}}"
+                                        TextColor="{AppThemeBinding Light=#111827, Dark=White}"
+                                        FontFamily="InterRegular"
+                                        FontSize="14" />
+                            </Border>
+                        </VerticalStackLayout>
+                        <!--prioridad-->
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Prioridad"
+                                FontFamily="InterSemiBold"
+                                FontSize="14"
+                                TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                            <Picker Title="Selecciona prioridad"
+                                ItemsSource="{Binding Priorities}"
+                                SelectedItem="{Binding SelectedPriority}" 
+                                    TextColor="{StaticResource primarioO}"/>
+                        </VerticalStackLayout>
+                        <!--curso-->
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Curso"
+                                FontFamily="InterSemiBold"
+                                FontSize="14"
+                                TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                            <Picker Title="Selecciona Curso"
+                                ItemsSource="{Binding Courses}"
+                                ItemDisplayBinding="{Binding Name}"
+                                SelectedItem="{Binding SelectedCourse}" 
+                                TextColor="{StaticResource primarioO}"/>
+                        </VerticalStackLayout>
+                        <!-- ========================= -->
+                        <!-- SUBTAREAS -->
+                        <!-- ========================= -->
+                        <VerticalStackLayout Spacing="4">
 
-            <VerticalStackLayout Spacing="6">
-                <Label Text="Prioridad"
-                       FontAttributes="Bold" />
-                <Picker Title="Selecciona prioridad"
-                        ItemsSource="{Binding Priorities}"
-                        SelectedItem="{Binding SelectedPriority}" />
-            </VerticalStackLayout>
-            <Picker Title="Curso"
-                ItemsSource="{Binding Courses}"
-                ItemDisplayBinding="{Binding Name}"
-                SelectedItem="{Binding SelectedCourse}" />
-            <VerticalStackLayout Spacing="8">
-
-                <Label Text="Subtareas (opcional)"
-                       FontAttributes="Bold" />
-
-                <Entry Placeholder="Nueva subtarea"
-                       Text="{Binding NewSubtaskText}"
-                       ReturnType="Done"
-                       Completed="OnSubtaskCompleted" />
-
-                <Button Text="+ Agregar subtarea"
-                        Command="{Binding AddSubtaskCommand}" />
-
-                <CollectionView ItemsSource="{Binding Subtasks}">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid ColumnDefinitions="*,Auto"
-                                  Padding="6">
-
-                                <Label Text="{Binding .}"
-                                       VerticalOptions="Center" />
+                            <!-- HEADER SUBTAREAS -->
+                            <Grid ColumnDefinitions="*,Auto" Padding="0,0,0,5">
+                                <Label Text="Subtareas (Opcional)"
+                                       FontSize="14"
+                                       FontFamily="InterSemiBold"
+                                       TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" 
+                                       VerticalOptions="Center"/>
 
                                 <Button Grid.Column="1"
-                                        Text="❌"
-                                        BackgroundColor="Transparent"
-                                        Command="{Binding BindingContext.RemoveSubtaskCommand, Source={x:Reference PageRoot}}"
-                                        CommandParameter="{Binding .}" />
-
+                                        Text="+"
+                                        FontSize="17"
+                                        WidthRequest="26"
+                                        HeightRequest="26"
+                                        CornerRadius="26"
+                                        BackgroundColor="{StaticResource primarioO}"
+                                        TextColor="White"
+                                        Command="{Binding AddSubtaskCommand}" />
                             </Grid>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
+                            <!-- INPUT -->
+                            <Border Padding="12,2"
+                                 BackgroundColor="{AppThemeBinding Light={StaticResource EntryClar}, Dark={StaticResource EntryDark}}"
+                                 StrokeShape="RoundRectangle 10">
+                                <Entry Placeholder="Ingrese Sub Tarea ..."
+                                    Text="{Binding NewSubtaskText}"
+                                    BackgroundColor="Transparent"
+                                    PlaceholderColor="{AppThemeBinding Light={StaticResource PlaceHolderClar},  Dark={StaticResource PlaceHolderDarck}}"
+                                    TextColor="{AppThemeBinding Light=#111827, Dark=White}"
+                                    FontFamily="InterRegular"
+                                    FontSize="14" />
+                            </Border>
 
+                            <!-- LISTA -->
+                            <CollectionView ItemsSource="{Binding Subtasks}">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+
+                                        <Border Padding="4"
+                                                Margin="0,5"
+                                                BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource DarkBackground}}"
+                                                StrokeShape="RoundRectangle 10">
+
+                                            <Grid ColumnDefinitions="*,Auto">
+
+                                                <Label Text="{Binding .}"
+                                                       Margin="10,0,0,0"
+                                                       VerticalOptions="Center"
+                                                       FontFamily="InterRegular"
+                                                       TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" 
+                                                       />
+
+                                                <!-- BOTÓN X (VISIBLE AHORA) -->
+                                                <Button Grid.Column="1"
+                                                        Text="✕"
+                                                        FontSize="14"
+                                                        WidthRequest="22"
+                                                        HeightRequest="22"
+                                                        BackgroundColor="#EF4444"
+                                                        TextColor="White"
+                                                        CornerRadius="8"
+                                                        Command="{Binding BindingContext.RemoveSubtaskCommand, Source={x:Reference PageRoot}}"
+                                                        CommandParameter="{Binding .}" />
+                                            </Grid>
+
+                                        </Border>
+
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+
+                        </VerticalStackLayout>
+                       
+                        <Button Text="Guardar tarea"
+                            Command="{Binding SaveCommand}"
+                            HeightRequest="50"
+                            TextColor="White"
+                            IsEnabled="{Binding CanSave}" />
+
+                        <ActivityIndicator IsRunning="{Binding IsSaving}"
+                            IsVisible="{Binding IsSaving}" />
+
+                    </VerticalStackLayout>
+                    
+                </Border>
             </VerticalStackLayout>
-            <Button Text="Guardar tarea"
-                    Command="{Binding SaveCommand}"
-                    HeightRequest="50"
-                    IsEnabled="{Binding CanSave}" />
-
-            <ActivityIndicator IsRunning="{Binding IsSaving}"
-                               IsVisible="{Binding IsSaving}" />
-
-        </VerticalStackLayout>
-    </ScrollView>
+        </ScrollView>
+    </Grid>
+    
 </ContentPage>

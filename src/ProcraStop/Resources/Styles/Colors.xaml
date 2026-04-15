@@ -11,17 +11,47 @@
     <Color x:Key="Secondary">#DFD8F7</Color>
     <Color x:Key="SecondaryDarkText">#9880e5</Color>
     <Color x:Key="Tertiary">#2B0B98</Color>
+    
+     <!--colores texto tema oscuro-->
+    <Color x:Key="Title">#feffff</Color>
+    <Color x:Key="Subtitle">#aab0c0</Color>
+    <!--colores texto tema claro-->
+    <Color x:Key="Titlecl">#1e1f21</Color>
+    <Color x:Key="Subtitlecl">#7d848b</Color>
+    <!--colores buttom oscuro-->
+    <Color x:Key="primarioS">#4075ff</Color>
+    <Color x:Key="secondaryS">#1f2845</Color>
+    <Color x:Key="TagsS">#4862bb</Color>
+    <!--colores buttom claro-->
+    <Color x:Key="primarioO">#4075ff</Color>
+    <Color x:Key="secondaryO">#d9e2ff</Color>
 
-    <Color x:Key="DarkBackground">#17171a</Color>
-    <Color x:Key="LightOnDarkBackground">#C3C3C3</Color>
-    <Color x:Key="LightBackground">#F2F2F2</Color>
-    <Color x:Key="DarkOnLightBackground">#0D0D0D</Color>
+    <Color x:Key="saveButton">#46c872</Color>
+    <Color x:Key="CancelButton">#ff2524</Color>
 
-    <Color x:Key="LightSecondaryBackground">#E0E0E0</Color>
-    <Color x:Key="DarkSecondaryBackground">#222228</Color>
+    <Color x:Key="EntryDark">#333949</Color>
+    <Color x:Key="EntryClar">#dae0ec</Color>
+
+    <Color x:Key="PlaceHolderDarck">#8f94a7</Color>
+    <Color x:Key="PlaceHolderClar">#b0b7ca</Color>
+    <Color x:Key="cabecera">#4f80ff</Color>
+
+
+    <!--<Color x:Key="DarkBackground">#17171a</Color>-->
+    <Color x:Key="DarkBackground">#222631</Color>
+    <Color x:Key="LightOnDarkBackground">#E0E0E0</Color>
+    <Color x:Key="LightBackground">#feffff</Color>
+    <Color x:Key="shipsligth">#e9eaf0</Color>
+
+    <!--<Color x:Key="DarkOnLightBackground">#0D0D0D</Color>-->
+    <Color x:Key="DarkOnLightBackground">#222631</Color>
+
+    <Color x:Key="LightSecondaryBackground">#f2f3f8</Color>
+    <!--<Color x:Key="DarkSecondaryBackground">#222228</Color>-->
+    <Color x:Key="DarkSecondaryBackground">#171b24</Color>
 
     <Color x:Key="White">White</Color>
-    <Color x:Key="Black">Black</Color>
+    <Color x:Key="Black">#171b24</Color>
     <Color x:Key="Magenta">#D600AA</Color>
     <Color x:Key="MidnightBlue">#190649</Color>
     <Color x:Key="OffBlack">#1f1f1f</Color>

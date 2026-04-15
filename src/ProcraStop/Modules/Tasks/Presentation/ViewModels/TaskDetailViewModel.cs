@@ -40,25 +40,26 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
 
         private async Task LoadAsync(Guid id)
         {
-            Console.WriteLine($"LOAD DETAIL: {id}");
-
             var dto = await _tasksFacade.GetTaskByIdAsync(id);
 
             if (dto is null)
-            {
-                Console.WriteLine("DTO NULL");
                 return;
-            }
 
             Task = new TaskDetailModel
             {
                 Id = dto.Id,
                 Title = dto.Title,
                 Description = dto.Description,
+
                 DueDate = dto.DueDate,
+                ReminderDate = dto.ReminderDate,
+
                 Priority = (TaskPriority)dto.Priority,
                 Status = (TaskItemStatus)dto.Status,
+
                 CourseName = dto.CourseName,
+                CourseColor = dto.CourseColor ?? "#6B7280",
+
                 Subtasks = new ObservableCollection<SubtaskModel>(
                     dto.Subtasks.Select(x => new SubtaskModel
                     {

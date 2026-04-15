@@ -20,9 +20,9 @@ namespace ProcraStop.Modules.Tasks.Application.Commands.CompleteTask
             CompleteTaskCommand command,
             CancellationToken cancellationToken = default)
         {
-            var task = await _repository.GetByIdAsync(command.TaskId, cancellationToken);
+            //var task = await _repository.GetByIdAsync(command.TaskId, cancellationToken);
 
-            if (task is null)
+            //if (task is null)
                 return;
 
             //var updated = new StudyTask

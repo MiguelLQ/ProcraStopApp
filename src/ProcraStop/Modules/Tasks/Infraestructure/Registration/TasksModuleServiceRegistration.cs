@@ -61,6 +61,8 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Registration
             services.AddTransient<CreateTaskPage>();
             services.AddTransient<CoursesPage>();
             services.AddTransient<TaskDetailPage>();
+            // 
+            services.AddScoped<ITaskReadService, TaskReadService>();
 
             return services;
         }
