@@ -92,13 +92,15 @@
 	  <MauiXaml Update="Modules\Tasks\Presentation\Views\TasksPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Shared\UI\Components\CustomSnackbar.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Folder Include="Modules\Habits\" />
 	  <Folder Include="Modules\Tasks\Domain\Rules\" />
 	  <Folder Include="Shared\Abstractions\" />
-	  <Folder Include="Shared\Services\" />
 	</ItemGroup>
 
 	<ItemGroup>

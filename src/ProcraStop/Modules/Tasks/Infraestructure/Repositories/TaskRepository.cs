@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProcraStop.Modules.Tasks.Application.Abstractions;
 using ProcraStop.Modules.Tasks.Domain.Entities;
+using ProcraStop.Modules.Tasks.Domain.Enums;
 using ProcraStop.Modules.Tasks.Infraestructure.Persistence;
 
 namespace ProcraStop.Modules.Tasks.Infraestructure.Repositories
@@ -23,18 +24,37 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Repositories
 
             return items.Select(x => x.ToDomain()).ToList();
         }
-        // metodo para obtener una tarea por su id
-        //public async Task<StudyTask?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
-        //{
-        //    var entity = await _dbContext.Tasks
-               
-        //        .Include(x => x.Subtasks)
-        //        .AsNoTracking()
-        //        .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        // metodo para obtener una tarea por su id, incluyendo sus subtareas
+        public async Task<StudyTask?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            var entity = await _dbContext.Tasks
+                .Include(x => x.Subtasks) // OBLIGATORIO
+                .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
-        //    return entity?.ToDomain();
-        //}
-        // metodo para agregar una nueva tarea a la base de datos
+            if (entity is null)
+                return null;
+
+            //  MAPEO COMPLETO A DOMINIO
+            var task = StudyTask.FromPersistence(
+                entity.Id,
+                entity.Title,
+                entity.Description,
+                entity.DueDate,
+                entity.ReminderDate,
+                (TaskPriority)entity.Priority,
+                (TaskItemStatus)entity.Status,
+                entity.IsArchived,
+                entity.CourseId,
+                entity.EstimatedMinutes,
+                entity.CreatedAtUtc,
+                entity.CompletedAtUtc,
+                entity.Subtasks
+                    .Select(s => new Subtask(s.Id, s.Title, s.IsCompleted))
+                    .ToList()
+            );
+
+            return task;
+        }
 
         public async Task AddAsync(StudyTask task, CancellationToken cancellationToken = default)
         {

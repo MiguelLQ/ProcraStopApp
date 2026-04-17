@@ -1,7 +1,11 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using ProcraStop.Modules.Tasks.Application.Facade;
 using ProcraStop.Modules.Tasks.Domain.Enums;
 using ProcraStop.Modules.Tasks.Presentation.Models;
+using ProcraStop.Shared.Services;
+using ProcraStop.Shared.UI.Components;
 using System.Collections.ObjectModel;
 
 namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
@@ -10,13 +14,45 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
     public partial class TaskDetailViewModel : ObservableObject
     {
         private readonly ITasksFacade _tasksFacade;
+        private readonly ISnackbarService _snackbarService;
 
-        public TaskDetailViewModel(ITasksFacade tasksFacade)
+        
+        public TaskDetailViewModel(ITasksFacade tasksFacade, ISnackbarService snackbarService)
         {
             _tasksFacade = tasksFacade;
-            Console.WriteLine("TaskDetailViewModel creado");
+            _snackbarService = snackbarService;
         }
+        [RelayCommand]
+        private async Task ToggleSubtask(SubtaskModel subtask)
+        {
+            if (CurrentTask is null || subtask is null)
+                return;
 
+            Console.WriteLine($"[TaskDetailViewModel] ToggleSubtask invoked. TaskId={CurrentTask.Id}, SubtaskId={subtask.Id}");
+
+            // Because the CheckBox two-way binding updates the subtask's IsCompleted
+            // before the command runs, CurrentTask.Progress already reflects the new state.
+            // Compute the previous progress by reversing this subtask's change.
+            var total = CurrentTask.Subtasks.Count;
+            var currentCompleted = CurrentTask.Subtasks.Count(s => s.IsCompleted); // after toggle
+            var previousCompleted = subtask.IsCompleted ? currentCompleted - 1 : currentCompleted + 1;
+            var previousProgress = total == 0 ? 0 : (double)previousCompleted / total;
+            var wasCompleted = previousProgress >= 1;
+            Console.WriteLine($"[TaskDetailViewModel] wasCompleted={wasCompleted}, previousProgress={previousProgress}, currentProgress={CurrentTask.Progress}");
+
+            await _tasksFacade.ToggleSubtaskAsync(CurrentTask.Id, subtask.Id);
+
+            await LoadAsync(CurrentTask.Id);
+
+            var isNowCompleted = CurrentTask.Progress >= 1;
+            Console.WriteLine($"[TaskDetailViewModel] isNowCompleted={isNowCompleted}, progress={CurrentTask.Progress}");
+
+            if (!wasCompleted && isNowCompleted)
+            {
+                await _snackbarService.ShowAsync("¡La Tarea fue completada con éxito! Sigue Así 😉", SnackbarType.Success);
+            }
+        }
+        
         [ObservableProperty]
         private string? taskIdRaw;
 
@@ -36,7 +72,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
         }
 
         [ObservableProperty]
-        private TaskDetailModel? task;
+        private TaskDetailModel? currentTask;
 
         private async Task LoadAsync(Guid id)
         {
@@ -45,7 +81,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             if (dto is null)
                 return;
 
-            Task = new TaskDetailModel
+            CurrentTask = new TaskDetailModel
             {
                 Id = dto.Id,
                 Title = dto.Title,

@@ -27,8 +27,12 @@ namespace ProcraStop.Modules.Tasks.Application.Facade
         // metodo para obtener los cursos disponibles para asignar a una tarea
         Task<IReadOnlyList<CourseDto>> GetCoursesAsync(
         CancellationToken ct = default);
+        // metodo para obtener los detalles de una tarea por su id
         Task<TaskDetailDto?> GetTaskByIdAsync(
             Guid taskId,
+            CancellationToken ct = default);
+        Task ToggleSubtaskAsync(Guid taskId,
+            Guid subtaskId,
             CancellationToken ct = default);
     }
 }

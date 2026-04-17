@@ -1,13 +1,11 @@
 ﻿using ProcraStop.Modules.Tasks.Application.Commands.ArchiveTask;
 using ProcraStop.Modules.Tasks.Application.Commands.CompleteTask;
 using ProcraStop.Modules.Tasks.Application.Commands.CreateTask;
+using ProcraStop.Modules.Tasks.Application.Commands.ToggleSubtask;
 using ProcraStop.Modules.Tasks.Application.DTOs;
 using ProcraStop.Modules.Tasks.Application.Queries.GetCourses;
 using ProcraStop.Modules.Tasks.Application.Queries.GetTaskById;
 using ProcraStop.Modules.Tasks.Application.Queries.GetTasks;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ProcraStop.Modules.Tasks.Application.Facade
 {
@@ -19,13 +17,15 @@ namespace ProcraStop.Modules.Tasks.Application.Facade
         private readonly ArchiveTaskCommandHandler _archiveTaskHandler;
         private readonly GetCoursesQueryHandler _getCoursesHandler;
         private readonly GetTaskByIdQueryHandler _getTaskByIdHandler;
+        private readonly ToggleSubtaskCommandHandler _toggleSubtaskHandler;
         public TasksFacade(
             GetTasksQueryHandler getTasksHandler,
             CreateTaskCommandHandler createTaskHandler,
             CompleteTaskCommandHandler completeTaskHandler,
             ArchiveTaskCommandHandler archiveTaskHandler,
              GetCoursesQueryHandler getCoursesHandler,
-             GetTaskByIdQueryHandler getTaskByIdHandler)
+             GetTaskByIdQueryHandler getTaskByIdHandler,
+             ToggleSubtaskCommandHandler toggleSubtaskHandler)
         {
             _getTasksHandler = getTasksHandler;
             _createTaskHandler = createTaskHandler;
@@ -33,6 +33,7 @@ namespace ProcraStop.Modules.Tasks.Application.Facade
             _archiveTaskHandler = archiveTaskHandler;
             _getCoursesHandler = getCoursesHandler;
             _getTaskByIdHandler = getTaskByIdHandler;
+            _toggleSubtaskHandler = toggleSubtaskHandler;
         }
 
         public Task<IReadOnlyList<TaskListItemDto>> GetTasksAsync(
@@ -80,6 +81,14 @@ namespace ProcraStop.Modules.Tasks.Application.Facade
         public Task<TaskDetailDto?> GetTaskByIdAsync(Guid taskId, CancellationToken ct = default)
             => _getTaskByIdHandler.HandleAsync(
                 new GetTaskByIdQuery { TaskId = taskId },
+                ct);
+        public Task ToggleSubtaskAsync(Guid taskId, Guid subtaskId, CancellationToken ct = default)
+            => _toggleSubtaskHandler.HandleAsync(
+                new ToggleSubtaskCommand
+                {
+                    TaskId = taskId,
+                    SubtaskId = subtaskId
+                },
                 ct);
     }
 }

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProcraStop.Shared.UI.Components.CustomSnackbar"
+             IsVisible="False"
+             Opacity="0">
+    <Border x:Name="Root"
+            Padding="20"
+            Margin="25,0,25,0"
+            BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
+            StrokeShape="RoundRectangle 18">
+
+        <Border.Shadow>
+            <Shadow Brush="{AppThemeBinding Light={StaticResource DarkBackground}, Dark={StaticResource Gray500}}"
+                    Opacity="0.4"
+                    Offset="0,4"
+                    Radius="10"/>
+        </Border.Shadow>
+
+        <Grid ColumnDefinitions="Auto,*,Auto"
+              ColumnSpacing="12">
+            <Border x:Name="IconContainer"
+                WidthRequest="50"
+                HeightRequest="50"
+                    Padding="0"
+                StrokeShape="RoundRectangle 12">
+
+                <Grid>
+                    <Label x:Name="Icon"
+                       FontSize="22"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       TextColor="White"/>
+                </Grid>
+            </Border>
+
+
+            <!-- TEXT -->
+            <Label x:Name="Message"
+                   Grid.Column="1"
+                   FontSize="15"
+                   FontFamily="InterRegular"
+                   TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}"
+                   VerticalOptions="Center"/>
+
+            <!-- ACTION -->
+            <Label x:Name="Action"
+                   Grid.Column="3"
+                   FontSize="14"
+                   FontFamily="InterSemiBold"
+                   Text="Ok"
+                   TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}"
+                    IsVisible="True"
+                   Margin="0,0,10,0"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"/>
+        </Grid>
+    </Border>
+</ContentView>

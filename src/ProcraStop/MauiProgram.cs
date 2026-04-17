@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Plugin.LocalNotification;
 using ProcraStop.Modules.Tasks.Infraestructure.Persistence;
 using ProcraStop.Modules.Tasks.Infraestructure.Registration;
+using ProcraStop.Shared.Services;
 using Syncfusion.Maui.Toolkit.Hosting;
 
 namespace ProcraStop
@@ -75,6 +76,10 @@ namespace ProcraStop
             // Registro encapsulado del módulo Tasks
             // =========================
             builder.Services.AddTasksModule();
+            // =========================
+            // Registro del servicio de Snackbar
+            // =========================
+            builder.Services.AddSingleton<ISnackbarService, SnackbarService>();
 
             var app = builder.Build();
 

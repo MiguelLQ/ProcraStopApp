@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ProcraStop.Modules.Tasks.Presentation.Views.TaskDetailPage"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:components="clr-namespace:ProcraStop.Shared.UI.Components"
              Shell.BackgroundColor="{StaticResource cabecera}"
              Shell.TitleColor="White"
              Shell.ForegroundColor="White"
@@ -14,9 +15,24 @@
             StatusBarColor="{StaticResource cabecera}"
             StatusBarStyle="LightContent" />
     </ContentPage.Behaviors>
-
+   
     <!-- ROOT -->
     <Grid RowDefinitions="85,*,Auto">
+        
+        <Grid x:Name="Overlay"
+              BackgroundColor="Transparent"
+              IsVisible="False"
+              ZIndex="998">
+
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnOverlayTapped"/>
+            </Grid.GestureRecognizers>
+        </Grid>
+        <components:CustomSnackbar 
+            x:Name="SnackbarView"
+            Grid.RowSpan="3"
+            ZIndex="999"
+            VerticalOptions="Start"/>
 
         <!-- ========================= -->
         <!-- HEADER BACKGROUND -->
@@ -38,7 +54,7 @@
                 <!-- ========================= -->
                 <!-- CARD PRINCIPAL -->
                 <!-- ========================= -->
-                <Border Margin="15,0,15,0"
+                <Border Margin="8,0,8,0"
                         Padding="0"
                         BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}"
                         StrokeShape="RoundRectangle 20">
@@ -50,27 +66,28 @@
 
                             <VerticalStackLayout Spacing="3">
 
-                                <Label Text="{Binding Task.Title}"
+                                <Label Text="{Binding CurrentTask.Title}"
                                        FontSize="20"
                                        FontFamily="InterSemiBold"
                                        TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
 
-                                <Label Text="{Binding Task.Description}"
+                                <Label Text="{Binding CurrentTask.Description}"
                                        FontSize="14"
                                        FontFamily="InterRegular"
                                        TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}"
                                        LineBreakMode="WordWrap" />
 
                             </VerticalStackLayout>
+                            
 
                             <!-- PRIORITY -->
                             <Border Grid.Column="1"
                                     Padding="10,5"
-                                    BackgroundColor="{Binding Task.PriorityColorHex}"
+                                    BackgroundColor="{Binding CurrentTask.PriorityColorHex}"
                                     StrokeShape="RoundRectangle 10"
                                     VerticalOptions="Start">
 
-                                <Label Text="{Binding Task.PriorityText}"
+                                <Label Text="{Binding CurrentTask.PriorityText}"
                                        FontSize="11"
                                        TextColor="#d9e2ff"
                                        FontFamily="InterSemiBold" />
@@ -82,7 +99,7 @@
                         <BoxView HeightRequest="1"
                                  Color="{AppThemeBinding Light=#aab0c0, Dark=#1F2937}"
                                   />
-
+              
                         <!-- META -->
                         <VerticalStackLayout Spacing="15">
 
@@ -94,10 +111,10 @@
                                            FontSize="14"
                                            FontFamily="InterRegular"
                                        TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}"/>
-                                    <Label Text="{Binding Task.DueDateText}"
+                                    <Label Text="{Binding CurrentTask.DueDateText}"
                                            FontSize="14"
                                            FontFamily="InterSemiBold"
-                                           TextColor="{Binding Task.DueDateColorHex}" />
+                                           TextColor="{Binding CurrentTask.DueDateColorHex}" />
                                 </VerticalStackLayout>
                             </Grid>
 
@@ -109,10 +126,10 @@
                                            FontFamily="InterRegular"
                                            FontSize="14"
                                        TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}"/>
-                                    <Label Text="{Binding Task.StatusText}"
+                                    <Label Text="{Binding CurrentTask.StatusText}"
                                            FontSize="14"
                                            FontFamily="InterSemiBold"
-                                           TextColor="{Binding Task.StatusColorHex}" />
+                                           TextColor="{Binding CurrentTask.StatusColorHex}" />
                                 </VerticalStackLayout>
                             </Grid>
 
@@ -124,14 +141,14 @@
                                            FontSize="14"
                                            FontFamily="InterRegular"
                                        TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}"/>
-                                    <Label Text="{Binding Task.ReminderText}"
+                                    <Label Text="{Binding CurrentTask.ReminderText}"
                                            FontSize="14"
                                            FontFamily="InterSemiBold" />
                                 </VerticalStackLayout>
                             </Grid>
 
                             <!-- COURSE -->
-                            <Border IsVisible="{Binding HasCourse}"
+                            <Border IsVisible="{Binding CurrentTask.HasCourse}"
                                     HeightRequest="40"
                                     Padding="1"
                                     StrokeShape="RoundRectangle 8"
@@ -141,8 +158,8 @@
                                              HeightRequest="40"
                                              CornerRadius="8"
                                              Background="Transparent"
-                                             Color="{Binding Task.CourseColor}" />
-                                    <Label Text="{Binding Task.CourseName}"
+                                             Color="{Binding CurrentTask.CourseColor}" />
+                                    <Label Text="{Binding CurrentTask.CourseName}"
                                            FontSize="14"
                                            VerticalOptions="Center"
                                            FontFamily="InterRegular"
@@ -161,8 +178,18 @@
                        FontSize="18"
                        FontFamily="InterSemiBold"
                        TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
-
-                <CollectionView ItemsSource="{Binding Task.Subtasks}"
+               
+                <ProgressBar Progress="{Binding CurrentTask.Progress}"
+                    HeightRequest="6"
+                    Margin="25,5,25,0"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource DarkBackground}}"
+                    ProgressColor="{Binding CurrentTask.ProgressColorHex}"/>
+                <Label Text="{Binding CurrentTask.ProgressText}"
+                    FontSize="12"
+                    Margin="25,0,15,0"
+                    FontFamily="InterRegular"
+                    TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                                <CollectionView ItemsSource="{Binding CurrentTask.Subtasks}"
                                 SelectionMode="None">
 
                     <CollectionView.ItemTemplate>
@@ -175,7 +202,9 @@
                                 <Grid ColumnDefinitions="Auto,*"
                                       VerticalOptions="Center">
 
-                                    <CheckBox IsChecked="{Binding IsCompleted}" />
+                                    <CheckBox IsChecked="{Binding IsCompleted}"
+                                          Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ToggleSubtaskCommand}"
+                                          CommandParameter="{Binding .}" />
 
                                     <Label Grid.Column="1"
                                            Text="{Binding Title}"
@@ -193,7 +222,7 @@
                 </CollectionView>
 
                 <!-- espacio para que no tape botones -->
-                <BoxView HeightRequest="80" Opacity="0"/>
+                <BoxView  Opacity="0"/>
 
             </VerticalStackLayout>
 

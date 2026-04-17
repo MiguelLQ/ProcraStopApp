@@ -4,6 +4,7 @@ using ProcraStop.Modules.Tasks.Application.Commands.CompleteTask;
 using ProcraStop.Modules.Tasks.Application.Commands.CreateCourse;
 using ProcraStop.Modules.Tasks.Application.Commands.CreateTask;
 using ProcraStop.Modules.Tasks.Application.Commands.DeleteCourse;
+using ProcraStop.Modules.Tasks.Application.Commands.ToggleSubtask;
 using ProcraStop.Modules.Tasks.Application.Commands.UpdateCourse;
 using ProcraStop.Modules.Tasks.Application.Facade;
 using ProcraStop.Modules.Tasks.Application.Queries.GetCourses;
@@ -43,6 +44,7 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Registration
             services.AddTransient<CompleteTaskCommandHandler>();
             services.AddTransient<ArchiveTaskCommandHandler>();
             services.AddTransient<GetTaskByIdQueryHandler>();
+            services.AddTransient<ToggleSubtaskCommandHandler>();
             // CQRS handlers para cursos
             services.AddTransient<UpdateCourseCommandHandler>();
             services.AddTransient<CreateCourseCommandHandler>();

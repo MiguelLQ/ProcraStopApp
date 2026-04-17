@@ -20,7 +20,11 @@ namespace ProcraStop.Modules.Tasks.Domain.Entities
         // 
 
         //NUEVO: Subtasks
+        // Permite saber si la tarea está completa, considerando el estado de las subtareas
+        public bool IsCompleted => Status == TaskItemStatus.Completed;
+        // Permite saber si la tarea está en progreso, considerando el estado de las subtareas
         private readonly List<Subtask> _subtasks = new();
+        // Exponer las subtareas como una colección de solo lectura para mantener la encapsulación
         public IReadOnlyCollection<Subtask> Subtasks => _subtasks;
 
         private StudyTask() { } // EF
@@ -59,6 +63,8 @@ namespace ProcraStop.Modules.Tasks.Domain.Entities
                 throw new ArgumentException("La subtarea necesita título");
 
             _subtasks.Add(new Subtask(Guid.NewGuid(), title));
+
+            UpdateStatusBasedOnSubtasks();
         }
 
         public void RemoveSubtask(Guid subtaskId)
@@ -67,28 +73,35 @@ namespace ProcraStop.Modules.Tasks.Domain.Entities
             if (subtask is null) return;
 
             _subtasks.Remove(subtask);
+
+            UpdateStatusBasedOnSubtasks();
         }
 
-        public void CompleteSubtask(Guid subtaskId)
+
+        public void ToggleSubtask(Guid subtaskId)
         {
             var subtask = _subtasks.FirstOrDefault(s => s.Id == subtaskId);
             if (subtask is null)
                 throw new Exception("Subtarea no encontrada");
 
-            subtask.MarkAsCompleted();
-        }
+            if (subtask.IsCompleted)
+                subtask.MarkAsPending();
+            else
+                subtask.MarkAsCompleted();
 
+            UpdateStatusBasedOnSubtasks();
+        }
         // =========================
         // REGLAS DE NEGOCIO
         // =========================
 
         public void Complete()
         {
-            if (_subtasks.Any() && _subtasks.Any(s => !s.IsCompleted))
-                throw new Exception("Debes completar todas las subtareas");
-
             Status = TaskItemStatus.Completed;
             CompletedAtUtc = DateTime.UtcNow;
+
+            foreach (var subtask in _subtasks)
+                subtask.MarkAsCompleted();
         }
 
         public void Reopen()
@@ -108,6 +121,11 @@ namespace ProcraStop.Modules.Tasks.Domain.Entities
             var completed = _subtasks.Count(s => s.IsCompleted);
             return (double)completed / _subtasks.Count;
         }
+        // 
+        public double Progress =>
+            !_subtasks.Any()
+                ? 0
+                : (double)_subtasks.Count(s => s.IsCompleted) / _subtasks.Count;
         // Permite establecer o actualizar la fecha de recordatorio, con validaciones
         public void SetReminder(DateTime? reminderDate)
         {
@@ -172,7 +190,35 @@ namespace ProcraStop.Modules.Tasks.Domain.Entities
 
             return task;
         }
+        // Permite actualizar el estado de la tarea automáticamente al completar o reabrir subtareas    
+        private void UpdateStatusBasedOnSubtasks()
+        {
+            if (!_subtasks.Any())
+            {
+                Status = TaskItemStatus.Pending;
+                CompletedAtUtc = null;
+                return;
+            }
 
+            var allCompleted = _subtasks.All(s => s.IsCompleted);
+            var anyCompleted = _subtasks.Any(s => s.IsCompleted);
+
+            if (allCompleted)
+            {
+                Status = TaskItemStatus.Completed;
+                CompletedAtUtc ??= DateTime.UtcNow;
+            }
+            else if (anyCompleted)
+            {
+                Status = TaskItemStatus.InProgress;
+                CompletedAtUtc = null;
+            }
+            else
+            {
+                Status = TaskItemStatus.Pending;
+                CompletedAtUtc = null;
+            }
+        }
         // =========================
         // HELPERS
         // =========================

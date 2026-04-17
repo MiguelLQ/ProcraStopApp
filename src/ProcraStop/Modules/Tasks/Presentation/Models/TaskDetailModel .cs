@@ -57,7 +57,25 @@ namespace ProcraStop.Modules.Tasks.Presentation.Models
             TaskItemStatus.Completed => "Completada",
             _ => "Pendiente"
         };
+        // ========================================= Progreso UI
+        // El progreso se calcula como el porcentaje de subtareas completadas
+        public double Progress =>
+            Subtasks.Count == 0
+                ? 0
+                : (double)Subtasks.Count(s => s.IsCompleted) / Subtasks.Count;
 
+        // El texto de progreso muestra "Sin subtareas" si no hay subtareas, o "X/Y completadas" si las hay
+        public string ProgressText =>
+            Subtasks.Count == 0
+                ? "Sin subtareas"
+                : $"{Subtasks.Count(s => s.IsCompleted)}/{Subtasks.Count} completadas";
+        public string ProgressColorHex =>
+            Progress switch
+            {
+                >= 1 => "#16A34A", // verde completado
+                >= 0.5 => "#F59E0B", // amarillo medio
+                _ => "#2563EB" // azul inicio
+            };
         public string DueDateText =>
             DueDate?.ToString("dd MMM yyyy HH:mm") ?? "Sin fecha";
 
