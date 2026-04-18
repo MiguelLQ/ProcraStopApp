@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using ProcraStop.Modules.Tasks.Application.DTOs;
 using ProcraStop.Modules.Tasks.Application.Facade;
 using ProcraStop.Modules.Tasks.Domain.Enums;
+using ProcraStop.Shared.Services;
 using System.Collections.ObjectModel;
 
 namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
@@ -59,7 +60,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
         // Exponemos la lista de offsets de recordatorio para enlazarla a la UI
         public IReadOnlyList<ReminderOffset> ReminderOffsets { get; } =
             Enum.GetValues<ReminderOffset>();
-       
+       // 
         public ReminderOffset SelectedReminderOffset =>
     SelectedReminderOffsetIndex >= 0 &&
     SelectedReminderOffsetIndex < ReminderOffsets.Count
@@ -229,6 +230,8 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
                 Console.WriteLine($"INDEX: {SelectedReminderOffsetIndex}");
 
                 TaskCreated?.Invoke();
+                PendingNotificationService.Set("Tarea creada con exito!");
+
             }
             finally
             {

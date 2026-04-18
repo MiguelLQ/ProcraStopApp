@@ -70,8 +70,6 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels.CoursesViewModels
         // LOAD
         // =========================
 
-        private bool _isLoaded;
-
         public async Task LoadAsync()
         {
             var list = await _coursesFacade.GetCoursesAsync();

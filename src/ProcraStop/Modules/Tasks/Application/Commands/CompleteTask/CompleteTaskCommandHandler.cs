@@ -20,28 +20,20 @@ namespace ProcraStop.Modules.Tasks.Application.Commands.CompleteTask
             CompleteTaskCommand command,
             CancellationToken cancellationToken = default)
         {
-            //var task = await _repository.GetByIdAsync(command.TaskId, cancellationToken);
+            var task = await _repository.GetByIdAsync(command.TaskId, cancellationToken);
 
-            //if (task is null)
-                return;
+            if (task is null)
+                throw new Exception("Task no encontrada");
 
-            //var updated = new StudyTask
-            //{
-            //    Id = task.Id,
-            //    Title = task.Title,
-            //    Description = task.Description,
-            //    DueDate = task.DueDate,
-            //    ReminderDate = task.ReminderDate,
-            //    Priority = task.Priority,
-            //    Status = TaskItemStatus.Completed,
-            //    IsArchived = task.IsArchived,
-            //    CourseId = task.CourseId,
-            //    EstimatedMinutes = task.EstimatedMinutes,
-            //    CreatedAtUtc = task.CreatedAtUtc,
-            //    CompletedAtUtc = DateTime.UtcNow
-            //};
+            // REGLA DE NEGOCIO (IMPORTANTE)
+            if (task.Subtasks.Any())
+                throw new InvalidOperationException("No puedes completar una tarea con subtareas manualmente");
 
-            //await _repository.UpdateAsync(updated, cancellationToken);
-        }   
+            //DOMINIO
+            task.Complete();
+
+            //PERSISTENCIA
+            await _repository.UpdateAsync(task, cancellationToken);
+        }
     }
 }

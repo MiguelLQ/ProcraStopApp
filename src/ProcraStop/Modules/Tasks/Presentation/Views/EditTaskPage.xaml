@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProcraStop.Modules.Tasks.Presentation.Views.EditTaskPage"
+             Title="EditTaskPage"
+             x:Name="PageRoot"
+             >
+
+
+    <Grid RowDefinitions="50,*">
+
+        <!-- HEADER -->
+        <Grid BackgroundColor="{StaticResource primarioS}" />
+
+        <ScrollView Grid.RowSpan="2">
+
+            <VerticalStackLayout>
+
+                <!-- CARD -->
+                <Border Margin="0,0,0,5"
+                        Padding="18"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}"
+                        StrokeShape="RoundRectangle 28">
+
+                    <VerticalStackLayout Spacing="12">
+
+                        <!-- HEADER TEXT -->
+                        <VerticalStackLayout>
+                            <Label Text="Editar tarea"
+                                   FontSize="20"
+                                   FontFamily="InterSemiBold"
+                                   TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+
+                            <Label Text="Modifica la información"
+                                   FontSize="12"
+                                   FontFamily="InterRegular"
+                                   TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                        </VerticalStackLayout>
+
+                        <!-- TITLE -->
+                        <Entry Placeholder="Nombre"
+                               Text="{Binding Title}" />
+
+                        <!-- DESCRIPTION -->
+                        <Editor Placeholder="Descripción"
+                                AutoSize="TextChanges"
+                                Text="{Binding Description}" />
+
+                        <!-- FECHA -->
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Fecha límite" />
+                            <Switch Grid.Column="1"
+                                    IsToggled="{Binding HasDueDate}" />
+                        </Grid>
+
+                        <VerticalStackLayout IsVisible="{Binding HasDueDate}">
+
+                            <Grid ColumnDefinitions="*,*">
+                                <DatePicker Date="{Binding SelectedDueDate}" />
+                                <TimePicker Grid.Column="1"
+                                            Time="{Binding SelectedDueTime}" />
+                            </Grid>
+
+                            <!-- RECORDATORIO -->
+                            <Picker Title="Recordatorio"
+                                    ItemsSource="{Binding ReminderOffsets}"
+                                    SelectedIndex="{Binding SelectedReminderOffsetIndex}" />
+                        </VerticalStackLayout>
+
+                        <!-- MINUTOS -->
+                        <Entry Placeholder="Minutos estimados"
+                               Keyboard="Numeric"
+                               Text="{Binding EstimatedMinutesText}" />
+
+                        <!-- PRIORIDAD -->
+                        <Picker Title="Prioridad"
+                            ItemsSource="{Binding Priorities}"
+                            SelectedItem="{Binding SelectedPriority}"
+                            ItemDisplayBinding="{Binding .}" />
+
+                        <!-- CURSO -->
+                        <Picker Title="Curso"
+                                ItemsSource="{Binding Courses}"
+                                ItemDisplayBinding="{Binding Name}"
+                                SelectedItem="{Binding SelectedCourse}" />
+
+                        <!-- ===================== -->
+                        <!-- SUBTAREAS -->
+                        <!-- ===================== -->
+
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Entry Placeholder="Nueva subtarea"
+                                   Text="{Binding NewSubtaskText}" />
+
+                            <Button Grid.Column="1"
+                                    Text="+"
+                                    Command="{Binding AddSubtaskCommand}" />
+                        </Grid>
+
+                        <CollectionView ItemsSource="{Binding Subtasks}">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+
+                                    <Border Padding="10"
+                                            Margin="0,5"
+                                            StrokeShape="RoundRectangle 12">
+
+                                        <Grid ColumnDefinitions="Auto,*,Auto">
+
+                                            <!-- CHECK -->
+                                            <CheckBox IsChecked="{Binding IsCompleted}" />
+
+                                            <!-- TITLE -->
+                                            <Entry Grid.Column="1"
+                                                   Text="{Binding Title}"
+                                                   BackgroundColor="Transparent" />
+
+                                            <!-- DELETE -->
+                                            <Button Grid.Column="2"
+                                                    Text="✕"
+                                                    BackgroundColor="#EF4444"
+                                                    TextColor="White"
+                                                    WidthRequest="30"
+                                                    HeightRequest="30"
+                                                    CornerRadius="8"
+                                                    Command="{Binding BindingContext.RemoveSubtaskCommand, Source={x:Reference PageRoot}}"
+                                                    CommandParameter="{Binding .}" />
+
+                                        </Grid>
+
+                                    </Border>
+
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+
+                        <!-- SAVE -->
+                        <Button Text="Actualizar tarea"
+                                Command="{Binding SaveCommand}"
+                                HeightRequest="50"
+                                BackgroundColor="{StaticResource primarioO}"
+                                TextColor="White" />
+
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+
+        </ScrollView>
+
+    </Grid>
+
+</ContentPage>

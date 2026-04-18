@@ -1,4 +1,5 @@
 ﻿using ProcraStop.Modules.Tasks.Domain.Entities;
+using ProcraStop.Modules.Tasks.Domain.Enums;
 
 namespace ProcraStop.Modules.Tasks.Application.DTOs
 {
@@ -11,7 +12,7 @@ namespace ProcraStop.Modules.Tasks.Application.DTOs
 
         public DateTime? DueDate { get; init; }
         public DateTime? ReminderDate { get; init; }
-
+        public ReminderOffset ReminderOffset { get; set; }
         public int Priority { get; init; }
         public int Status { get; init; }
 

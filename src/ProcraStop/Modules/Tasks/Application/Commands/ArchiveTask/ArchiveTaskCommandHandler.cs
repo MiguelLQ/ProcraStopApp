@@ -10,34 +10,23 @@ namespace ProcraStop.Modules.Tasks.Application.Commands.ArchiveTask
         public ArchiveTaskCommandHandler(ITaskRepository repository)
         {
             _repository = repository;
+
         }
 
         public async Task HandleAsync(
-            ArchiveTaskCommand command,
-            CancellationToken cancellationToken = default)
+            ArchiveTaskCommand command
+            , CancellationToken ct)
         {
-            /*ar task = await _repository.GetByIdAsync(command.TaskId, cancellationToken);
-*/
-            //if (task is null)
-                return;
+            var task = await _repository.GetByIdAsync(command.TaskId, ct);
 
-            //var updated = new StudyTask
-            //{
-            //    Id = task.Id,
-            //    Title = task.Title,
-            //    Description = task.Description,
-            //    DueDate = task.DueDate,
-            //    ReminderDate = task.ReminderDate,
-            //    Priority = task.Priority,
-            //    Status = task.Status,
-            //    IsArchived = true,
-            //    CourseId = task.CourseId,
-            //    EstimatedMinutes = task.EstimatedMinutes,
-            //    CreatedAtUtc = task.CreatedAtUtc,
-            //    CompletedAtUtc = task.CompletedAtUtc
-            //};
+            if (task is null)
+                throw new Exception("Task no encontrada");
 
-            //await _repository.UpdateAsync(updated, cancellationToken);
+            // dominio
+            task.Archive();
+
+            //persistencia
+            await _repository.UpdateAsync(task, ct);
         }
     }
 }

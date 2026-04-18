@@ -36,7 +36,8 @@
     <Color x:Key="PlaceHolderClar">#b0b7ca</Color>
     <Color x:Key="cabecera">#4f80ff</Color>
 
-
+    <Color x:Key="shellDark">#171b24</Color>
+    <Color x:Key="TapBarDarck">#131821</Color>
     <!--<Color x:Key="DarkBackground">#17171a</Color>-->
     <Color x:Key="DarkBackground">#222631</Color>
     <Color x:Key="LightOnDarkBackground">#E0E0E0</Color>

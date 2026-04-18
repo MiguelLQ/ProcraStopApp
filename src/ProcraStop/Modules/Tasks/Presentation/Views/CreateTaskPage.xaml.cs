@@ -39,20 +39,7 @@ public partial class CreateTaskPage : ContentPage
             await vm.LoadAsync();
         }
         await RequestNotificationPermissionAsync();
-        var request = new NotificationRequest
-        {
-            NotificationId = 1000,
-            Title = "⏰ Programada",
-            Description = "Esto debería salir en 1 minuto",
-            Schedule = new NotificationRequestSchedule
-            {
-                NotifyTime = DateTime.Now.AddMinutes(1)
 
-            }
-        };
-        
-
-        await LocalNotificationCenter.Current.Show(request);
     }
     public async Task RequestNotificationPermissionAsync()
     {

@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Maui.Alerts;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ProcraStop.Modules.Tasks.Application.Facade;
 using ProcraStop.Modules.Tasks.Domain.Enums;
@@ -15,8 +14,8 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
     {
         private readonly ITasksFacade _tasksFacade;
         private readonly ISnackbarService _snackbarService;
+        public Guid CurrentTaskId => CurrentTask?.Id ?? Guid.Empty;
 
-        
         public TaskDetailViewModel(ITasksFacade tasksFacade, ISnackbarService snackbarService)
         {
             _tasksFacade = tasksFacade;
@@ -43,6 +42,8 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             await _tasksFacade.ToggleSubtaskAsync(CurrentTask.Id, subtask.Id);
 
             await LoadAsync(CurrentTask.Id);
+            // esto es lo que te falta
+            OnPropertyChanged(nameof(CurrentTask));
 
             var isNowCompleted = CurrentTask.Progress >= 1;
             Console.WriteLine($"[TaskDetailViewModel] isNowCompleted={isNowCompleted}, progress={CurrentTask.Progress}");
@@ -52,7 +53,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
                 await _snackbarService.ShowAsync("¡La Tarea fue completada con éxito! Sigue Así 😉", SnackbarType.Success);
             }
         }
-        
+    
         [ObservableProperty]
         private string? taskIdRaw;
 
@@ -105,11 +106,54 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
                     }))
             };
         }
+        // tareas sin subtareas
+        [RelayCommand]
+        private async Task CompleteTask()
+        {
+            if (CurrentTask is null)
+                return;
 
+            if (CurrentTask.Subtasks.Count > 0)
+                return; // protección extra
+
+            await _tasksFacade.CompleteTaskAsync(CurrentTask.Id);
+
+            await LoadAsync(CurrentTask.Id);
+
+            await _snackbarService.ShowAsync("¡La Tarea fue completada! Sigue Así 😉", SnackbarType.Success);
+
+        }
+        [RelayCommand]
+        private async Task DeleteTask()
+        {
+            if (CurrentTask is null) return;
+
+            bool confirm = await Shell.Current.DisplayAlertAsync(
+                "Eliminar tarea",
+                "¿Estás seguro de eliminar esta tarea?",
+                "Eliminar", "Cancelar");
+
+            if (!confirm) return;
+
+            await _tasksFacade.ArchiveTaskAsync(CurrentTask.Id);
+
+            // Guarda el mensaje ANTES de navegar
+            // Success (default)
+            PendingNotificationService.Set("La tarea fue eliminada!", SnackbarType.Info);
+
+            await Shell.Current.GoToAsync("..");
+        }
         // Explicit method to allow pages to pass the id without depending on generated properties
         public void SetTaskId(Guid id)
         {
             _ = LoadAsync(id);
+        }
+        [RelayCommand]
+        private async Task GoToEdit()
+        {
+            if (CurrentTask is null) return;
+
+            await Shell.Current.GoToAsync($"edit-task?taskId={CurrentTask.Id}");
         }
     }
 }

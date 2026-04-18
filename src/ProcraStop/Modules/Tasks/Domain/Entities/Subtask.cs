@@ -33,6 +33,17 @@ namespace ProcraStop.Modules.Tasks.Domain.Entities
 
             Title = title;
         }
+        // Este método permite actualizar tanto el título como el estado de completado en una sola operación,
+        // lo que es útil para la edición rápida de subtareas.
+        public void Update(string title, bool isCompleted)
+        {
+            Title = title;
+
+            if (isCompleted)
+                MarkAsCompleted();
+            else
+                MarkAsPending();
+        }
         // Este constructor es para reconstruir desde la base de datos (EF)
         internal Subtask(Guid id, string title, bool isCompleted)
         {

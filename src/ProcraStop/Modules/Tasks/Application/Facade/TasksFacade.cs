@@ -2,6 +2,7 @@
 using ProcraStop.Modules.Tasks.Application.Commands.CompleteTask;
 using ProcraStop.Modules.Tasks.Application.Commands.CreateTask;
 using ProcraStop.Modules.Tasks.Application.Commands.ToggleSubtask;
+using ProcraStop.Modules.Tasks.Application.Commands.UpdateTask;
 using ProcraStop.Modules.Tasks.Application.DTOs;
 using ProcraStop.Modules.Tasks.Application.Queries.GetCourses;
 using ProcraStop.Modules.Tasks.Application.Queries.GetTaskById;
@@ -18,6 +19,8 @@ namespace ProcraStop.Modules.Tasks.Application.Facade
         private readonly GetCoursesQueryHandler _getCoursesHandler;
         private readonly GetTaskByIdQueryHandler _getTaskByIdHandler;
         private readonly ToggleSubtaskCommandHandler _toggleSubtaskHandler;
+        private readonly UpdateTaskCommandHandler _updateTaskHandler;
+
         public TasksFacade(
             GetTasksQueryHandler getTasksHandler,
             CreateTaskCommandHandler createTaskHandler,
@@ -25,7 +28,8 @@ namespace ProcraStop.Modules.Tasks.Application.Facade
             ArchiveTaskCommandHandler archiveTaskHandler,
              GetCoursesQueryHandler getCoursesHandler,
              GetTaskByIdQueryHandler getTaskByIdHandler,
-             ToggleSubtaskCommandHandler toggleSubtaskHandler)
+             ToggleSubtaskCommandHandler toggleSubtaskHandler,
+             UpdateTaskCommandHandler updateTaskHandler)
         {
             _getTasksHandler = getTasksHandler;
             _createTaskHandler = createTaskHandler;
@@ -34,6 +38,7 @@ namespace ProcraStop.Modules.Tasks.Application.Facade
             _getCoursesHandler = getCoursesHandler;
             _getTaskByIdHandler = getTaskByIdHandler;
             _toggleSubtaskHandler = toggleSubtaskHandler;
+            _updateTaskHandler = updateTaskHandler;
         }
 
         public Task<IReadOnlyList<TaskListItemDto>> GetTasksAsync(
@@ -90,5 +95,7 @@ namespace ProcraStop.Modules.Tasks.Application.Facade
                     SubtaskId = subtaskId
                 },
                 ct);
+        public Task UpdateTaskAsync(UpdateTaskCommand command, CancellationToken ct = default)
+            => _updateTaskHandler.HandleAsync(command, ct);
     }
 }

@@ -1,4 +1,5 @@
-﻿using ProcraStop.Modules.Tasks.Domain.Enums;
+﻿using ProcraStop.Modules.Tasks.Application.DTOs;
+using ProcraStop.Modules.Tasks.Domain.Enums;
 
 
 namespace ProcraStop.Modules.Tasks.Domain.Entities
@@ -218,6 +219,43 @@ namespace ProcraStop.Modules.Tasks.Domain.Entities
                 Status = TaskItemStatus.Pending;
                 CompletedAtUtc = null;
             }
+        }
+        // archivar tarea
+        public void Archive()
+        {
+            IsArchived = true;
+        }
+        // actualizar subatareas  
+        public void Update(
+      string title,
+      string? description,
+      DateTime? dueDate,
+      DateTime? reminderDate,
+      TaskPriority priority,
+      Guid? courseId,
+      int? estimatedMinutes,
+      List<SubtaskDto> subtasks)
+        {
+            Title = title;
+            Description = description;
+            DueDate = dueDate;
+            ReminderDate = reminderDate;
+            Priority = priority;
+            CourseId = courseId;
+            EstimatedMinutes = estimatedMinutes;
+
+            // 🔥 REEMPLAZO TOTAL (SOURCE OF TRUTH)
+            _subtasks.Clear();
+
+            foreach (var dto in subtasks)
+            {
+                if (dto.Id == Guid.Empty)
+                    throw new Exception("Subtask debe tener Id");
+
+                _subtasks.Add(new Subtask(dto.Id, dto.Title, dto.IsCompleted));
+            }
+
+            UpdateStatusBasedOnSubtasks();
         }
         // =========================
         // HELPERS

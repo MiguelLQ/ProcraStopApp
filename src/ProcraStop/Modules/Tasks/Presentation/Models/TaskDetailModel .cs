@@ -126,5 +126,29 @@ namespace ProcraStop.Modules.Tasks.Presentation.Models
                 return "#6B7280"; // gris
             }
         }
+        // 
+        public bool CanComplete
+        {
+            get
+            {
+                if (Status == TaskItemStatus.Completed)
+                    return false;
+
+                if (Subtasks.Count == 0)
+                    return true;
+
+                return false; // si hay subtareas → NO se puede usar el botón
+            }
+        }
+        // boton activado desactivado color
+        public string CompleteButtonColor =>
+            Status == TaskItemStatus.Completed
+                ? "#9CA3AF"   // gris desactivado
+                : "#2563EB";  // tu color primario
+        // texto para boton 
+        public string CompleteButtonText =>
+        Status == TaskItemStatus.Completed
+            ? "Completada"
+            : "Completar";
     }
 }

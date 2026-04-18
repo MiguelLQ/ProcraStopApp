@@ -63,49 +63,49 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Repositories
             await _dbContext.Tasks.AddAsync(entity, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
-        // metodo para actualizar una tarea existente en la base de datos
         public async Task UpdateAsync(StudyTask task, CancellationToken cancellationToken = default)
         {
-            var existing = await _dbContext.Tasks
-                .Include(x => x.Subtasks) //IMPORTANTE
-                .FirstOrDefaultAsync(x => x.Id == task.Id, cancellationToken);
-
-            if (existing is null)
-                return;
-
-            // Update propiedades simples
-            existing.Title = task.Title;
-            existing.Description = task.Description;
-            existing.DueDate = task.DueDate;
-            existing.ReminderDate = task.ReminderDate;
-            existing.Priority = (int)task.Priority;
-            existing.Status = (int)task.Status;
-            existing.IsArchived = task.IsArchived;
-            existing.CourseId = task.CourseId;
-            existing.EstimatedMinutes = task.EstimatedMinutes;
-            //existing.CreatedAtUtc = task.CreatedAtUtc;
-            existing.CompletedAtUtc = task.CompletedAtUtc;
-
-            //SUBTASKS (LO IMPORTANTE)
-
-            // 1. Eliminar las que ya no existen
-            var incomingIds = task.Subtasks.Select(s => s.Id).ToHashSet();
-
-            var toRemove = existing.Subtasks
-                .Where(s => !incomingIds.Contains(s.Id))
-                .ToList();
-
-            _dbContext.Subtasks.RemoveRange(toRemove);
-
-            // 2. Actualizar o agregar
-            foreach (var subtask in task.Subtasks)
+            try
             {
-                var existingSubtask = existing.Subtasks
-                    .FirstOrDefault(s => s.Id == subtask.Id);
+                Console.WriteLine("========== REPOSITORY UPDATE ==========");
 
-                if (existingSubtask is null)
+                var existing = await _dbContext.Tasks
+                    .Include(x => x.Subtasks)
+                    .FirstOrDefaultAsync(x => x.Id == task.Id, cancellationToken);
+
+                if (existing is null)
+                    return;
+
+                Console.WriteLine($"Existing subtasks DB: {existing.Subtasks.Count}");
+                Console.WriteLine($"Incoming subtasks Domain: {task.Subtasks.Count}");
+
+                // =========================
+                // UPDATE CAMPOS SIMPLES
+                // =========================
+
+                existing.Title = task.Title;
+                existing.Description = task.Description;
+                existing.DueDate = task.DueDate;
+                existing.ReminderDate = task.ReminderDate;
+                existing.Priority = (int)task.Priority;
+                existing.Status = (int)task.Status;
+                existing.IsArchived = task.IsArchived;
+                existing.CourseId = task.CourseId;
+                existing.EstimatedMinutes = task.EstimatedMinutes;
+                existing.CompletedAtUtc = task.CompletedAtUtc;
+
+                // =========================
+                // 🔥 SUBTASKS (SOURCE = DOMAIN)
+                // =========================
+
+                Console.WriteLine("RESET SUBTASKS...");
+
+                existing.Subtasks.Clear(); // 💥 clave
+
+                foreach (var subtask in task.Subtasks)
                 {
-                    // nueva
+                    Console.WriteLine($"ADD -> {subtask.Id} | {subtask.Title}");
+
                     existing.Subtasks.Add(new SubtaskEntity
                     {
                         Id = subtask.Id,
@@ -114,16 +114,28 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Repositories
                         TaskId = task.Id
                     });
                 }
-                else
+
+                // =========================
+                // SAVE
+                // =========================
+
+                Console.WriteLine("SAVING CHANGES...");
+
+                foreach (var entry in _dbContext.ChangeTracker.Entries<SubtaskEntity>())
                 {
-                    // update
-                    existingSubtask.Title = subtask.Title;
-                    existingSubtask.IsCompleted = subtask.IsCompleted;
+                    Console.WriteLine($"TRACKING -> {entry.Entity.Id} | State: {entry.State}");
                 }
+
+                await _dbContext.SaveChangesAsync(cancellationToken);
+
+                Console.WriteLine("SAVE OK");
             }
-
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            catch (Exception ex)
+            {
+                Console.WriteLine("🔥 ERROR REAL EN REPOSITORY:");
+                Console.WriteLine(ex.ToString());
+                throw;
+            }
         }
-
     }
 }

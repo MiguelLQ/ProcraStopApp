@@ -6,6 +6,7 @@ using ProcraStop.Modules.Tasks.Application.Commands.CreateTask;
 using ProcraStop.Modules.Tasks.Application.Commands.DeleteCourse;
 using ProcraStop.Modules.Tasks.Application.Commands.ToggleSubtask;
 using ProcraStop.Modules.Tasks.Application.Commands.UpdateCourse;
+using ProcraStop.Modules.Tasks.Application.Commands.UpdateTask;
 using ProcraStop.Modules.Tasks.Application.Facade;
 using ProcraStop.Modules.Tasks.Application.Queries.GetCourses;
 using ProcraStop.Modules.Tasks.Application.Queries.GetTaskById;
@@ -45,6 +46,7 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Registration
             services.AddTransient<ArchiveTaskCommandHandler>();
             services.AddTransient<GetTaskByIdQueryHandler>();
             services.AddTransient<ToggleSubtaskCommandHandler>();
+            services.AddTransient<UpdateTaskCommandHandler>();
             // CQRS handlers para cursos
             services.AddTransient<UpdateCourseCommandHandler>();
             services.AddTransient<CreateCourseCommandHandler>();
@@ -58,11 +60,13 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Registration
             services.AddTransient<CreateTaskPageViewModel>();
             services.AddTransient<CoursesPageViewModel>();
             services.AddTransient<TaskDetailViewModel>();
+            services.AddTransient<EditTaskViewModel>();
             //// Views
             services.AddTransient<TasksPage>();
             services.AddTransient<CreateTaskPage>();
             services.AddTransient<CoursesPage>();
             services.AddTransient<TaskDetailPage>();
+            services.AddTransient<EditTaskPage>();
             // 
             services.AddScoped<ITaskReadService, TaskReadService>();
 

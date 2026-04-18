@@ -1,4 +1,5 @@
-﻿using ProcraStop.Modules.Tasks.Application.DTOs;
+﻿using ProcraStop.Modules.Tasks.Application.Commands.UpdateTask;
+using ProcraStop.Modules.Tasks.Application.DTOs;
 
 namespace ProcraStop.Modules.Tasks.Application.Facade
 {
@@ -34,5 +35,6 @@ namespace ProcraStop.Modules.Tasks.Application.Facade
         Task ToggleSubtaskAsync(Guid taskId,
             Guid subtaskId,
             CancellationToken ct = default);
+        Task UpdateTaskAsync(UpdateTaskCommand command, CancellationToken ct = default);
     }
 }

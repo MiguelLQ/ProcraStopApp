@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ProcraStop.Modules.Tasks.Presentation.Views.CoursesView.CoursesPage"
              x:Name="PageRoot"
-             BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkSecondaryBackground}}">
+             BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
 
     <Grid RowDefinitions="Auto,*">
 
@@ -13,7 +13,7 @@
         <Border Grid.Row="0"
             Margin="15,5,15,5"
             Padding="14"
-            BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkBackground}}"
+            BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}"
             StrokeShape="RoundRectangle 14">
 
             <VerticalStackLayout Spacing="0">
@@ -168,7 +168,7 @@
 
                     <Border Margin="0,3"
                             Padding="7"
-                            BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkBackground}}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}"
                             StrokeShape="RoundRectangle 12" >
                         
 

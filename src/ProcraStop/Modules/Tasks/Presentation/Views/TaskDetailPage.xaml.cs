@@ -2,65 +2,40 @@ using ProcraStop.Modules.Tasks.Presentation.ViewModels;
 using ProcraStop.Shared.Helpers;
 using ProcraStop.Shared.Services;
 using ProcraStop.Shared.UI.Components;
+using ProcraStop.Shared.UI.Layouts;
 namespace ProcraStop.Modules.Tasks.Presentation.Views;
 
-public partial class TaskDetailPage : ContentPage
+public partial class TaskDetailPage : BasePage
 {
-    private readonly ISnackbarService _snackbarService;
-
     public TaskDetailPage(TaskDetailViewModel vm, ISnackbarService snackbarService)
     {
         InitializeComponent();
         BindingContext = vm;
-        _snackbarService = snackbarService;
 
+        InitializeSnackbar(snackbarService); // 🔥 CLAVE
     }
-    private SnackbarService? _concrete;
-    private async void OnPageTapped(object sender, EventArgs e)
-    {
-        if (SnackbarView.IsVisible)
-        {
-            await SnackbarView.Hide();
-        }
-    }
-    private async Task HandleSnackbar(string msg, SnackbarType type)
-    {
-        var (icon, color) = type.GetStyle();
 
-        Overlay.IsVisible = true;
-
-        await MainThread.InvokeOnMainThreadAsync(async () =>
-        {
-            await SnackbarView.Show(msg, icon, color);
-        });
-
-        // Se ejecuta DESPUÉS del click
-        Overlay.IsVisible = false;
-    }
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
 
-        _concrete = _snackbarService as SnackbarService;
-
-        if (_concrete is not null)
+        // 🔥 recargar datos (lo que ya tenías)
+        if (BindingContext is TaskDetailViewModel vm && vm.CurrentTaskId != Guid.Empty)
         {
-            _concrete.OnShowRequested += HandleSnackbar;
+            vm.SetTaskId(vm.CurrentTaskId);
         }
-    }
 
-    protected override void OnDisappearing()
-    {
-        base.OnDisappearing();
+        // 🔥 consumir snackbar pendiente
+        var (msg, type) = PendingNotificationService.Consume();
 
-        if (_concrete is not null)
+        if (!string.IsNullOrWhiteSpace(msg))
         {
-            _concrete.OnShowRequested -= HandleSnackbar;
+            await Task.Delay(300);
+
+            await MainThread.InvokeOnMainThreadAsync(async () =>
+            {
+                await Snackbar.ShowAsync(msg, type);
+            });
         }
-    }
-    private async void OnOverlayTapped(object sender, EventArgs e)
-    {
-        await SnackbarView.Hide();
-        Overlay.IsVisible = false;
     }
 }

@@ -1,38 +1,25 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<base:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ProcraStop.Modules.Tasks.Presentation.Views.TaskDetailPage"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:components="clr-namespace:ProcraStop.Shared.UI.Components"
+             xmlns:base="clr-namespace:ProcraStop.Shared.UI.Layouts"
              Shell.BackgroundColor="{StaticResource cabecera}"
+             Shell.TabBarIsVisible="False"
              Shell.TitleColor="White"
              Shell.ForegroundColor="White"
              Title="Detalle de Tarea">
 
     <!-- STATUS BAR -->
-    <ContentPage.Behaviors>
+    <base:BasePage.Behaviors>
         <toolkit:StatusBarBehavior 
             StatusBarColor="{StaticResource cabecera}"
             StatusBarStyle="LightContent" />
-    </ContentPage.Behaviors>
+    </base:BasePage.Behaviors>
    
     <!-- ROOT -->
     <Grid RowDefinitions="85,*,Auto">
-        
-        <Grid x:Name="Overlay"
-              BackgroundColor="Transparent"
-              IsVisible="False"
-              ZIndex="998">
-
-            <Grid.GestureRecognizers>
-                <TapGestureRecognizer Tapped="OnOverlayTapped"/>
-            </Grid.GestureRecognizers>
-        </Grid>
-        <components:CustomSnackbar 
-            x:Name="SnackbarView"
-            Grid.RowSpan="3"
-            ZIndex="999"
-            VerticalOptions="Start"/>
 
         <!-- ========================= -->
         <!-- HEADER BACKGROUND -->
@@ -239,8 +226,11 @@
             <Grid ColumnDefinitions="*,Auto,Auto"
                   ColumnSpacing="7">
 
-                <Button Text="Completar"
-                        BackgroundColor="{StaticResource primarioO}"
+                <Button 
+                        Text="{Binding CurrentTask.CompleteButtonText}"
+                        BackgroundColor="{Binding CurrentTask.CompleteButtonColor}"
+                        IsEnabled="{Binding CurrentTask.CanComplete}"
+                        Command="{Binding CompleteTaskCommand}" 
                         TextColor="#d9e2ff"
                         CornerRadius="12"
                         WidthRequest="160"
@@ -250,6 +240,7 @@
                 <Button Grid.Column="1"
                         Text="Editar >"
                         WidthRequest="120"
+                        Command="{Binding GoToEditCommand}" 
                         BackgroundColor="{StaticResource Gray200}"
                         TextColor="{StaticResource DarkOnLightBackground}"
                         CornerRadius="11"
@@ -259,6 +250,7 @@
 
                 <Button Grid.Column="2"
                         Text="🗑"
+                        Command="{Binding DeleteTaskCommand}"
                         FontSize="15"
                         BackgroundColor="#EF4444"
                         TextColor="White"
@@ -272,4 +264,4 @@
 
     </Grid>
 
-</ContentPage>
+</base:BasePage>

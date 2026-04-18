@@ -4,6 +4,7 @@
              x:Class="ProcraStop.Modules.Tasks.Presentation.Views.CreateTaskPage"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              Title="Crear Tarea"
+             Shell.TabBarIsVisible="False"
              Shell.TitleColor="White"
              Shell.ForegroundColor="White"
              Shell.BackgroundColor="{StaticResource primarioS}"
