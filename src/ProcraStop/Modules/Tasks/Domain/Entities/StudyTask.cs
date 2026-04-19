@@ -57,7 +57,20 @@ namespace ProcraStop.Modules.Tasks.Domain.Entities
         // =========================
         // SUBTASKS
         // =========================
+        // create
+        public void AddSubtask(Guid id, string title, bool isCompleted = false)
+        {
+            if (id == Guid.Empty)
+                throw new ArgumentException("Id inválido");
 
+            if (string.IsNullOrWhiteSpace(title))
+                throw new ArgumentException("La subtarea necesita título");
+
+            _subtasks.Add(new Subtask(id, title, isCompleted));
+
+            UpdateStatusBasedOnSubtasks();
+        }
+        // edit
         public void AddSubtask(string title)
         {
             if (string.IsNullOrWhiteSpace(title))
@@ -227,14 +240,14 @@ namespace ProcraStop.Modules.Tasks.Domain.Entities
         }
         // actualizar subatareas  
         public void Update(
-      string title,
-      string? description,
-      DateTime? dueDate,
-      DateTime? reminderDate,
-      TaskPriority priority,
-      Guid? courseId,
-      int? estimatedMinutes,
-      List<SubtaskDto> subtasks)
+    string title,
+    string? description,
+    DateTime? dueDate,
+    DateTime? reminderDate,
+    TaskPriority priority,
+    Guid? courseId,
+    int? estimatedMinutes,
+    List<SubtaskDto> subtasks)
         {
             Title = title;
             Description = description;
@@ -244,15 +257,28 @@ namespace ProcraStop.Modules.Tasks.Domain.Entities
             CourseId = courseId;
             EstimatedMinutes = estimatedMinutes;
 
-            // 🔥 REEMPLAZO TOTAL (SOURCE OF TRUTH)
-            _subtasks.Clear();
+            // =========================
+            // SYNC REAL (SIN ROMPER)
+            // =========================
 
+            // 1. Remove
+            var incomingIds = subtasks.Select(x => x.Id).ToHashSet();
+
+            _subtasks.RemoveAll(s => !incomingIds.Contains(s.Id));
+
+            // 2. Add / Update
             foreach (var dto in subtasks)
             {
-                if (dto.Id == Guid.Empty)
-                    throw new Exception("Subtask debe tener Id");
+                var existing = _subtasks.FirstOrDefault(s => s.Id == dto.Id);
 
-                _subtasks.Add(new Subtask(dto.Id, dto.Title, dto.IsCompleted));
+                if (existing is null)
+                {
+                    AddSubtask(dto.Id, dto.Title, dto.IsCompleted);
+                }
+                else
+                {
+                    existing.Update(dto.Title, dto.IsCompleted);
+                }
             }
 
             UpdateStatusBasedOnSubtasks();

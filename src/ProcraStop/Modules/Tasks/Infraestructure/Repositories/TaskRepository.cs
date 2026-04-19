@@ -98,21 +98,46 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Repositories
                 // 🔥 SUBTASKS (SOURCE = DOMAIN)
                 // =========================
 
-                Console.WriteLine("RESET SUBTASKS...");
+                Console.WriteLine("SYNC SUBTASKS: calculando cambios...");
 
-                existing.Subtasks.Clear(); // 💥 clave
+                // Mejor estrategia: sincronizar cambios explícitamente para evitar que EF
+                // genere operaciones UPDATE sobre filas inexistentes (concurrency errors).
+                // 1) Eliminar subtareas que ya no vienen
+                var incomingIds = task.Subtasks.Select(s => s.Id).ToHashSet();
+                var toRemove = existing.Subtasks.Where(s => !incomingIds.Contains(s.Id)).ToList();
 
+                foreach (var rem in toRemove)
+                {
+                    Console.WriteLine($"REMOVE -> {rem.Id} | {rem.Title}");
+                    _dbContext.Subtasks.Remove(rem);
+                }
+
+                // 2) Actualizar las existentes y añadir las nuevas (usando Add para nuevas)
                 foreach (var subtask in task.Subtasks)
                 {
-                    Console.WriteLine($"ADD -> {subtask.Id} | {subtask.Title}");
+                    var found = existing.Subtasks.FirstOrDefault(s => s.Id == subtask.Id);
 
-                    existing.Subtasks.Add(new SubtaskEntity
+                    if (found is null)
                     {
-                        Id = subtask.Id,
-                        Title = subtask.Title,
-                        IsCompleted = subtask.IsCompleted,
-                        TaskId = task.Id
-                    });
+                        Console.WriteLine($"ADD -> {subtask.Id} | {subtask.Title}");
+                        var ent = new SubtaskEntity
+                        {
+                            Id = subtask.Id,
+                            Title = subtask.Title,
+                            IsCompleted = subtask.IsCompleted,
+                            TaskId = task.Id
+                        };
+
+                        // Añadir directamente al DbSet para que EF marque como Added
+                        await _dbContext.Subtasks.AddAsync(ent, cancellationToken);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"UPDATE -> {subtask.Id} | {subtask.Title}");
+                        found.Title = subtask.Title;
+                        found.IsCompleted = subtask.IsCompleted;
+                        // TaskId ya está seteado
+                    }
                 }
 
                 // =========================
