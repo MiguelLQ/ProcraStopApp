@@ -70,13 +70,13 @@ namespace ProcraStop.Modules.Tasks.Domain.Entities
 
             UpdateStatusBasedOnSubtasks();
         }
-        // edit
-        public void AddSubtask(string title)
+        // edit - genera id en la capa de dominio
+        public void AddSubtask(string title, bool isCompleted = false)
         {
             if (string.IsNullOrWhiteSpace(title))
                 throw new ArgumentException("La subtarea necesita título");
 
-            _subtasks.Add(new Subtask(Guid.NewGuid(), title));
+            _subtasks.Add(new Subtask(Guid.NewGuid(), title, isCompleted));
 
             UpdateStatusBasedOnSubtasks();
         }
@@ -267,17 +267,25 @@ namespace ProcraStop.Modules.Tasks.Domain.Entities
             _subtasks.RemoveAll(s => !incomingIds.Contains(s.Id));
 
             // 2. Add / Update
-            foreach (var dto in subtasks)
+            // 1. NUEVAS
+            foreach (var dto in subtasks.Where(s => s.Id == Guid.Empty))
+            {
+                AddSubtask(dto.Title, dto.IsCompleted);
+            }
+
+            // 2. EXISTENTES
+            foreach (var dto in subtasks.Where(s => s.Id != Guid.Empty))
             {
                 var existing = _subtasks.FirstOrDefault(s => s.Id == dto.Id);
 
-                if (existing is null)
+                if (existing != null)
                 {
-                    AddSubtask(dto.Id, dto.Title, dto.IsCompleted);
+                    existing.Update(dto.Title, dto.IsCompleted);
                 }
                 else
                 {
-                    existing.Update(dto.Title, dto.IsCompleted);
+                    // fallback por seguridad (datos corruptos o edge case)
+                    AddSubtask(dto.Id, dto.Title, dto.IsCompleted);
                 }
             }
 

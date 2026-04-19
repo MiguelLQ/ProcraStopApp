@@ -328,7 +328,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
 
             Subtasks.Add(new SubtaskModel
             {
-                Id = Guid.NewGuid(), // CLAVE: generar id único para evitar errores al guardar
+                Id = Guid.Empty, // Id se generará en la capa de dominio al guardar
                 Title = NewSubtaskText.Trim(),
                 IsCompleted = false
             });
