@@ -240,6 +240,7 @@
                 <Button Grid.Column="1"
                         Text="Editar >"
                         WidthRequest="120"
+                          IsVisible="{Binding CanEdit}"
                         Command="{Binding GoToEditCommand}" 
                         BackgroundColor="{StaticResource Gray200}"
                         TextColor="{StaticResource DarkOnLightBackground}"

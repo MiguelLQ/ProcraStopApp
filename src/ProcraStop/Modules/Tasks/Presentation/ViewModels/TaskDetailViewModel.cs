@@ -15,7 +15,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
         private readonly ITasksFacade _tasksFacade;
         private readonly ISnackbarService _snackbarService;
         public Guid CurrentTaskId => CurrentTask?.Id ?? Guid.Empty;
-
+        public bool CanEdit => CurrentTask?.Status != TaskItemStatus.Completed;
         public TaskDetailViewModel(ITasksFacade tasksFacade, ISnackbarService snackbarService)
         {
             _tasksFacade = tasksFacade;
@@ -105,6 +105,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
                         IsCompleted = x.IsCompleted
                     }))
             };
+            OnPropertyChanged(nameof(CanEdit));
         }
         // tareas sin subtareas
         [RelayCommand]
