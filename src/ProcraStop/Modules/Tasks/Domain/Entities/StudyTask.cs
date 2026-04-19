@@ -292,6 +292,21 @@ namespace ProcraStop.Modules.Tasks.Domain.Entities
             UpdateStatusBasedOnSubtasks();
         }
         // =========================
+        // logica de dificultad
+        // ========================
+        public TaskEffort GetEffort()
+        {
+            if (!EstimatedMinutes.HasValue)
+                return TaskEffort.Unknown;
+
+            return EstimatedMinutes.Value switch
+            {
+                <= 30 => TaskEffort.Quick,
+                <= 60 => TaskEffort.Medium,
+                _ => TaskEffort.Heavy
+            };
+        }
+        // =========================
         // HELPERS
         // =========================
 

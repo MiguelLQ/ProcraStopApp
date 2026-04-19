@@ -16,7 +16,7 @@ namespace ProcraStop
             Routing.RegisterRoute(nameof(CreateTaskPage), typeof(CreateTaskPage));
             Routing.RegisterRoute(nameof(CoursesPage), typeof(CoursesPage));
             Routing.RegisterRoute("edit-task", typeof(EditTaskPage));
-
+            Routing.RegisterRoute(nameof(DashboardPage), typeof(DashboardPage));
             var currentTheme = Application.Current!.RequestedTheme;
             ThemeSegmentedControl.SelectedIndex = currentTheme == AppTheme.Light ? 0 : 1;
         }

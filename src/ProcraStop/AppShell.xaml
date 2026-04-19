@@ -77,7 +77,12 @@
                 ContentTemplate="{DataTemplate course:CoursesPage}"
                 Route="CoursesPage"/>
         </Tab>
-
+        <Tab Title="Dashboard" Icon="{StaticResource IconDashboard}">
+            <ShellContent
+                Title="Dashboard"
+                ContentTemplate="{DataTemplate task:DashboardPage}"
+                Route="DashboardPage"/>
+        </Tab>
     </FlyoutItem>
 
     <!-- MÓDULO FUTURO — Configuración u otro -->

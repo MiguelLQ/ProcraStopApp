@@ -9,8 +9,11 @@ using ProcraStop.Modules.Tasks.Application.Commands.UpdateCourse;
 using ProcraStop.Modules.Tasks.Application.Commands.UpdateTask;
 using ProcraStop.Modules.Tasks.Application.Facade;
 using ProcraStop.Modules.Tasks.Application.Queries.GetCourses;
+using ProcraStop.Modules.Tasks.Application.Queries.GetDashboardGuidance;
+using ProcraStop.Modules.Tasks.Application.Queries.GetFocusTasks;
 using ProcraStop.Modules.Tasks.Application.Queries.GetTaskById;
 using ProcraStop.Modules.Tasks.Application.Queries.GetTasks;
+using ProcraStop.Modules.Tasks.Application.Queries.GetTodayRecommendations;
 using ProcraStop.Modules.Tasks.Infraestructure.Persistence;
 using ProcraStop.Modules.Tasks.Infraestructure.Repositories;
 using ProcraStop.Modules.Tasks.Infraestructure.Services;
@@ -52,6 +55,13 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Registration
             services.AddTransient<CreateCourseCommandHandler>();
             services.AddTransient<DeleteCourseCommandHandler>();
             services.AddTransient<GetCoursesQueryHandler>();
+            // logica de paginas inteligentes
+            services.AddTransient<GetTodayRecommendationsHandler>();
+            services.AddTransient<GetTodayRecommendationsQuery>();
+            services.AddTransient<GetDashboardGuidanceHandler>();
+            services.AddTransient<GetDashboardGuidanceQuery>();
+            services.AddTransient<GetFocusTasksHandler>();
+            services.AddTransient<GetFocusTasksQuery>();
             // Facade
             services.AddScoped<ITasksFacade, TasksFacade>();
             services.AddScoped<ICoursesFacade, CoursesFacade>();
@@ -61,12 +71,14 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Registration
             services.AddTransient<CoursesPageViewModel>();
             services.AddTransient<TaskDetailViewModel>();
             services.AddTransient<EditTaskViewModel>();
+            services.AddTransient<DashboardViewModel>();
             //// Views
             services.AddTransient<TasksPage>();
             services.AddTransient<CreateTaskPage>();
             services.AddTransient<CoursesPage>();
             services.AddTransient<TaskDetailPage>();
             services.AddTransient<EditTaskPage>();
+            services.AddTransient<DashboardPage>();
             // 
             services.AddScoped<ITaskReadService, TaskReadService>();
 
