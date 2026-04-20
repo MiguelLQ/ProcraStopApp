@@ -1,4 +1,5 @@
 ﻿
+using ProcraStop.Modules.Tasks.Application.DecisionEngine.Context;
 using ProcraStop.Modules.Tasks.Application.DecisionEngine.DTOs;
 using ProcraStop.Modules.Tasks.Application.DecisionEngine.Signals;
 using ProcraStop.Modules.Tasks.Domain.Entities;
@@ -11,12 +12,12 @@ namespace ProcraStop.Modules.Tasks.Application.DecisionEngine.Rules
         // Esta regla se activa cuando el usuario tiene más de 3 tareas atrasadas
         public int Priority => 100;
         // La regla se activa si el usuario tiene una alta cantidad de tareas atrasadas y una alta carga total de trabajo
-        public bool IsMatch(TaskSignals s)
+        public bool IsMatch(DecisionContext ctx)
         {
-            return s.HighOverdue && s.HighTotalEffort;
+            return ctx.Tasks.HighOverdue && ctx.Tasks.HighTotalEffort;
         }
         // Si la regla se activa, se sugiere al usuario que reduzca el alcance de su trabajo para evitar sentirse abrumado
-        public DashboardDecisionDto CreateDecision(TaskSignals s)
+        public DashboardDecisionDto CreateDecision(DecisionContext ctx)
         {
             return new DashboardDecisionDto
             {

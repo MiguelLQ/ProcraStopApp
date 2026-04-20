@@ -1,7 +1,6 @@
 ﻿
+using ProcraStop.Modules.Tasks.Application.DecisionEngine.Context;
 using ProcraStop.Modules.Tasks.Application.DecisionEngine.DTOs;
-using ProcraStop.Modules.Tasks.Application.DecisionEngine.Signals;
-using ProcraStop.Modules.Tasks.Domain.Entities;
 using ProcraStop.Modules.Tasks.Domain.Enums;
 
 namespace ProcraStop.Modules.Tasks.Application.DecisionEngine.Rules
@@ -11,13 +10,14 @@ namespace ProcraStop.Modules.Tasks.Application.DecisionEngine.Rules
         // Esta regla se activa cuando el usuario tiene tareas atrasadas pero también tiene
         // varias tareas rápidas pendientes
         public int Priority => 50;
-        // Verifica si el usuario tiene tareas atrasadas y tareas rápidas pendientes
-        public bool IsMatch(TaskSignals s)
+        // La regla se activa si el usuario tiene tareas de alta prioridad atrasadas
+        // pero también tiene tareas de alta prioridad con poco esfuerzo total
+        public bool IsMatch(DecisionContext ctx)
         {
-            return s.HasOverdueTasks && s.HasQuickTasks;
+            return ctx.Tasks.HighOverdue && ctx.Tasks.HighTotalEffort;
         }
-        // Si la regla se activa, se sugiere al usuario que haga una tarea rápida para ganar impulso
-        public DashboardDecisionDto CreateDecision(TaskSignals s)
+        // Si la regla se activa, se sugiere al usuario que aproveche las tareas rápidas para ganar impulso
+        public DashboardDecisionDto CreateDecision(DecisionContext  ctx)
         {
             return new DashboardDecisionDto
             {

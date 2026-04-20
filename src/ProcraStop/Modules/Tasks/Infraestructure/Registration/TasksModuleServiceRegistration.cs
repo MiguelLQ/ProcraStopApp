@@ -7,6 +7,7 @@ using ProcraStop.Modules.Tasks.Application.Commands.DeleteCourse;
 using ProcraStop.Modules.Tasks.Application.Commands.ToggleSubtask;
 using ProcraStop.Modules.Tasks.Application.Commands.UpdateCourse;
 using ProcraStop.Modules.Tasks.Application.Commands.UpdateTask;
+using ProcraStop.Modules.Tasks.Application.DecisionEngine.Context;
 using ProcraStop.Modules.Tasks.Application.DecisionEngine.Queries;
 using ProcraStop.Modules.Tasks.Application.DecisionEngine.Rules;
 using ProcraStop.Modules.Tasks.Application.DecisionEngine.Signals;
@@ -70,6 +71,7 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Registration
             services.AddTransient<IDecisionRule, OverdueOverloadRule>();
             services.AddTransient<IDecisionRule, QuickWinRule>();
             services.AddTransient<TaskSignalsBuilder>();
+            services.AddTransient<DecisionContextBuilder>();
             // Facade
             services.AddScoped<ITasksFacade, TasksFacade>();
             services.AddScoped<ICoursesFacade, CoursesFacade>();

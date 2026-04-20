@@ -1,8 +1,8 @@
 ﻿
 using ProcraStop.Modules.Tasks.Application.Abstractions;
+using ProcraStop.Modules.Tasks.Application.DecisionEngine.Context;
 using ProcraStop.Modules.Tasks.Application.DecisionEngine.DTOs;
 using ProcraStop.Modules.Tasks.Application.DecisionEngine.Rules;
-using ProcraStop.Modules.Tasks.Application.DecisionEngine.Signals;
 using ProcraStop.Modules.Tasks.Domain.Enums;
 
 namespace ProcraStop.Modules.Tasks.Application.DecisionEngine.Queries
@@ -11,24 +11,24 @@ namespace ProcraStop.Modules.Tasks.Application.DecisionEngine.Queries
     {
         private readonly ITaskRepository _repository;
         private readonly IEnumerable<IDecisionRule> _rules;
-        private readonly TaskSignalsBuilder _signalsBuilder;
+        private readonly DecisionContextBuilder _contextBuilder;
         public GetDashboardDecisionHandler(
           ITaskRepository repository,
           IEnumerable<IDecisionRule> rules,
-          TaskSignalsBuilder signalsBuilder)
+          DecisionContextBuilder contextBuilder)
             {
                 _repository = repository;
                 _rules = rules;
-                _signalsBuilder = signalsBuilder;
+                _contextBuilder = contextBuilder;
             }
 
         public async Task<DashboardDecisionDto> Handle(GetDashboardDecisionQuery query)
         {
             var tasks = await _repository.GetAllAsync();
-            var signals = _signalsBuilder.Build(tasks);
+            var context = _contextBuilder.Build(tasks);
 
             // caso especial
-            if (signals.NoPendingTasks)
+            if (context.Tasks.NoPendingTasks)
             {
                 return new DashboardDecisionDto
                 {
@@ -37,9 +37,8 @@ namespace ProcraStop.Modules.Tasks.Application.DecisionEngine.Queries
                 };
             }
 
-            //evaluar reglas
             var matchedRules = _rules
-                .Where(r => r.IsMatch(signals))
+                .Where(r => r.IsMatch(context))
                 .OrderByDescending(r => r.Priority)
                 .ToList();
 
@@ -47,7 +46,7 @@ namespace ProcraStop.Modules.Tasks.Application.DecisionEngine.Queries
 
             if (selected != null)
             {
-                return selected.CreateDecision(signals);
+                return selected.CreateDecision(context);
             }
 
             //default
