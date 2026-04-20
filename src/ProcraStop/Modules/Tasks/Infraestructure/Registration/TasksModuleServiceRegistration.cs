@@ -70,6 +70,9 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Registration
             services.AddTransient<GetDashboardDecisionHandler>();
             services.AddTransient<IDecisionRule, OverdueOverloadRule>();
             services.AddTransient<IDecisionRule, QuickWinRule>();
+            services.AddTransient<IDecisionRule, MomentumRule>();
+            services.AddTransient<IDecisionRule, OverPlanningRule>();
+            services.AddTransient<IDecisionRule, AvoidingHardTasksRule>();
             services.AddTransient<TaskSignalsBuilder>();
             services.AddTransient<DecisionContextBuilder>();
             // Facade
