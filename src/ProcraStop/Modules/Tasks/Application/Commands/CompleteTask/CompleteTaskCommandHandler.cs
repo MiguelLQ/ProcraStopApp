@@ -1,9 +1,4 @@
 ﻿using ProcraStop.Modules.Tasks.Application.Abstractions;
-using ProcraStop.Modules.Tasks.Domain.Entities;
-using ProcraStop.Modules.Tasks.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ProcraStop.Modules.Tasks.Application.Commands.CompleteTask
 {

@@ -7,6 +7,8 @@ using ProcraStop.Modules.Tasks.Application.Commands.DeleteCourse;
 using ProcraStop.Modules.Tasks.Application.Commands.ToggleSubtask;
 using ProcraStop.Modules.Tasks.Application.Commands.UpdateCourse;
 using ProcraStop.Modules.Tasks.Application.Commands.UpdateTask;
+using ProcraStop.Modules.Tasks.Application.DecisionEngine.Queries;
+using ProcraStop.Modules.Tasks.Application.DecisionEngine.Rules;
 using ProcraStop.Modules.Tasks.Application.Facade;
 using ProcraStop.Modules.Tasks.Application.Queries.GetCourses;
 using ProcraStop.Modules.Tasks.Application.Queries.GetDashboardGuidance;
@@ -14,7 +16,6 @@ using ProcraStop.Modules.Tasks.Application.Queries.GetFocusTasks;
 using ProcraStop.Modules.Tasks.Application.Queries.GetTaskById;
 using ProcraStop.Modules.Tasks.Application.Queries.GetTasks;
 using ProcraStop.Modules.Tasks.Application.Queries.GetTodayRecommendations;
-using ProcraStop.Modules.Tasks.Infraestructure.Persistence;
 using ProcraStop.Modules.Tasks.Infraestructure.Repositories;
 using ProcraStop.Modules.Tasks.Infraestructure.Services;
 using ProcraStop.Modules.Tasks.Presentation.ViewModels;
@@ -56,12 +57,17 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Registration
             services.AddTransient<DeleteCourseCommandHandler>();
             services.AddTransient<GetCoursesQueryHandler>();
             // logica de paginas inteligentes
+            services.AddTransient<GetDashboardDecisionQuery>();
             services.AddTransient<GetTodayRecommendationsHandler>();
             services.AddTransient<GetTodayRecommendationsQuery>();
             services.AddTransient<GetDashboardGuidanceHandler>();
             services.AddTransient<GetDashboardGuidanceQuery>();
             services.AddTransient<GetFocusTasksHandler>();
             services.AddTransient<GetFocusTasksQuery>();
+            // reglas de decision engine
+            services.AddTransient<GetDashboardDecisionHandler>();
+            services.AddTransient<IDecisionRule, OverdueOverloadRule>();
+            services.AddTransient<IDecisionRule, QuickWinRule>();
             // Facade
             services.AddScoped<ITasksFacade, TasksFacade>();
             services.AddScoped<ICoursesFacade, CoursesFacade>();
