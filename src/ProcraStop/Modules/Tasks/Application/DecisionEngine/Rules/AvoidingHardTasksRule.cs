@@ -17,19 +17,26 @@ namespace ProcraStop.Modules.Tasks.Application.DecisionEngine.Rules
         {
             var t = ctx.Tasks;
 
-            return t.HeavyTasksCount >= 3 &&
+            return t.HeavyTasksCount >= 2 &&
                    t.QuickTasksCount >= 2 &&
-                   !t.HighOverdue;
+                   t.OverdueCount <= 1;
         }
         // El mensaje de esta regla es "Podrías estar evitando tareas importantes."
         // porque se enfoca en alertar al usuario sobre el hecho de que podría estar procrastinando tareas difíciles,
         public DashboardDecisionDto CreateDecision(DecisionContext ctx)
         {
+            var t = ctx.Tasks;
             return new DashboardDecisionDto
             {
                 Message = "Podrías estar evitando tareas importantes.",
                 Type = GuidanceType.Warning,
-                SuggestedAction = "Avanza al menos 10 minutos en una tarea difícil"
+                Reason = $"Tienes {t.HeavyTasksCount} tareas complejas, pero estás priorizando tareas rápidas.",
+                SuggestedAction = "Avanza al menos 10 minutos en una tarea difícil",
+                Insights = new List<string>
+                {
+                    $"Tareas difíciles: {t.HeavyTasksCount}",
+                    $"Tareas rápidas: {t.QuickTasksCount}"
+                }
             };
         }
 

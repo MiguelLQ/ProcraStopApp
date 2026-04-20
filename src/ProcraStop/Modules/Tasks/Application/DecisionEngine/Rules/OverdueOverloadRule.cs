@@ -14,16 +14,27 @@ namespace ProcraStop.Modules.Tasks.Application.DecisionEngine.Rules
         // La regla se activa si el usuario tiene una alta cantidad de tareas atrasadas y una alta carga total de trabajo
         public bool IsMatch(DecisionContext ctx)
         {
-            return ctx.Tasks.HighOverdue && ctx.Tasks.HighTotalEffort;
+            var t = ctx.Tasks;
+
+            return t.OverdueCount >= 3;
         }
         // Si la regla se activa, se sugiere al usuario que reduzca el alcance de su trabajo para evitar sentirse abrumado
         public DashboardDecisionDto CreateDecision(DecisionContext ctx)
         {
+            var t = ctx.Tasks;
+
             return new DashboardDecisionDto
             {
                 Message = "Estás acumulando retrasos y mucha carga. Reduce el alcance hoy.",
                 Type = GuidanceType.Warning,
-                SuggestedAction = "Elige una tarea pequeña y avanza solo en eso"
+                Reason = $"Tienes {t.OverdueCount} tareas atrasadas y una carga estimada de {t.TotalEffort} minutos.",
+                SuggestedAction = "No intentes hacer todo. Recupera control con una tarea pequeña.",
+                Insights = new List<string>
+                {
+                    $"Tareas pendientes: {t.PendingCount}",
+                    $"Tareas atrasadas: {t.OverdueCount}",
+                    $"Carga total: {t.TotalEffort} min"
+                }
             };
         }
     }

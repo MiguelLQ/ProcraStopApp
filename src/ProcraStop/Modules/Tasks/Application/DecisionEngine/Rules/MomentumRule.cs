@@ -15,7 +15,7 @@ namespace ProcraStop.Modules.Tasks.Application.DecisionEngine.Rules
         {
             var t = ctx.Tasks;
 
-            return t.PendingCount > 0 &&
+            return t.PendingCount >= 2 &&
                    t.QuickTasksCount >= 2 &&
                    !t.HasOverdueTasks;
         }
@@ -23,11 +23,18 @@ namespace ProcraStop.Modules.Tasks.Application.DecisionEngine.Rules
         // sugiriendo que empiece con una tarea corta para mantener ese impulso.
         public DashboardDecisionDto CreateDecision(DecisionContext ctx)
         {
+            var t = ctx.Tasks;
             return new DashboardDecisionDto
             {
                 Message = "Te conviene generar impulso.",
                 Type = GuidanceType.Info,
-                SuggestedAction = "Empieza con una tarea corta para entrar en ritmo"
+                Reason = $"Tienes {t.QuickTasksCount} tareas rápidas disponibles y ninguna atrasada.",
+                SuggestedAction = "Empieza con una tarea corta para entrar en ritmo",
+                Insights = new List<string>
+                {
+                    $"Tareas rápidas: {t.QuickTasksCount}",
+                    $"Tareas pendientes: {t.PendingCount}"
+                }
             };
         }
     }

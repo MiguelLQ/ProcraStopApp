@@ -60,12 +60,12 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Registration
             services.AddTransient<GetCoursesQueryHandler>();
             // logica de paginas inteligentes
             services.AddTransient<GetDashboardDecisionQuery>();
-            services.AddTransient<GetTodayRecommendationsHandler>();
-            services.AddTransient<GetTodayRecommendationsQuery>();
-            services.AddTransient<GetDashboardGuidanceHandler>();
-            services.AddTransient<GetDashboardGuidanceQuery>();
-            services.AddTransient<GetFocusTasksHandler>();
-            services.AddTransient<GetFocusTasksQuery>();
+            //services.AddTransient<GetTodayRecommendationsHandler>();
+            //services.AddTransient<GetTodayRecommendationsQuery>();
+            //services.AddTransient<GetDashboardGuidanceHandler>();
+            //services.AddTransient<GetDashboardGuidanceQuery>();
+            //services.AddTransient<GetFocusTasksHandler>();
+            //services.AddTransient<GetFocusTasksQuery>();
             // reglas de decision engine
             services.AddTransient<GetDashboardDecisionHandler>();
             services.AddTransient<IDecisionRule, OverdueOverloadRule>();

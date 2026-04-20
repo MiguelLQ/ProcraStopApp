@@ -17,9 +17,7 @@ namespace ProcraStop.Modules.Tasks.Application.DecisionEngine.Rules
         {
             var t = ctx.Tasks;
 
-            return t.PendingCount >= 10 &&
-                   t.HighTotalEffort &&
-                   !t.HasQuickTasks;
+            return t.PendingCount >= 8 && t.TotalEffort >= 240;
         }
         // El mensaje de esta regla es "Tienes demasiadas tareas planificadas." porque se enfoca en
         // alertar al usuario sobre el hecho de que tiene una cantidad excesiva de tareas pendientes,

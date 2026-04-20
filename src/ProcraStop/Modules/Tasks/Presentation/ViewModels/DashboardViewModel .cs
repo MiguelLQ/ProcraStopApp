@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using ProcraStop.Modules.Tasks.Application.DecisionEngine.Queries;
 using ProcraStop.Modules.Tasks.Domain.Enums;
+using System.Collections.ObjectModel;
 
 namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
 {
@@ -23,7 +24,22 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
         // o un enlace a una sección específica de la aplicación
         [ObservableProperty]
         private string? suggestedAction;
-        // método para cargar la decisión del dashboard
+        // la razón detrás de la decisión puede ser un texto que explique por qué se tomó esa decisión,
+        [ObservableProperty]
+        private string reason = string.Empty;
+        // las ideas o insights relacionados con la decisión pueden ser una lista de puntos clave que
+        // el usuario debe tener en cuenta,
+        [ObservableProperty]
+        private ObservableCollection<string> insights = new();
+        //
+        [ObservableProperty]
+        private Color? guidanceColor;
+        // iconos
+        [ObservableProperty]
+        private string guidanceIcon = string.Empty;
+        //
+        [ObservableProperty]
+        private ObservableCollection<string> secondaryInsights = new();
         public async Task LoadAsync()
         {
             // aquí se llama al handler para obtener la decisión del dashboard
@@ -32,6 +48,33 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             Message = decision.Message;
             Type = decision.Type;
             SuggestedAction = decision.SuggestedAction;
+            Reason = decision.Reason ?? string.Empty;
+            Insights = new ObservableCollection<string>(
+                decision.Insights ?? new List<string>());
+            GuidanceColor = MapColor(decision.Type);
+            GuidanceIcon = MapIcon(decision.Type);
+            SecondaryInsights = new ObservableCollection<string>(
+                 decision.SecondaryInsights ?? new List<string>());
+        }
+        private Color MapColor(GuidanceType type)
+        {
+            return type switch
+            {
+                GuidanceType.Warning => Colors.OrangeRed,
+                GuidanceType.Success => Colors.Green,
+                GuidanceType.Info => Colors.Blue,
+                _ => Colors.Gray
+            };
+        }
+        private string MapIcon(GuidanceType type)
+        {
+            return type switch
+            {
+                GuidanceType.Warning => "⚠️",
+                GuidanceType.Success => "✅",
+                GuidanceType.Info => "💡",
+                _ => "ℹ️"
+            };
         }
 
     }

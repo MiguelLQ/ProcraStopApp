@@ -14,16 +14,29 @@ namespace ProcraStop.Modules.Tasks.Application.DecisionEngine.Rules
         // pero también tiene tareas de alta prioridad con poco esfuerzo total
         public bool IsMatch(DecisionContext ctx)
         {
-            return ctx.Tasks.HighOverdue && ctx.Tasks.HighTotalEffort;
+            var t = ctx.Tasks;
+
+            return t.OverdueCount >= 1 && t.QuickTasksCount >= 2;
         }
         // Si la regla se activa, se sugiere al usuario que aproveche las tareas rápidas para ganar impulso
         public DashboardDecisionDto CreateDecision(DecisionContext  ctx)
         {
+            var t = ctx.Tasks;
+
             return new DashboardDecisionDto
             {
                 Message = "Tienes tareas atrasadas pero fáciles.",
                 Type = GuidanceType.Info,
-                SuggestedAction = "Haz una tarea rápida ahora"
+
+                Reason = $"Tienes {t.OverdueCount} tareas atrasadas y {t.QuickTasksCount} tareas rápidas disponibles.",
+
+                SuggestedAction = "Haz una tarea rápida ahora para recuperar control.",
+
+                Insights = new List<string>
+                {
+                    $"Atrasadas: {t.OverdueCount}",
+                    $"Rápidas: {t.QuickTasksCount}"
+                 }
             };
         }
     }

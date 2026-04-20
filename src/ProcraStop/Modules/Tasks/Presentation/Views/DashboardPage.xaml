@@ -3,23 +3,57 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ProcraStop.Modules.Tasks.Presentation.Views.DashboardPage"
              Title="DashboardPage">
-    <VerticalStackLayout Padding="16" Spacing="16">
+    <VerticalStackLayout Padding="16" Spacing="12">
 
-        <Border Padding="16">
-            <VerticalStackLayout Spacing="8">
+        <!-- HEADER -->
+        <HorizontalStackLayout Spacing="8" Padding="1">
+            <Label Text="{Binding GuidanceIcon}" FontSize="20"/>
+            <Label 
+            Text="{Binding Message}"
+            FontSize="20"
+            FontAttributes="Bold"
+            TextColor="{Binding GuidanceColor}" />
+        </HorizontalStackLayout>
 
-                <Label 
-                Text="{Binding Message}"
-                FontSize="18"
-                FontAttributes="Bold" />
+        <!-- REASON -->
+        <Label 
+        Text="{Binding Reason}"
+        FontSize="14"
+        TextColor="Gray" />
 
+        <!-- ACTION BOX -->
+        <Border Padding="12" BackgroundColor="#EEF6FF">
+            <VerticalStackLayout>
                 <Label 
                 Text="{Binding SuggestedAction}"
-                FontSize="14"
-                TextColor="Gray" />
+                FontAttributes="Bold" />
 
+                <Button 
+                Text="boton accion"
+                Command="{Binding ExecuteActionCommand}" />
             </VerticalStackLayout>
         </Border>
+
+        <!-- INSIGHTS -->
+        <CollectionView ItemsSource="{Binding Insights}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Label Text="{Binding .}" FontSize="12" />
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <Label Text="También considera:" FontSize="12" TextColor="Gray"/>
+        <!-- SECONDARY INSIGHTS -->
+        <CollectionView ItemsSource="{Binding SecondaryInsights}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Label 
+                    Text="{Binding .}" 
+                    FontSize="11"
+                    TextColor="DarkGray"/>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
 
     </VerticalStackLayout>
 
