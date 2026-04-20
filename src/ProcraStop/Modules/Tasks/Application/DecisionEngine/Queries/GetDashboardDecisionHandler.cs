@@ -2,6 +2,7 @@
 using ProcraStop.Modules.Tasks.Application.Abstractions;
 using ProcraStop.Modules.Tasks.Application.DecisionEngine.DTOs;
 using ProcraStop.Modules.Tasks.Application.DecisionEngine.Rules;
+using ProcraStop.Modules.Tasks.Application.DecisionEngine.Signals;
 using ProcraStop.Modules.Tasks.Domain.Enums;
 
 namespace ProcraStop.Modules.Tasks.Application.DecisionEngine.Queries
@@ -10,22 +11,24 @@ namespace ProcraStop.Modules.Tasks.Application.DecisionEngine.Queries
     {
         private readonly ITaskRepository _repository;
         private readonly IEnumerable<IDecisionRule> _rules;
+        private readonly TaskSignalsBuilder _signalsBuilder;
         public GetDashboardDecisionHandler(
           ITaskRepository repository,
-          IEnumerable<IDecisionRule> rules)
+          IEnumerable<IDecisionRule> rules,
+          TaskSignalsBuilder signalsBuilder)
             {
                 _repository = repository;
                 _rules = rules;
+                _signalsBuilder = signalsBuilder;
             }
 
         public async Task<DashboardDecisionDto> Handle(GetDashboardDecisionQuery query)
         {
             var tasks = await _repository.GetAllAsync();
+            var signals = _signalsBuilder.Build(tasks);
 
-            var pending = tasks.Where(t => !t.IsCompleted && !t.IsArchived).ToList();
-
-            // 🟢 caso especial: sin tareas
-            if (!pending.Any())
+            // caso especial
+            if (signals.NoPendingTasks)
             {
                 return new DashboardDecisionDto
                 {
@@ -34,20 +37,20 @@ namespace ProcraStop.Modules.Tasks.Application.DecisionEngine.Queries
                 };
             }
 
-            // 🔥 evaluar reglas
+            //evaluar reglas
             var matchedRules = _rules
-                .Where(r => r.IsMatch(tasks))
+                .Where(r => r.IsMatch(signals))
                 .OrderByDescending(r => r.Priority)
                 .ToList();
 
-            var selectedRule = matchedRules.FirstOrDefault();
+            var selected = matchedRules.FirstOrDefault();
 
-            if (selectedRule != null)
+            if (selected != null)
             {
-                return selectedRule.CreateDecision(tasks);
+                return selected.CreateDecision(signals);
             }
 
-            // 🔵 default
+            //default
             return new DashboardDecisionDto
             {
                 Message = "Organiza tu día y enfócate en lo importante.",

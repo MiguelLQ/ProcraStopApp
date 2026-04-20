@@ -1,5 +1,6 @@
 ﻿
 using ProcraStop.Modules.Tasks.Application.DecisionEngine.DTOs;
+using ProcraStop.Modules.Tasks.Application.DecisionEngine.Signals;
 using ProcraStop.Modules.Tasks.Domain.Entities;
 using ProcraStop.Modules.Tasks.Domain.Enums;
 
@@ -9,19 +10,13 @@ namespace ProcraStop.Modules.Tasks.Application.DecisionEngine.Rules
     {
         // Esta regla se activa cuando el usuario tiene más de 3 tareas atrasadas
         public int Priority => 100;
-        // el siguiente paso es evaluar si el usuario tiene una carga de trabajo excesiva,
-        // considerando tanto el número de tareas atrasadas como el esfuerzo estimado total
-        public bool IsMatch(IReadOnlyList<StudyTask> tasks)
+        // La regla se activa si el usuario tiene una alta cantidad de tareas atrasadas y una alta carga total de trabajo
+        public bool IsMatch(TaskSignals s)
         {
-            var pending = tasks.Where(t => !t.IsCompleted && !t.IsArchived).ToList();
-
-            var overdueCount = pending.Count(t => t.IsOverdue);
-            var totalEffort = pending.Sum(t => t.EstimatedMinutes ?? 30);
-
-            return overdueCount >= 3 && totalEffort > 300;
+            return s.HighOverdue && s.HighTotalEffort;
         }
-        // Si la regla se activa, se sugiere al usuario reducir el alcance de su trabajo para evitar sentirse abrumado
-        public DashboardDecisionDto CreateDecision(IReadOnlyList<StudyTask> tasks)
+        // Si la regla se activa, se sugiere al usuario que reduzca el alcance de su trabajo para evitar sentirse abrumado
+        public DashboardDecisionDto CreateDecision(TaskSignals s)
         {
             return new DashboardDecisionDto
             {
