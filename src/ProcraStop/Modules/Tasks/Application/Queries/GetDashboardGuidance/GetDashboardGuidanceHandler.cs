@@ -1,7 +1,6 @@
 ﻿using ProcraStop.Modules.Tasks.Application.Abstractions;
-using ProcraStop.Modules.Tasks.Application.DTOs;
+using ProcraStop.Modules.Tasks.Application.EngineTask.DTOs;
 using ProcraStop.Modules.Tasks.Domain.Entities;
-using ProcraStop.Modules.Tasks.Domain.Enums;
 
 namespace ProcraStop.Modules.Tasks.Application.Queries.GetDashboardGuidance
 {
@@ -14,7 +13,7 @@ namespace ProcraStop.Modules.Tasks.Application.Queries.GetDashboardGuidance
             _repository = repository;
         }
 
-        public async Task<DashboardGuidanceDto> Handle(GetDashboardGuidanceQuery query)
+        public async Task<DashboardDecisionDto> Handle(GetDashboardGuidanceQuery query)
         {
             var tasks = await _repository.GetAllAsync();
 
@@ -22,7 +21,7 @@ namespace ProcraStop.Modules.Tasks.Application.Queries.GetDashboardGuidance
 
             if (!pending.Any())
             {
-                return new DashboardGuidanceDto
+                return new DashboardDecisionDto
                 {
                     Message = "No tienes tareas pendientes. Buen trabajo.",
                     Type = GuidanceType.Success
@@ -40,7 +39,7 @@ namespace ProcraStop.Modules.Tasks.Application.Queries.GetDashboardGuidance
             // 🔴 1. CRÍTICO: atraso + carga alta
             if (overdueTasks.Count >= 3 && totalEffort > 300)
             {
-                return new DashboardGuidanceDto
+                return new DashboardDecisionDto
                 {
                     Message = "Estás acumulando retrasos y carga alta. Reduce el alcance hoy.",
                     Type = GuidanceType.Warning
@@ -50,7 +49,7 @@ namespace ProcraStop.Modules.Tasks.Application.Queries.GetDashboardGuidance
             // 🔴 2. OVERLOAD (sobrecarga mental)
             if (heavyTasks >= 5)
             {
-                return new DashboardGuidanceDto
+                return new DashboardDecisionDto
                 {
                     Message = "Tienes muchas tareas pesadas. Empieza por dividirlas o hacer progreso parcial.",
                     Type = GuidanceType.Warning
@@ -60,7 +59,7 @@ namespace ProcraStop.Modules.Tasks.Application.Queries.GetDashboardGuidance
             // 🟡 3. PROCRASTINACIÓN DETECTADA
             if (overdueTasks.Any() && quickTasks >= 2)
             {
-                return new DashboardGuidanceDto
+                return new DashboardDecisionDto
                 {
                     Message = "Tienes tareas rápidas atrasadas. Hazlas ahora para desbloquear progreso.",
                     Type = GuidanceType.Info
@@ -70,7 +69,7 @@ namespace ProcraStop.Modules.Tasks.Application.Queries.GetDashboardGuidance
             // 🟡 4. BAJA ACTIVIDAD
             if (completionRate < 0.2)
             {
-                return new DashboardGuidanceDto
+                return new DashboardDecisionDto
                 {
                     Message = "Has avanzado poco últimamente. Intenta completar 1 tarea corta hoy.",
                     Type = GuidanceType.Info
@@ -78,7 +77,7 @@ namespace ProcraStop.Modules.Tasks.Application.Queries.GetDashboardGuidance
             }
 
             // 🟢 5. ESTADO NORMAL
-            return new DashboardGuidanceDto
+            return new DashboardDecisionDto
             {
                 Message = "Vas bien. Mantén el ritmo y prioriza lo importante.",
                 Type = GuidanceType.Info

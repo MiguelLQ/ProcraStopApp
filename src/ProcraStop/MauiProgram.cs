@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Plugin.LocalNotification;
+using ProcraStop.Core.Decisions.Engine;
 using ProcraStop.Modules.Tasks.Infraestructure.Persistence;
 using ProcraStop.Modules.Tasks.Infraestructure.Registration;
 using ProcraStop.Shared.Services;
@@ -80,6 +81,8 @@ namespace ProcraStop
             // Registro del servicio de Snackbar
             // =========================
             builder.Services.AddSingleton<ISnackbarService, SnackbarService>();
+            // core
+            builder.Services.AddScoped<DecisionEngine>();
 
             var app = builder.Build();
 

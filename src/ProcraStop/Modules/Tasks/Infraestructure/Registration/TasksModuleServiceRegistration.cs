@@ -1,4 +1,5 @@
-﻿using ProcraStop.Modules.Tasks.Application.Abstractions;
+﻿using ProcraStop.Core.Decisions.Rules;
+using ProcraStop.Modules.Tasks.Application.Abstractions;
 using ProcraStop.Modules.Tasks.Application.Commands.ArchiveTask;
 using ProcraStop.Modules.Tasks.Application.Commands.CompleteTask;
 using ProcraStop.Modules.Tasks.Application.Commands.CreateCourse;
@@ -7,10 +8,10 @@ using ProcraStop.Modules.Tasks.Application.Commands.DeleteCourse;
 using ProcraStop.Modules.Tasks.Application.Commands.ToggleSubtask;
 using ProcraStop.Modules.Tasks.Application.Commands.UpdateCourse;
 using ProcraStop.Modules.Tasks.Application.Commands.UpdateTask;
-using ProcraStop.Modules.Tasks.Application.DecisionEngine.Context;
-using ProcraStop.Modules.Tasks.Application.DecisionEngine.Queries;
-using ProcraStop.Modules.Tasks.Application.DecisionEngine.Rules;
-using ProcraStop.Modules.Tasks.Application.DecisionEngine.Signals;
+using ProcraStop.Modules.Tasks.Application.EngineTask.Context;
+using ProcraStop.Modules.Tasks.Application.EngineTask.Queries;
+using ProcraStop.Modules.Tasks.Application.EngineTask.Rules;
+using ProcraStop.Modules.Tasks.Application.EngineTask.Signals;
 using ProcraStop.Modules.Tasks.Application.Facade;
 using ProcraStop.Modules.Tasks.Application.Queries.GetCourses;
 using ProcraStop.Modules.Tasks.Application.Queries.GetDashboardGuidance;
@@ -59,7 +60,6 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Registration
             services.AddTransient<DeleteCourseCommandHandler>();
             services.AddTransient<GetCoursesQueryHandler>();
             // logica de paginas inteligentes
-            services.AddTransient<GetDashboardDecisionQuery>();
             //services.AddTransient<GetTodayRecommendationsHandler>();
             //services.AddTransient<GetTodayRecommendationsQuery>();
             //services.AddTransient<GetDashboardGuidanceHandler>();

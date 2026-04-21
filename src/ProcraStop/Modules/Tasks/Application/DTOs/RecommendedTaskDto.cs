@@ -1,4 +1,4 @@
-﻿using ProcraStop.Modules.Tasks.Domain.Enums;
+﻿using ProcraStop.Modules.Tasks.Application.EngineTask.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Text;

@@ -1,6 +1,7 @@
 ﻿
 using ProcraStop.Modules.Tasks.Application.Abstractions;
 using ProcraStop.Modules.Tasks.Application.DTOs;
+using ProcraStop.Modules.Tasks.Application.EngineTask.DTOs;
 using ProcraStop.Modules.Tasks.Domain.Entities;
 using ProcraStop.Modules.Tasks.Domain.Enums;
 

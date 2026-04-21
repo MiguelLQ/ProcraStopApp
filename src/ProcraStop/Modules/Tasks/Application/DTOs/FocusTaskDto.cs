@@ -1,4 +1,4 @@
-﻿using ProcraStop.Modules.Tasks.Domain.Enums;
+﻿using ProcraStop.Modules.Tasks.Application.EngineTask.DTOs;
 
 namespace ProcraStop.Modules.Tasks.Application.DTOs
 {

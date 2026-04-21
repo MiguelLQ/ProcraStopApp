@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using ProcraStop.Modules.Tasks.Application.DecisionEngine.Queries;
-using ProcraStop.Modules.Tasks.Domain.Enums;
+using ProcraStop.Modules.Tasks.Application.EngineTask.Queries;
+using ProcraStop.Modules.Tasks.Application.EngineTask.DTOs;
 using System.Collections.ObjectModel;
 
 namespace ProcraStop.Modules.Tasks.Presentation.ViewModels

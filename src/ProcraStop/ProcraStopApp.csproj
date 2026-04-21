@@ -104,7 +104,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Modules\Habits\" />
+	  <Folder Include="Modules\Habits\Infraestructure\" />
+	  <Folder Include="Modules\Habits\Presentation\" />
 	  <Folder Include="Modules\Tasks\Domain\Rules\" />
 	  <Folder Include="Shared\Abstractions\" />
 	</ItemGroup>
