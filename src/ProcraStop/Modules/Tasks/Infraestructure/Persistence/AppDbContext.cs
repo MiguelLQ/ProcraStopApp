@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProcraStop.Modules.Habits.Infraestructure.Persistence.Entities;
 
 namespace ProcraStop.Modules.Tasks.Infraestructure.Persistence
 {
-    public sealed class TasksDbContext :DbContext
+    public sealed class AppDbContext :DbContext
     {
        
-        public TasksDbContext(DbContextOptions<TasksDbContext> options) : base(options)
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
 
         }
@@ -15,6 +16,9 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Persistence
         public DbSet<CourseEntity> Courses => Set<CourseEntity>();
         // DbSet para las subtareas
         public DbSet<SubtaskEntity> Subtasks => Set<SubtaskEntity>();
+        // para habits
+        public DbSet<HabitEntity> Habits => Set<HabitEntity>();
+        public DbSet<HabitLogEntity> HabitLogs => Set<HabitLogEntity>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -94,10 +98,49 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Persistence
                     .HasForeignKey(x => x.TaskId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
+            // habits
+            modelBuilder.Entity<HabitEntity>(entity =>
+            {
+                entity.ToTable("Habits");
+
+                entity.HasKey(x => x.Id);
+
+                entity.Property(x => x.Name)
+                    .IsRequired()
+                    .HasMaxLength(150);
+
+                entity.Property(x => x.Unit).IsRequired();
+
+                entity.Property(x => x.TargetValue).IsRequired();
+
+                entity.Property(x => x.DaysOfWeek).IsRequired();
+
+                entity.Property(x => x.RequiredPercentage).IsRequired();
+
+                entity.Property(x => x.IsActive).IsRequired();
+            });
+
+            modelBuilder.Entity<HabitLogEntity>(entity =>
+            {
+                entity.ToTable("HabitLogs");
+
+                entity.HasKey(x => x.Id);
+
+                entity.Property(x => x.Date).IsRequired();
+
+                entity.Property(x => x.Value).IsRequired();
+
+                entity.HasOne<HabitEntity>()
+                    .WithMany()
+                    .HasForeignKey(x => x.HabitId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
             modelBuilder.Entity<StudyTaskEntity>()
             .HasOne(t => t.Course)
             .WithMany()
             .HasForeignKey(t => t.CourseId);
+            // navegacion habit logs
+           
         }
 
     }

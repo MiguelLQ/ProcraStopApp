@@ -1,5 +1,8 @@
 ﻿using ProcraStop.Core.Decisions.Rules;
+using ProcraStop.Core.Decisions.Rules.Behavior;
+using ProcraStop.Modules.Dashboard.Application.Queries;
 using ProcraStop.Modules.Tasks.Application.Abstractions;
+using ProcraStop.Modules.Tasks.Application.Analytics;
 using ProcraStop.Modules.Tasks.Application.Commands.ArchiveTask;
 using ProcraStop.Modules.Tasks.Application.Commands.CompleteTask;
 using ProcraStop.Modules.Tasks.Application.Commands.CreateCourse;
@@ -8,17 +11,12 @@ using ProcraStop.Modules.Tasks.Application.Commands.DeleteCourse;
 using ProcraStop.Modules.Tasks.Application.Commands.ToggleSubtask;
 using ProcraStop.Modules.Tasks.Application.Commands.UpdateCourse;
 using ProcraStop.Modules.Tasks.Application.Commands.UpdateTask;
-using ProcraStop.Modules.Tasks.Application.EngineTask.Context;
-using ProcraStop.Modules.Tasks.Application.EngineTask.Queries;
 using ProcraStop.Modules.Tasks.Application.EngineTask.Rules;
 using ProcraStop.Modules.Tasks.Application.EngineTask.Signals;
 using ProcraStop.Modules.Tasks.Application.Facade;
 using ProcraStop.Modules.Tasks.Application.Queries.GetCourses;
-using ProcraStop.Modules.Tasks.Application.Queries.GetDashboardGuidance;
-using ProcraStop.Modules.Tasks.Application.Queries.GetFocusTasks;
 using ProcraStop.Modules.Tasks.Application.Queries.GetTaskById;
 using ProcraStop.Modules.Tasks.Application.Queries.GetTasks;
-using ProcraStop.Modules.Tasks.Application.Queries.GetTodayRecommendations;
 using ProcraStop.Modules.Tasks.Infraestructure.Repositories;
 using ProcraStop.Modules.Tasks.Infraestructure.Services;
 using ProcraStop.Modules.Tasks.Presentation.ViewModels;
@@ -59,22 +57,18 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Registration
             services.AddTransient<CreateCourseCommandHandler>();
             services.AddTransient<DeleteCourseCommandHandler>();
             services.AddTransient<GetCoursesQueryHandler>();
-            // logica de paginas inteligentes
-            //services.AddTransient<GetTodayRecommendationsHandler>();
-            //services.AddTransient<GetTodayRecommendationsQuery>();
-            //services.AddTransient<GetDashboardGuidanceHandler>();
-            //services.AddTransient<GetDashboardGuidanceQuery>();
-            //services.AddTransient<GetFocusTasksHandler>();
-            //services.AddTransient<GetFocusTasksQuery>();
+            
             // reglas de decision engine
-            services.AddTransient<GetDashboardDecisionHandler>();
             services.AddTransient<IDecisionRule, OverdueOverloadRule>();
             services.AddTransient<IDecisionRule, QuickWinRule>();
             services.AddTransient<IDecisionRule, MomentumRule>();
             services.AddTransient<IDecisionRule, OverPlanningRule>();
             services.AddTransient<IDecisionRule, AvoidingHardTasksRule>();
+            // core
+            services.AddTransient<IDecisionRule, FakeProductivityRule>();
+            services.AddTransient<IDecisionRule, BurnoutRiskRule>();
+            // signals
             services.AddTransient<TaskSignalsBuilder>();
-            services.AddTransient<DecisionContextBuilder>();
             // Facade
             services.AddScoped<ITasksFacade, TasksFacade>();
             services.AddScoped<ICoursesFacade, CoursesFacade>();
@@ -84,16 +78,17 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Registration
             services.AddTransient<CoursesPageViewModel>();
             services.AddTransient<TaskDetailViewModel>();
             services.AddTransient<EditTaskViewModel>();
-            services.AddTransient<DashboardViewModel>();
+            services.AddTransient<TaskAnalyticsViewModel>();
             //// Views
             services.AddTransient<TasksPage>();
             services.AddTransient<CreateTaskPage>();
             services.AddTransient<CoursesPage>();
             services.AddTransient<TaskDetailPage>();
             services.AddTransient<EditTaskPage>();
-            services.AddTransient<DashboardPage>();
+            services.AddTransient<TaskAnalyticsPage>();
             // 
             services.AddScoped<ITaskReadService, TaskReadService>();
+            services.AddScoped<TaskAnalyticsService>();
 
             return services;
         }

@@ -2,9 +2,18 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Plugin.LocalNotification;
+using ProcraStop.Core.Decisions.Context;
 using ProcraStop.Core.Decisions.Engine;
+using ProcraStop.Core.Decisions.Memory;
+using ProcraStop.Core.Decisions.Rules;
+using ProcraStop.Core.Decisions.Rules.Behavior;
+using ProcraStop.Modules.Dashboard.Application.Queries;
+using ProcraStop.Modules.Dashboard.Presentation.ViewModels;
+using ProcraStop.Modules.Dashboard.Presentation.Views;
+using ProcraStop.Modules.Habits.Infraestructure.Registration;
 using ProcraStop.Modules.Tasks.Infraestructure.Persistence;
 using ProcraStop.Modules.Tasks.Infraestructure.Registration;
+using ProcraStop.Modules.Tasks.Presentation.ViewModels;
 using ProcraStop.Shared.Services;
 using Syncfusion.Maui.Toolkit.Hosting;
 
@@ -68,21 +77,34 @@ namespace ProcraStop
             // =========================
             // Base de datos SQLite (EF Core)
             // =========================
-            builder.Services.AddDbContext<TasksDbContext>(options =>
-            {
-                options.UseSqlite(Constants.DatabasePath);
-            });
-
+            //builder.Services.AddDbContext<AppDbContext>(options =>
+            //{
+            //    options.UseSqlite(Constants.DatabasePath);
+            //});
+            builder.Services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlite(
+                    $"Data Source={Path.Combine(FileSystem.AppDataDirectory, "procra.db")}"
+                ));
+            // core
+            builder.Services.AddScoped<DecisionContextBuilder>();
+            // Registrar store de decisiones en memoria y el motor de decisiones
+            builder.Services.AddSingleton<IDecisionMemoryStore, InMemoryDecisionMemoryStore>();
+            builder.Services.AddSingleton<DecisionEngine>();
             // =========================
-            // Registro encapsulado del módulo Tasks
+            // Registro encapsulado del módulo Tasks , Habits
             // =========================
             builder.Services.AddTasksModule();
+            builder.Services.AddHabitsModule();
             // =========================
             // Registro del servicio de Snackbar
             // =========================
             builder.Services.AddSingleton<ISnackbarService, SnackbarService>();
-            // core
-            builder.Services.AddScoped<DecisionEngine>();
+           
+            //dashboard principal
+            builder.Services.AddTransient<GetDashboardDecisionHandler>();
+            builder.Services.AddTransient<DashboardViewModel>();
+            builder.Services.AddTransient<DashboardView>();
+
 
             var app = builder.Build();
 
@@ -91,7 +113,7 @@ namespace ProcraStop
             // =========================
             using (var scope = app.Services.CreateScope())
             {
-                var dbContext = scope.ServiceProvider.GetRequiredService<TasksDbContext>();
+                var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 dbContext.Database.EnsureCreated();
             }
 

@@ -6,8 +6,11 @@ namespace ProcraStop.Core.Decisions.Context
     public class DecisionContext
     {
         // Indicadores relacionados con la tarea actual
-        public object? TaskSignals { get; init; }
-        public object? HabitSignals { get; init; }
+        // Señales del módulo Tasks
+        public TaskSignals TaskSignals { get; init; } = default!;
+
+        // Señales del módulo Habits
+        public HabitSignals Habits { get; init; } = default!;
         // futuro
 
         // public StressSignals? Stress { get; init; }

@@ -80,16 +80,19 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Modules\Dashboard\Presentation\Views\DashboardView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Modules\Tasks\Presentation\Views\CoursesView\CoursesPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Modules\Tasks\Presentation\Views\CreateTaskPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Modules\Tasks\Presentation\Views\DashboardPage.xaml">
+	  <MauiXaml Update="Modules\Tasks\Presentation\Views\EditTaskPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Modules\Tasks\Presentation\Views\EditTaskPage.xaml">
+	  <MauiXaml Update="Modules\Tasks\Presentation\Views\TaskAnalyticsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Modules\Tasks\Presentation\Views\TaskDetailPage.xaml">
@@ -104,10 +107,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Modules\Habits\Infraestructure\" />
+	  <Folder Include="Modules\Habits\Application\EngineHabits\Signals\" />
 	  <Folder Include="Modules\Habits\Presentation\" />
+	  <Folder Include="Modules\Tasks\Application\EngineTask\Context\" />
+	  <Folder Include="Modules\Tasks\Application\EngineTask\Queries\" />
 	  <Folder Include="Modules\Tasks\Domain\Rules\" />
 	  <Folder Include="Shared\Abstractions\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Modules\Dashboard\Presentation\Views\DashboardView.xaml.cs">
+	    <DependentUpon>DashboardView.xaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>

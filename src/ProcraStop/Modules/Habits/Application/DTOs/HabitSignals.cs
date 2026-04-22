@@ -8,5 +8,15 @@ namespace ProcraStop.Modules.Habits.Application.DTOs
         public int CurrentStreak { get; init; }                 // días consecutivos cumplidos
         public double AverageEffort { get; init; }              // promedio relativo (0 - 1)
         public double WeeklyCompletionRate { get; init; }       // cumplimiento semanal (0 - 1)
+        public static HabitSignals Empty()
+        {
+            return new HabitSignals
+            {
+                ConsistencyScore = 0,
+                CurrentStreak = 0,
+                WeeklyCompletionRate = 0,
+                AverageEffort = 0
+            };
+        }
     }
 }

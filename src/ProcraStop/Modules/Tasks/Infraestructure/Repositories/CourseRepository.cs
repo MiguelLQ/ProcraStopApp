@@ -8,9 +8,9 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Repositories
 {
     public sealed class CourseRepository : ICourseRepository
     {
-        private readonly TasksDbContext _dbContext;
+        private readonly AppDbContext _dbContext;
 
-        public CourseRepository(TasksDbContext dbContext)
+        public CourseRepository(AppDbContext dbContext)
         {
             _dbContext = dbContext;
         }

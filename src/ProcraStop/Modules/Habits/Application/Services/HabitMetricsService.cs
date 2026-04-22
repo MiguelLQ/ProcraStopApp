@@ -14,7 +14,9 @@ namespace ProcraStop.Modules.Habits.Application.Services
        DateTime today)
         {
             if (!habits.Any())
-                return Empty();
+            {
+                return HabitSignals.Empty();
+            }
 
             var last7Days = Enumerable.Range(0, 7)
                 .Select(i => today.Date.AddDays(-i))
@@ -51,8 +53,7 @@ namespace ProcraStop.Modules.Habits.Application.Services
                     weeklyExpected++;
                     totalExpected++;
 
-                    var log = habitLogs.FirstOrDefault(l => l.Date == date);
-
+                    var log = habitLogs.FirstOrDefault(l => l.Date.Date == date.Date);
                     var value = log?.Value ?? 0;
 
                     var completed = habit.IsCompleted(value);
@@ -64,9 +65,15 @@ namespace ProcraStop.Modules.Habits.Application.Services
                     }
 
                     // esfuerzo relativo
-                    var effortRatio = Math.Min((double)value / habit.Target.Value, 1.0);
-                    effortAccumulated += effortRatio;
-                    effortCount++;
+                    if (habit.Target is not null)
+                    {
+                        var target = habit.Target.Value;
+
+                        var effortRatio = Math.Min((double)value / target, 1.0);
+
+                        effortAccumulated += effortRatio;
+                        effortCount++;
+                    }
 
                     // streak (desde hoy hacia atrás)
                     if (!streakBroken)
@@ -99,14 +106,7 @@ namespace ProcraStop.Modules.Habits.Application.Services
                 WeeklyCompletionRate = Round(weeklyRate)
             };
         }
-        // método para retornar señales vacías cuando no hay hábitos
-        private static HabitSignals Empty() => new()
-        {
-            ConsistencyScore = 0,
-            CurrentStreak = 0,
-            AverageEffort = 0,
-            WeeklyCompletionRate = 0
-        };
+        
         // metodo para redondear a 2 decimales
         private static double Round(double value)
             => Math.Round(value, 2);

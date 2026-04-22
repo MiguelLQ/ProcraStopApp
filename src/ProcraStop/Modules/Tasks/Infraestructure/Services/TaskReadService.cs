@@ -8,9 +8,9 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Services
 {
     public sealed class TaskReadService : ITaskReadService
     {
-        private readonly TasksDbContext _db;
+        private readonly AppDbContext _db;
 
-        public TaskReadService(TasksDbContext db)
+        public TaskReadService(AppDbContext db)
         {
             _db = db;
         }
@@ -44,6 +44,32 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Services
                     }).ToList()
                 })
                 .FirstOrDefaultAsync(ct);
+        }
+        public async Task<IReadOnlyList<TaskDetailDto>> GetAllAsync(CancellationToken ct)
+        {
+            return await _db.Tasks
+                .AsNoTracking()
+                .Select(t => new TaskDetailDto
+                {
+                    Id = t.Id,
+                    Title = t.Title,
+                    Description = t.Description,
+                    DueDate = t.DueDate,
+                    ReminderDate = t.ReminderDate,
+                    Priority = (int)t.Priority,
+                    Status = (int)t.Status,
+                    EstimatedMinutes = t.EstimatedMinutes,
+                    CourseId = t.CourseId,
+                    CourseName = t.Course != null ? t.Course.Name : null,
+                    CourseColor = t.Course != null ? t.Course.Color : null,
+                    Subtasks = t.Subtasks.Select(s => new SubtaskDto
+                    {
+                        Id = s.Id,
+                        Title = s.Title,
+                        IsCompleted = s.IsCompleted
+                    }).ToList()
+                })
+                .ToListAsync(ct);
         }
 
     }

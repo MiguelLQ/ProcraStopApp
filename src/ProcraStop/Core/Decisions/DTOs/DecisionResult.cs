@@ -18,8 +18,11 @@ namespace ProcraStop.Core.Decisions.DTOs
         // NUEVO (opcional, UX avanzado)
         // lista de insights generados por el motor de decisiones, pueden ser recomendaciones,
         // advertencias o acciones a tomar
-        public List<string>? Insights { get; set; }
+        public List<string>? TaskInsights { get; set; }
+        public List<string>? HabitInsights { get; set; }
         // 
         public List<string>? SecondaryInsights { get; set; }
+        public List<string>? Insights { get; set; }
+
     }
 }

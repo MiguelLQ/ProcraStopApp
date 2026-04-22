@@ -2,11 +2,11 @@
 
 using ProcraStop.Modules.Habits.Domain.Enums;
 using ProcraStop.Modules.Habits.Domain.ValueObjects;
-
 namespace ProcraStop.Modules.Habits.Domain.Entities
 {
     public sealed class Habit
     {
+
         public Guid Id { get; private set; }
 
         public string Name { get; private set; } = string.Empty;
@@ -38,6 +38,23 @@ namespace ProcraStop.Modules.Habits.Domain.Entities
             Schedule = schedule;
             CompletionRule = completionRule;
             IsActive = true;
+        }
+        //
+        public static Habit Rehydrate(
+            Guid id,
+            string name,
+            HabitUnit unit,
+            HabitTarget target,
+            HabitSchedule schedule,
+            HabitCompletionRule completionRule,
+            bool isActive)
+        {
+            var habit = new Habit(id, name, unit, target, schedule, completionRule);
+
+            if (!isActive)
+                habit.Deactivate();
+
+            return habit;
         }
         // metodo de fábrica para crear hábitos de forma controlada,
         // asegurando que se cumplan las invariantes del dominio
@@ -94,5 +111,9 @@ namespace ProcraStop.Modules.Habits.Domain.Entities
         // metodo para verificar si el hábito se ha completado según la regla de completitud,
         public bool IsCompleted(int value)
             => CompletionRule.IsCompleted(value, Target.Value);
+        //
+        private readonly HashSet<DayOfWeek> _days;
+
+        public IReadOnlyCollection<DayOfWeek> Days => _days;
     }
 }

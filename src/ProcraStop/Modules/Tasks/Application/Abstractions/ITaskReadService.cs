@@ -5,6 +5,6 @@ namespace ProcraStop.Modules.Tasks.Application.Abstractions
     public interface ITaskReadService
     {
         Task<TaskDetailDto?> GetByIdAsync(Guid id, CancellationToken ct);
-
+        Task<IReadOnlyList<TaskDetailDto>> GetAllAsync(CancellationToken ct);
     }
 }

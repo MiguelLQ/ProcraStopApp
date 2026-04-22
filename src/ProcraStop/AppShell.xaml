@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"
     xmlns:task="clr-namespace:ProcraStop.Modules.Tasks.Presentation.Views"
+    xmlns:inicio="clr-namespace:ProcraStop.Modules.Dashboard.Presentation.Views"
     xmlns:course="clr-namespace:ProcraStop.Modules.Tasks.Presentation.Views.CoursesView"
     Shell.FlyoutBehavior="Flyout"
      FlyoutBackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource shellDark}}"
@@ -59,8 +60,8 @@
                      BackgroundColor="{AppThemeBinding Light=#F3F4F6, Dark=#2D2D44}"/>
         </Grid>
     </Shell.FlyoutHeader>
-
-    <!-- MÓDULO TAREAS — contiene TabBar con Tareas y Cursos -->
+    
+        <!-- MÓDULO TAREAS — contiene TabBar con Tareas y Cursos -->
     <FlyoutItem Title="Tareas"
                 Icon="{StaticResource IconDashboard}">
 
@@ -80,11 +81,21 @@
         <Tab Title="Dashboard" Icon="{StaticResource IconDashboard}">
             <ShellContent
                 Title="Dashboard"
-                ContentTemplate="{DataTemplate task:DashboardPage}"
-                Route="DashboardPage"/>
+                ContentTemplate="{DataTemplate task:TaskAnalyticsPage}"
+                Route="AnalyticsPage"/>
+        </Tab>
+
+    </FlyoutItem>
+    <!-- MÓDULO Dashboard -->
+    <FlyoutItem Title="Inicio"
+         Icon="{StaticResource IconDashboard}">
+        <Tab Title="Home" Icon="{StaticResource IconDashboard}">
+            <ShellContent
+            Title="home"
+            ContentTemplate="{DataTemplate inicio:DashboardView}"
+            Route="DashboardView"/>
         </Tab>
     </FlyoutItem>
-
     <!-- MÓDULO FUTURO — Configuración u otro -->
     <FlyoutItem Title="Configuración"
                 Icon="{StaticResource IconRibbon}">

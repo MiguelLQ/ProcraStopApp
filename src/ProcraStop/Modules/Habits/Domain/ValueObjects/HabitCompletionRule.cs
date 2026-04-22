@@ -26,5 +26,11 @@ namespace ProcraStop.Modules.Habits.Domain.ValueObjects
             var ratio = (double)value / target;
             return ratio >= RequiredPercentage;
         }
+        //
+        public static HabitCompletionRule AtLeast() => new HabitCompletionRule(1.0);
+
+        public static HabitCompletionRule Exact() => new HabitCompletionRule(1.0);
+
+        public static HabitCompletionRule Any() => new HabitCompletionRule(0.1);
     }
 }

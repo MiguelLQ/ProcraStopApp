@@ -8,9 +8,9 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Repositories
 {
     internal class TaskRepository : ITaskRepository
     {
-        private readonly TasksDbContext _dbContext;
+        private readonly AppDbContext _dbContext;
 
-        public TaskRepository(TasksDbContext dbContext)
+        public TaskRepository(AppDbContext dbContext)
         {
             _dbContext = dbContext;
         }

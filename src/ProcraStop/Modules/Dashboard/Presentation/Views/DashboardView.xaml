@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProcraStop.Modules.Dashboard.Presentation.Views.DashboardView"
+             Title="DashboardView">
+    <ScrollView>
+        <VerticalStackLayout Spacing="20" Padding="20">
+
+            <!-- 🧠 HEADER / DECISION STATE -->
+            <Border 
+                   Padding="20"
+                   BackgroundColor="#F5F7FB"
+                   >
+
+                <VerticalStackLayout Spacing="10">
+
+                    <Label Text="{Binding Message}"
+                           FontSize="22"
+                           FontAttributes="Bold"
+                           TextColor="Black"/>
+
+                    <Label Text="{Binding Reason}"
+                           FontSize="14"
+                           TextColor="Gray"/>
+
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- INSIGHTS -->
+            <Border 
+                   Padding="15"
+                   BackgroundColor="White"
+                   >
+
+                <VerticalStackLayout Spacing="10">
+
+                    <Label Text="Insights"
+                           FontSize="16"
+                           FontAttributes="Bold"/>
+
+                    <CollectionView ItemsSource="{Binding Insights}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border Padding="10"
+                                       Margin="0,5"
+                                       
+                                       BackgroundColor="#F9FAFB"
+                                       >
+
+                                    <Label Text="{Binding .}"
+                                           FontSize="14"
+                                           TextColor="Black"/>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- SUGGESTED ACTION -->
+            <Border 
+                   Padding="20"
+                   BackgroundColor="#111827">
+
+                <VerticalStackLayout Spacing="10">
+
+                    <Label Text="Acción recomendada"
+                           TextColor="White"
+                           FontSize="16"
+                           FontAttributes="Bold"/>
+
+                    <Label Text="{Binding SuggestedAction}"
+                           TextColor="#D1D5DB"
+                           FontSize="14"/>
+
+                    <Button Text="Ejecutar ahora"
+                            BackgroundColor="#22C55E"
+                            TextColor="White"
+                            CornerRadius="12"/>
+                </VerticalStackLayout>
+
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
