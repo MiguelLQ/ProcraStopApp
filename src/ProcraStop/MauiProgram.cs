@@ -11,6 +11,7 @@ using ProcraStop.Modules.Dashboard.Application.Queries;
 using ProcraStop.Modules.Dashboard.Presentation.ViewModels;
 using ProcraStop.Modules.Dashboard.Presentation.Views;
 using ProcraStop.Modules.Habits.Infraestructure.Registration;
+using ProcraStop.Modules.Stress.Infrastructure.Registration;
 using ProcraStop.Modules.Tasks.Infraestructure.Persistence;
 using ProcraStop.Modules.Tasks.Infraestructure.Registration;
 using ProcraStop.Modules.Tasks.Presentation.ViewModels;
@@ -95,6 +96,7 @@ namespace ProcraStop
             // =========================
             builder.Services.AddTasksModule();
             builder.Services.AddHabitsModule();
+            builder.Services.AddStressModule();
             // =========================
             // Registro del servicio de Snackbar
             // =========================

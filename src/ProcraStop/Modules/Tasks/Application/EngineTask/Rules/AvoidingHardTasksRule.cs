@@ -15,7 +15,7 @@ namespace ProcraStop.Modules.Tasks.Application.EngineTask.Rules
         // identificar cuando el usuario podría estar evitando tareas difíciles,
         public bool IsMatch(DecisionContext ctx)
         {
-            var t = (TaskSignals)ctx.TaskSignals!;
+            var t = (TaskSignals)ctx.Tasks!;
 
             return t.HeavyTasksCount >= 2 &&
                    t.QuickTasksCount >= 2 &&
@@ -25,7 +25,7 @@ namespace ProcraStop.Modules.Tasks.Application.EngineTask.Rules
         // porque se enfoca en alertar al usuario sobre el hecho de que podría estar procrastinando tareas difíciles,
         public DecisionResult CreateDecision(DecisionContext ctx)
         {
-            var t = (TaskSignals)ctx.TaskSignals!;
+            var t = (TaskSignals)ctx.Tasks!;
 
             return new DecisionResult
             {

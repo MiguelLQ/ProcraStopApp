@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProcraStop.Modules.Habits.Infraestructure.Persistence.Entities;
+using ProcraStop.Modules.Stress.Infrastructure.Persistences.Config;
+using ProcraStop.Modules.Stress.Infrastructure.Persistences.Entities;
 
 namespace ProcraStop.Modules.Tasks.Infraestructure.Persistence
 {
@@ -19,9 +21,16 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Persistence
         // para habits
         public DbSet<HabitEntity> Habits => Set<HabitEntity>();
         public DbSet<HabitLogEntity> HabitLogs => Set<HabitLogEntity>();
+        // streess
+        public DbSet<StressRecordEntity> StressRecords => Set<StressRecordEntity>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            // IMPORTANTE: carga configs externas (incluye Stress)
+            modelBuilder.ApplyConfigurationsFromAssembly(
+                typeof(StressRecordConfig).Assembly
+            );
 
             // Configuración de la entidad StudyTaskEntity
             modelBuilder.Entity<StudyTaskEntity>(entity =>
@@ -135,6 +144,8 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Persistence
                     .HasForeignKey(x => x.HabitId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
+            // estress
+            
             modelBuilder.Entity<StudyTaskEntity>()
             .HasOne(t => t.Course)
             .WithMany()

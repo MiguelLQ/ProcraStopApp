@@ -1,4 +1,5 @@
 ﻿using ProcraStop.Modules.Habits.Application.DTOs;
+using ProcraStop.Modules.Stress.Application.DTOs;
 using ProcraStop.Modules.Tasks.Application.EngineTask.Signals;
 
 namespace ProcraStop.Core.Decisions.Context
@@ -7,12 +8,12 @@ namespace ProcraStop.Core.Decisions.Context
     {
         // Indicadores relacionados con la tarea actual
         // Señales del módulo Tasks
-        public TaskSignals TaskSignals { get; init; } = default!;
+        public TaskSignals Tasks { get; init; } = default!;
 
         // Señales del módulo Habits
         public HabitSignals Habits { get; init; } = default!;
         // futuro
 
-        // public StressSignals? Stress { get; init; }
+        public StressSignals Stress { get; init; } = default!;
     }
 }

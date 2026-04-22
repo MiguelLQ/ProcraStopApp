@@ -11,7 +11,7 @@ namespace ProcraStop.Core.Decisions.Rules.Behavior
 
         public bool IsMatch(DecisionContext ctx)
         {
-            var t = (TaskSignals)ctx.TaskSignals!;
+            var t = (TaskSignals)ctx.Tasks!;
             var h = ctx.Habits;
 
             if (h is null) return false;
@@ -21,7 +21,7 @@ namespace ProcraStop.Core.Decisions.Rules.Behavior
 
         public DecisionResult CreateDecision(DecisionContext ctx)
         {
-            var t = (TaskSignals)ctx.TaskSignals!;
+            var t = (TaskSignals)ctx.Tasks!;
             var h = ctx.Habits!;
 
             return new DecisionResult

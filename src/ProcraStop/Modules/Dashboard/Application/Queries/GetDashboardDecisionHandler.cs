@@ -55,7 +55,7 @@ namespace ProcraStop.Modules.Dashboard.Application.Queries
             Console.WriteLine($"Habits: {habits.Count}");
             Console.WriteLine($"Logs: {logs.Count}");
             // 3. CONTEXTO
-            var context = _contextBuilder.Build(taskSignals, habitSignals);
+            var context = await _contextBuilder.BuildAsync(taskSignals, habitSignals);
 
             // 4. DECISIÓN
             var result = _engine.Evaluate(context);
@@ -64,7 +64,7 @@ namespace ProcraStop.Modules.Dashboard.Application.Queries
             return new DashboardDecisionDto
             {
                 Message = result.Message,
-                Type = result.Type, // 👈 DIRECTO (DecisionType)
+                Type = result.Type, //  DIRECTO (DecisionType)
                 SecondaryInsights = result.SecondaryInsights,
                 SuggestedAction = result.SuggestedAction,
                 Reason = result.Reason,
