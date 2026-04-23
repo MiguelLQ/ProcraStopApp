@@ -11,6 +11,8 @@
             Task<StressRecord?> GetLatestAsync();
             Task<bool> ExistsTodayAsync(StressSource source);
             Task UpdateTodayAsync(double level, StressSource source);
+        // mostrar checkin cada 12 horas
+            Task<bool> ExistsInLastHoursAsync(StressSource source, int hours);
 
-        }
+         }
     }

@@ -53,7 +53,7 @@ namespace ProcraStop.Modules.Stress.Infrastructure.Repositories
         }
         public async Task<bool> ExistsTodayAsync(StressSource source)
         {
-            var today = DateTime.UtcNow.Date;
+            var today = DateTime.Now.Date;
 
             return await _context.StressRecords
                 .AnyAsync(x =>
@@ -62,7 +62,7 @@ namespace ProcraStop.Modules.Stress.Infrastructure.Repositories
         }
         public async Task UpdateTodayAsync(double level, StressSource source)
         {
-            var today = DateTime.UtcNow.Date;
+            var today = DateTime.Now.Date;
 
             var entity = await _context.StressRecords
                 .Where(x =>
@@ -92,6 +92,15 @@ namespace ProcraStop.Modules.Stress.Infrastructure.Repositories
             }
 
             await _context.SaveChangesAsync();
+        }
+        public async Task<bool> ExistsInLastHoursAsync(StressSource source, int hours)
+        {
+            var cutoff = DateTime.UtcNow.AddHours(-hours);
+
+            return await _context.StressRecords
+                .AnyAsync(x =>
+                    x.Source == source &&
+                    x.Timestamp >= cutoff);
         }
     }
 }

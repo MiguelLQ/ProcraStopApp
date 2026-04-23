@@ -1,9 +1,11 @@
 ﻿
 using ProcraStop.Core.Decisions.Rules;
+using ProcraStop.Core.Decisions.Rules.Behavior;
 using ProcraStop.Modules.Stress.Application.Abstractions;
 using ProcraStop.Modules.Stress.Application.Commands.RegisterStress;
 using ProcraStop.Modules.Stress.Application.EngineStress;
-using ProcraStop.Modules.Stress.Application.Queries;
+using ProcraStop.Modules.Stress.Application.Queries.GetStressAnalytics;
+using ProcraStop.Modules.Stress.Application.Queries.GetStressHistory;
 using ProcraStop.Modules.Stress.Application.Services;
 using ProcraStop.Modules.Stress.Infrastructure.Repositories;
 using ProcraStop.Modules.Stress.Presentation.ViewModel;
@@ -24,12 +26,14 @@ namespace ProcraStop.Modules.Stress.Infrastructure.Registration
             // SERVICES (cálculo → signals)
             // =========================
             services.AddScoped<StressMetricsService>();
+            services.AddScoped<StressAnalyticsService>();
             services.AddScoped<StressEventDetector>();
             // =========================
             // CQRS (Application)
             // =========================
             services.AddScoped<RegisterStressHandler>();
             services.AddScoped<GetStressHistoryHandler>();
+            services.AddScoped<GetStressAnalyticsHandler>();
 
             // =========================
             // RULES (módulo Stress)
@@ -45,6 +49,8 @@ namespace ProcraStop.Modules.Stress.Infrastructure.Registration
             // =========================
             services.AddTransient<StressCheckInView>();
             services.AddTransient<StressCheckInViewModel>();
+            services.AddScoped<StressAnalyticsViewModel>();
+            services.AddScoped<StressAnalyticsPage>();
             return services;
         }
     }

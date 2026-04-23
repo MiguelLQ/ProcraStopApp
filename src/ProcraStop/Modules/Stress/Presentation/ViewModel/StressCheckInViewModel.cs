@@ -31,7 +31,8 @@ namespace ProcraStop.Modules.Stress.Presentation.ViewModel
 
         public async Task InitializeAsync()
         {
-            var exists = await _repo.ExistsTodayAsync(StressSource.Manual);
+            var exists = await _repo.ExistsInLastHoursAsync(StressSource.Manual, 12);
+
             IsVisible = !exists;
         }
 
@@ -43,7 +44,15 @@ namespace ProcraStop.Modules.Stress.Presentation.ViewModel
         new("😓", "Estresado", StressLevelInput.High),
         new("😵", "Saturado", StressLevelInput.VeryHigh),
     };
+        private StressLevelInput MapFromValue(double value)
+        {
+            if (value <= 0.2) return StressLevelInput.VeryLow;
+            if (value <= 0.4) return StressLevelInput.Low;
+            if (value <= 0.6) return StressLevelInput.Medium;
+            if (value <= 0.8) return StressLevelInput.High;
 
+            return StressLevelInput.VeryHigh;
+        }
         [RelayCommand(CanExecute = nameof(CanSubmit))]
         private async Task Submit()
         {

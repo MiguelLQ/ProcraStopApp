@@ -1,8 +1,7 @@
-﻿
-using ProcraStop.Modules.Stress.Application.Abstractions;
+﻿using ProcraStop.Modules.Stress.Application.Abstractions;
 using ProcraStop.Modules.Stress.Application.DTOs;
 
-namespace ProcraStop.Modules.Stress.Application.Queries
+namespace ProcraStop.Modules.Stress.Application.Queries.GetStressHistory
 {
     public class GetStressHistoryHandler
     {

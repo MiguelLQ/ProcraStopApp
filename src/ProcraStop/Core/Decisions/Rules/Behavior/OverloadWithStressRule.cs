@@ -1,8 +1,7 @@
 ﻿using ProcraStop.Core.Decisions.Context;
 using ProcraStop.Core.Decisions.DTOs;
-using ProcraStop.Core.Decisions.Rules;
 
-namespace ProcraStop.Modules.Stress.Application.EngineStress
+namespace ProcraStop.Core.Decisions.Rules.Behavior
 {
     internal class OverloadWithStressRule : IDecisionRule
     {

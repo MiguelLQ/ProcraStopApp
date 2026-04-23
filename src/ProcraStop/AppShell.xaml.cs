@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using ProcraStop.Modules.Dashboard.Presentation.Views;
 using ProcraStop.Modules.Tasks.Presentation.Views;

@@ -4,6 +4,7 @@ using ProcraStop.Modules.Dashboard.Application.DTOs;
 using ProcraStop.Modules.Habits.Application.Abstractions;
 using ProcraStop.Modules.Habits.Application.Interfaces;
 using ProcraStop.Modules.Habits.Application.Services;
+using ProcraStop.Modules.Stress.Application.Abstractions;
 using ProcraStop.Modules.Stress.Application.Services;
 using ProcraStop.Modules.Tasks.Application.Abstractions;
 using ProcraStop.Modules.Tasks.Application.EngineTask.Signals;
@@ -21,8 +22,10 @@ namespace ProcraStop.Modules.Dashboard.Application.Queries
 
         private readonly DecisionContextBuilder _contextBuilder;
         private readonly DecisionEngine _engine;
-        // 
+        // stress 
         private readonly StressEventDetector _stressEventDetector;
+        private readonly StressMetricsService _stressMetrics;
+        private readonly IStressRepository _stressRepo;
         public GetDashboardDecisionHandler(
             ITaskRepository taskRepository,
             IHabitRepository habitRepository,
@@ -31,7 +34,9 @@ namespace ProcraStop.Modules.Dashboard.Application.Queries
             IHabitMetricsService habitMetrics,
             DecisionContextBuilder contextBuilder,
             DecisionEngine engine,
-            StressEventDetector stressEventDetector)
+            StressEventDetector stressEventDetector,
+            StressMetricsService stressMetricsService,
+            IStressRepository stressRepository)
         {
             _taskRepository = taskRepository;
             _habitRepository = habitRepository;
@@ -41,6 +46,8 @@ namespace ProcraStop.Modules.Dashboard.Application.Queries
             _contextBuilder = contextBuilder;
             _engine = engine;
             _stressEventDetector = stressEventDetector;
+            _stressMetrics = stressMetricsService;
+            _stressRepo = stressRepository;
         }
 
         public async Task<DashboardDecisionDto> Handle(GetDashboardDecisionQuery query)
@@ -60,6 +67,7 @@ namespace ProcraStop.Modules.Dashboard.Application.Queries
             Console.WriteLine($"Logs: {logs.Count}");
             // antes de construir contexto
             await _stressEventDetector.EvaluateAndRegisterAsync(taskSignals, habitSignals);
+          
             // 3. CONTEXTO
             var context = await _contextBuilder.BuildAsync(taskSignals, habitSignals);
 

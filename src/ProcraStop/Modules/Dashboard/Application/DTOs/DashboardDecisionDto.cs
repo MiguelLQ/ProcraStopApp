@@ -18,7 +18,9 @@ namespace ProcraStop.Modules.Dashboard.Application.DTOs
 
         // insights combinados (tasks + habits)
         public List<string>? Insights { get; set; } = new();
-        // 
+        // streesss
+        public double StressLevel { get; set; }
+        public string StressLabel { get; set; } = "";
 
     }
 }

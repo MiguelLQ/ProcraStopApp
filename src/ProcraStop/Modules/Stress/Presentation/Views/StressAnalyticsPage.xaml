@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProcraStop.Modules.Stress.Presentation.Views.StressAnalyticsPage"
+             Title="StressAnalyticsPage">
+    <ScrollView>
+        <VerticalStackLayout Spacing="20" Padding="20">
+
+            <!-- HEADER -->
+            <Label 
+                Text="Tu estado de estrés"
+                FontSize="22"
+                FontAttributes="Bold"/>
+
+            <!-- KPIs -->
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" RowSpacing="10" ColumnSpacing="10">
+
+                <Border Grid.Row="0" Grid.Column="0" Padding="15" BackgroundColor="#F3F4F6">
+                    <VerticalStackLayout>
+                        <Label Text="Promedio" FontSize="12" TextColor="Gray"/>
+                        <Label Text="{Binding Average, StringFormat='{0:F2}'}"
+                               FontSize="18"
+                               FontAttributes="Bold"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Grid.Row="0" Grid.Column="1" Padding="15" BackgroundColor="#F3F4F6">
+                    <VerticalStackLayout>
+                        <Label Text="Máximo" FontSize="12" TextColor="Gray"/>
+                        <Label Text="{Binding Max, StringFormat='{0:F2}'}"
+                               FontSize="18"
+                               FontAttributes="Bold"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Grid.Row="1" Grid.Column="0" Padding="15" BackgroundColor="#F3F4F6">
+                    <VerticalStackLayout>
+                        <Label Text="Mínimo" FontSize="12" TextColor="Gray"/>
+                        <Label Text="{Binding Min, StringFormat='{0:F2}'}"
+                               FontSize="18"
+                               FontAttributes="Bold"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Grid.Row="1" Grid.Column="1" Padding="15" BackgroundColor="#F3F4F6">
+                    <VerticalStackLayout>
+                        <Label Text="Recuperación" FontSize="12" TextColor="Gray"/>
+                        <Label Text="{Binding RecoveryScore, StringFormat='{0:P0}'}"
+                               FontSize="18"
+                               FontAttributes="Bold"/>
+                    </VerticalStackLayout>
+                </Border>
+
+            </Grid>
+
+            <!-- TREND -->
+            <Border Padding="15" BackgroundColor="#E0F2FE">
+                <VerticalStackLayout>
+                    <Label Text="Tendencia" FontSize="14" TextColor="Gray"/>
+                    <Label Text="{Binding Trend}" FontSize="18" FontAttributes="Bold"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- HIGH STRESS -->
+            <Border Padding="15" BackgroundColor="#FEF3C7">
+                <VerticalStackLayout>
+                    <Label Text="Días de alto estrés" FontSize="14" TextColor="Gray"/>
+                    <Label Text="{Binding HighStressDays}" FontSize="18" FontAttributes="Bold"/>
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
