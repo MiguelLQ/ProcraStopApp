@@ -15,7 +15,9 @@ namespace ProcraStop.Modules.Stress.Infrastructure.Persistences.Config
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.Level).IsRequired();
-            builder.Property(x => x.Source).IsRequired();
+            builder.Property(x => x.Source)
+                .HasConversion<int>()   //  EF guarda como int pero usas enum
+                .IsRequired();
             builder.Property(x => x.Timestamp).IsRequired();
         }
     }

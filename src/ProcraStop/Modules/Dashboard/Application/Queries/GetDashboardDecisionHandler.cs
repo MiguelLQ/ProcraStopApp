@@ -4,6 +4,7 @@ using ProcraStop.Modules.Dashboard.Application.DTOs;
 using ProcraStop.Modules.Habits.Application.Abstractions;
 using ProcraStop.Modules.Habits.Application.Interfaces;
 using ProcraStop.Modules.Habits.Application.Services;
+using ProcraStop.Modules.Stress.Application.Services;
 using ProcraStop.Modules.Tasks.Application.Abstractions;
 using ProcraStop.Modules.Tasks.Application.EngineTask.Signals;
 
@@ -20,7 +21,8 @@ namespace ProcraStop.Modules.Dashboard.Application.Queries
 
         private readonly DecisionContextBuilder _contextBuilder;
         private readonly DecisionEngine _engine;
-
+        // 
+        private readonly StressEventDetector _stressEventDetector;
         public GetDashboardDecisionHandler(
             ITaskRepository taskRepository,
             IHabitRepository habitRepository,
@@ -28,7 +30,8 @@ namespace ProcraStop.Modules.Dashboard.Application.Queries
             TaskSignalsBuilder taskBuilder,
             IHabitMetricsService habitMetrics,
             DecisionContextBuilder contextBuilder,
-            DecisionEngine engine)
+            DecisionEngine engine,
+            StressEventDetector stressEventDetector)
         {
             _taskRepository = taskRepository;
             _habitRepository = habitRepository;
@@ -37,6 +40,7 @@ namespace ProcraStop.Modules.Dashboard.Application.Queries
             _habitMetrics = habitMetrics;
             _contextBuilder = contextBuilder;
             _engine = engine;
+            _stressEventDetector = stressEventDetector;
         }
 
         public async Task<DashboardDecisionDto> Handle(GetDashboardDecisionQuery query)
@@ -54,6 +58,8 @@ namespace ProcraStop.Modules.Dashboard.Application.Queries
             Console.WriteLine($"Tasks: {tasks.Count}");
             Console.WriteLine($"Habits: {habits.Count}");
             Console.WriteLine($"Logs: {logs.Count}");
+            // antes de construir contexto
+            await _stressEventDetector.EvaluateAndRegisterAsync(taskSignals, habitSignals);
             // 3. CONTEXTO
             var context = await _contextBuilder.BuildAsync(taskSignals, habitSignals);
 

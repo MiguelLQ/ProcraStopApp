@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProcraStop.Modules.Stress.Presentation.Views.StressCheckInView"
+             IsVisible="{Binding IsVisible}">
+    <VerticalStackLayout Spacing="16" Padding="16">
+
+        <!-- Título -->
+        <Label
+            Text="¿Cómo te sientes hoy?"
+            FontSize="18"
+            FontAttributes="Bold" />
+
+        <!-- Opciones -->
+        <FlexLayout
+            Wrap="Wrap"
+            JustifyContent="SpaceBetween"
+            BindableLayout.ItemsSource="{Binding Options}">
+
+            <BindableLayout.ItemTemplate>
+                <DataTemplate>
+
+                    <Border Padding="10"
+                            StrokeThickness="2"
+                            Stroke="Transparent"
+                            BackgroundColor="#F3F4F6">
+
+                        <!-- ESTADO SELECCIONADO -->
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border"
+                                         Binding="{Binding IsSelected}"
+                                         Value="True">
+                                <Setter Property="Stroke" Value="#6366F1"/>
+                                <Setter Property="BackgroundColor" Value="#EEF2FF"/>
+                            </DataTrigger>
+                        </Border.Triggers>
+
+                        <VerticalStackLayout HorizontalOptions="Center">
+
+                            <Label
+                                Text="{Binding Emoji}"
+                                FontSize="24"
+                                HorizontalTextAlignment="Center" />
+
+                            <Label
+                                Text="{Binding Label}"
+                                FontSize="12"
+                                HorizontalTextAlignment="Center" />
+
+                        </VerticalStackLayout>
+
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=BindingContext.SelectCommand}"
+                                CommandParameter="{Binding Value}" />
+                        </Border.GestureRecognizers>
+
+                    </Border>
+
+                </DataTemplate>
+            </BindableLayout.ItemTemplate>
+
+        </FlexLayout>
+
+        <!-- BOTÓN -->
+        <Button
+            Text="Guardar"
+            Command="{Binding SubmitCommand}">
+
+            <!--  DESHABILITADO VISUAL -->
+            <Button.Triggers>
+                <DataTrigger TargetType="Button"
+                             Binding="{Binding SelectedLevel}"
+                             Value="{x:Null}">
+                    <Setter Property="BackgroundColor" Value="Gray"/>
+                </DataTrigger>
+            </Button.Triggers>
+
+        </Button>
+
+    </VerticalStackLayout>
+</ContentView>

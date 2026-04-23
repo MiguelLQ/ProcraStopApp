@@ -83,6 +83,9 @@
 	  <MauiXaml Update="Modules\Dashboard\Presentation\Views\DashboardView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Modules\Stress\Presentation\Views\StressCheckInView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Modules\Tasks\Presentation\Views\CoursesView\CoursesPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

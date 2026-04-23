@@ -1,9 +1,11 @@
 ﻿
+using Microsoft.EntityFrameworkCore;
 using ProcraStop.Modules.Stress.Application.Abstractions;
 using ProcraStop.Modules.Stress.Domain.Entities;
+using ProcraStop.Modules.Stress.Domain.Enums;
+using ProcraStop.Modules.Stress.Infrastructure.Persistences.Entities;
 using ProcraStop.Modules.Stress.Infrastructure.Persistences.Mappers;
 using ProcraStop.Modules.Tasks.Infraestructure.Persistence;
-using Microsoft.EntityFrameworkCore;
 
 namespace ProcraStop.Modules.Stress.Infrastructure.Repositories
 {
@@ -48,6 +50,48 @@ namespace ProcraStop.Modules.Stress.Infrastructure.Repositories
                 return null;
 
             return StressMapper.ToDomain(entity);
+        }
+        public async Task<bool> ExistsTodayAsync(StressSource source)
+        {
+            var today = DateTime.UtcNow.Date;
+
+            return await _context.StressRecords
+                .AnyAsync(x =>
+                    x.Source == source &&
+                    x.Timestamp.Date == today);
+        }
+        public async Task UpdateTodayAsync(double level, StressSource source)
+        {
+            var today = DateTime.UtcNow.Date;
+
+            var entity = await _context.StressRecords
+                .Where(x =>
+                    x.Source == source && // o directo enum si haces conversión
+                    x.Timestamp.Date == today)
+                .OrderByDescending(x => x.Timestamp)
+                .FirstOrDefaultAsync();
+
+            if (entity is null)
+            {
+                // fallback → crear si no existe
+                var newEntity = new StressRecordEntity
+                {
+                    Id = Guid.NewGuid(),
+                    Level = level,
+                    Source = source,
+                    Timestamp = DateTime.UtcNow
+                };
+
+                _context.StressRecords.Add(newEntity);
+            }
+            else
+            {
+                // actualizar el existente
+                entity.Level = level;
+                entity.Timestamp = DateTime.UtcNow; // importante: refresh
+            }
+
+            await _context.SaveChangesAsync();
         }
     }
 }

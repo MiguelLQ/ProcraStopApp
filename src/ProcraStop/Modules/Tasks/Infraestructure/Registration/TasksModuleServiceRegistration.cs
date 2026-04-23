@@ -67,6 +67,8 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Registration
             // core
             services.AddTransient<IDecisionRule, FakeProductivityRule>();
             services.AddTransient<IDecisionRule, BurnoutRiskRule>();
+            services.AddTransient<IDecisionRule, FakeProductivityWithStressRule>();
+            services.AddTransient<IDecisionRule, BurnoutWithStressRule>();
             // signals
             services.AddTransient<TaskSignalsBuilder>();
             // Facade

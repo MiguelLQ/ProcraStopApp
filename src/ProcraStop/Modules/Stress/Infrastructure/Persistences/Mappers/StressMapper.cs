@@ -12,7 +12,7 @@ namespace ProcraStop.Modules.Stress.Infrastructure.Persistences.Mappers
         {
             Id = domain.Id,
             Level = domain.Level,
-            Source = (int)domain.Source,
+            Source = domain.Source,
             Timestamp = domain.Timestamp
         };
 

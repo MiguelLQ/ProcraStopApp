@@ -6,6 +6,8 @@ using ProcraStop.Modules.Stress.Application.EngineStress;
 using ProcraStop.Modules.Stress.Application.Queries;
 using ProcraStop.Modules.Stress.Application.Services;
 using ProcraStop.Modules.Stress.Infrastructure.Repositories;
+using ProcraStop.Modules.Stress.Presentation.ViewModel;
+using ProcraStop.Modules.Stress.Presentation.Views;
 
 namespace ProcraStop.Modules.Stress.Infrastructure.Registration
 {
@@ -22,7 +24,7 @@ namespace ProcraStop.Modules.Stress.Infrastructure.Registration
             // SERVICES (cálculo → signals)
             // =========================
             services.AddScoped<StressMetricsService>();
-
+            services.AddScoped<StressEventDetector>();
             // =========================
             // CQRS (Application)
             // =========================
@@ -35,6 +37,14 @@ namespace ProcraStop.Modules.Stress.Infrastructure.Registration
             services.AddScoped<IDecisionRule, HighStressRule>();
             services.AddScoped<IDecisionRule, RecoveryNeededRule>();
             services.AddScoped<IDecisionRule, OverloadWithStressRule>();
+            services.AddScoped<IDecisionRule, HighStressRisingRule>();
+            services.AddScoped<IDecisionRule, HighStressLowRecoveryRule>();
+            services.AddScoped<IDecisionRule, RecoveryOpportunityRule>();
+            // =========================
+            // Views y ViewModels
+            // =========================
+            services.AddTransient<StressCheckInView>();
+            services.AddTransient<StressCheckInViewModel>();
             return services;
         }
     }
