@@ -1,74 +1,225 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:ProcraStop.Modules.Stress.Presentation.Controls"
              x:Class="ProcraStop.Modules.Stress.Presentation.Views.StressAnalyticsPage"
+             BackgroundColor="{AppThemeBinding Light=#feffff, Dark=#222631}"
              Title="StressAnalyticsPage">
+
     <ScrollView>
-        <VerticalStackLayout Spacing="20" Padding="20">
+        <VerticalStackLayout Padding="15" Spacing="16">
 
-            <!-- HEADER -->
-            <Label 
-                Text="Tu estado de estrés"
-                FontSize="22"
-                FontAttributes="Bold"/>
+            <!-- ══ HEADER ══════════════════════════════════════════ -->
+            <Grid ColumnDefinitions="*,Auto">
+                <VerticalStackLayout Grid.Column="0" Spacing="2">
+                    <Label Text="Análisis de Estrés"
+                           FontSize="22" FontFamily="InterSemiBold"
+                           TextColor="{AppThemeBinding Light=#111827, Dark=#F9FAFB}"/>
+                    <Label Text="Últimos 7 días · Actualizado hoy"
+                           FontSize="12" FontFamily="InterRegular"
+                           TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"/>
+                </VerticalStackLayout>
 
-            <!-- KPIs -->
-            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" RowSpacing="10" ColumnSpacing="10">
-
-                <Border Grid.Row="0" Grid.Column="0" Padding="15" BackgroundColor="#F3F4F6">
-                    <VerticalStackLayout>
-                        <Label Text="Promedio" FontSize="12" TextColor="Gray"/>
-                        <Label Text="{Binding Average, StringFormat='{0:F2}'}"
-                               FontSize="18"
-                               FontAttributes="Bold"/>
-                    </VerticalStackLayout>
+                <!-- Badge de tendencia dinámico -->
+                <Border Grid.Column="1"
+                        BackgroundColor="{Binding TrendBadgeColor}"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 20"
+                        Padding="10,4"
+                        VerticalOptions="Center">
+                    <Label Text="{Binding TrendText}"
+                           FontSize="11" FontFamily="InterSemiBold"
+                           TextColor="{Binding TrendTextColor}"/>
                 </Border>
-
-                <Border Grid.Row="0" Grid.Column="1" Padding="15" BackgroundColor="#F3F4F6">
-                    <VerticalStackLayout>
-                        <Label Text="Máximo" FontSize="12" TextColor="Gray"/>
-                        <Label Text="{Binding Max, StringFormat='{0:F2}'}"
-                               FontSize="18"
-                               FontAttributes="Bold"/>
-                    </VerticalStackLayout>
-                </Border>
-
-                <Border Grid.Row="1" Grid.Column="0" Padding="15" BackgroundColor="#F3F4F6">
-                    <VerticalStackLayout>
-                        <Label Text="Mínimo" FontSize="12" TextColor="Gray"/>
-                        <Label Text="{Binding Min, StringFormat='{0:F2}'}"
-                               FontSize="18"
-                               FontAttributes="Bold"/>
-                    </VerticalStackLayout>
-                </Border>
-
-                <Border Grid.Row="1" Grid.Column="1" Padding="15" BackgroundColor="#F3F4F6">
-                    <VerticalStackLayout>
-                        <Label Text="Recuperación" FontSize="12" TextColor="Gray"/>
-                        <Label Text="{Binding RecoveryScore, StringFormat='{0:P0}'}"
-                               FontSize="18"
-                               FontAttributes="Bold"/>
-                    </VerticalStackLayout>
-                </Border>
-
             </Grid>
 
-            <!-- TREND -->
-            <Border Padding="15" BackgroundColor="#E0F2FE">
-                <VerticalStackLayout>
-                    <Label Text="Tendencia" FontSize="14" TextColor="Gray"/>
-                    <Label Text="{Binding Trend}" FontSize="18" FontAttributes="Bold"/>
+            <!-- ══ KPI CARDS ═══════════════════════════════════════ -->
+            <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="10">
+
+                <!-- Promedio -->
+                <Border Grid.Column="0"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource shellDark}}"
+                        StrokeShape="RoundRectangle 12"
+                        Padding="12">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="PROM" FontSize="10" FontFamily="InterSemiBold"
+                               TextColor="{AppThemeBinding Light=#9CA3AF, Dark=#6B7280}"
+                               CharacterSpacing="1.5"/>
+                        <Label Text="{Binding Average, StringFormat='{0:F2}'}"
+                               FontSize="22" FontFamily="InterSemiBold"
+                               TextColor="{AppThemeBinding Light=#111827, Dark=#F9FAFB}"/>
+                        <Label Text="esta semana" FontSize="10" FontFamily="InterRegular"
+                               TextColor="{AppThemeBinding Light=#D1D5DB, Dark=#4B5563}"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Máximo -->
+                <Border Grid.Column="1"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource shellDark}}"
+                        StrokeShape="RoundRectangle 12"
+                        Padding="12">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="MÁX" FontSize="10" FontFamily="InterSemiBold"
+                               TextColor="{AppThemeBinding Light=#9CA3AF, Dark=#6B7280}"
+                               CharacterSpacing="1.5"/>
+                        <Label Text="{Binding Max, StringFormat='{0:F2}'}"
+                               FontSize="22" FontFamily="InterSemiBold"
+                               TextColor="#A32D2D"/>
+                        <Label Text="nivel crítico" FontSize="10" FontFamily="InterRegular"
+                               TextColor="{AppThemeBinding Light=#D1D5DB, Dark=#4B5563}"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Mínimo -->
+                <Border Grid.Column="2"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource shellDark}}"
+                        StrokeShape="RoundRectangle 12"
+                        Padding="12">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="MÍN" FontSize="10" FontFamily="InterSemiBold"
+                               TextColor="{AppThemeBinding Light=#9CA3AF, Dark=#6B7280}"
+                               CharacterSpacing="1.5"/>
+                        <Label Text="{Binding Min, StringFormat='{0:F2}'}"
+                               FontSize="22" FontFamily="InterSemiBold"
+                               TextColor="#3B6D11"/>
+                        <Label Text="óptimo" FontSize="10" FontFamily="InterRegular"
+                               TextColor="{AppThemeBinding Light=#D1D5DB, Dark=#4B5563}"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Recovery -->
+                <Border Grid.Column="3"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource shellDark}}"
+                        StrokeShape="RoundRectangle 12"
+                        Padding="12">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="REC" FontSize="10" FontFamily="InterSemiBold"
+                               TextColor="{AppThemeBinding Light=#9CA3AF, Dark=#6B7280}"
+                               CharacterSpacing="1.5"/>
+                        <Label Text="{Binding RecoveryScore, StringFormat='{0:F2}'}"
+                               FontSize="22" FontFamily="InterSemiBold"
+                               TextColor="#185FA5"/>
+                        <Label Text="índice" FontSize="10" FontFamily="InterRegular"
+                               TextColor="{AppThemeBinding Light=#D1D5DB, Dark=#4B5563}"/>
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- ══ CHART CARD ══════════════════════════════════════ -->
+            <Border BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource shellDark}}"
+                    StrokeShape="RoundRectangle 14"
+                    Padding="15">
+                <VerticalStackLayout Spacing="14">
+
+                    <!-- Chart header -->
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Grid.Column="0"
+                               Text="Nivel de estrés diario"
+                               FontSize="14" FontFamily="InterSemiBold"
+                               TextColor="{AppThemeBinding Light=#111827, Dark=#F9FAFB}"/>
+                        <!-- Leyenda -->
+                        <HorizontalStackLayout Grid.Column="1" Spacing="12">
+                            <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
+                                <BoxView WidthRequest="8" HeightRequest="8"
+                                         CornerRadius="4" Color="#E24B4A"
+                                         BackgroundColor="Transparent"
+                                         VerticalOptions="Center"/>
+                                <Label Text="Estrés" FontSize="11"
+                                       TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
+                                       VerticalOptions="Center"/>
+                            </HorizontalStackLayout>
+                            <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
+                                <BoxView WidthRequest="12" HeightRequest="2"
+                                         Color="#B4B2A9" VerticalOptions="Center"/>
+                                <Label Text="Prom" FontSize="11"
+                                       TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
+                                       VerticalOptions="Center"/>
+                            </HorizontalStackLayout>
+                        </HorizontalStackLayout>
+                    </Grid>
+
+                    <!-- El chart SkiaSharp -->
+                    <controls:StressLineChart
+                        Values="{Binding ChartValues}"
+                        Labels="{Binding ChartLabels}"
+                        HeightRequest="220"/>
                 </VerticalStackLayout>
             </Border>
 
-            <!-- HIGH STRESS -->
-            <Border Padding="15" BackgroundColor="#FEF3C7">
-                <VerticalStackLayout>
-                    <Label Text="Días de alto estrés" FontSize="14" TextColor="Gray"/>
-                    <Label Text="{Binding HighStressDays}" FontSize="18" FontAttributes="Bold"/>
-                </VerticalStackLayout>
-            </Border>
+            <!-- ══ INSIGHT CARDS ═══════════════════════════════════ -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+
+                <!-- Días alto estrés -->
+                <Border Grid.Column="0"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource shellDark}}"
+                        StrokeShape="RoundRectangle 12"
+                        Padding="16">
+                    <VerticalStackLayout Spacing="8">
+                        <HorizontalStackLayout Spacing="8">
+                            <Border BackgroundColor="#FCEBEB"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 8"
+                                    WidthRequest="28" HeightRequest="28">
+                                <Label Text="↑" FontSize="14"
+                                       TextColor="#A32D2D"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"/>
+                            </Border>
+                            <Label Text="Días estrés alto"
+                                   FontSize="12" FontFamily="InterRegular"
+                                   TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
+                                   VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+                        <Label Text="{Binding HighStressDays, StringFormat='{0} días'}"
+                               FontSize="20" FontFamily="InterSemiBold"
+                               TextColor="{AppThemeBinding Light=#111827, Dark=#F9FAFB}"/>
+                        <!-- Barra de progreso -->
+                        <ProgressBar Progress="{Binding HighStressRatio}"
+                                     ProgressColor="#E24B4A"
+                                     BackgroundColor="{AppThemeBinding Light=#F3F4F6, Dark=#2D3748}"
+                                     HeightRequest="5"/>
+                        <Label Text="Superaron nivel 0.75"
+                               FontSize="11" FontFamily="InterRegular"
+                               TextColor="{AppThemeBinding Light=#D1D5DB, Dark=#4B5563}"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Mejor día -->
+                <Border Grid.Column="1"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource shellDark}}"
+                        StrokeShape="RoundRectangle 12"
+                        Padding="16">
+                    <VerticalStackLayout Spacing="8">
+                        <HorizontalStackLayout Spacing="8">
+                            <Border BackgroundColor="#EAF3DE"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 8"
+                                    WidthRequest="28" HeightRequest="28">
+                                <Label Text="↓" FontSize="14"
+                                       TextColor="#3B6D11"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"/>
+                            </Border>
+                            <Label Text="Mejor día"
+                                   FontSize="12" FontFamily="InterRegular"
+                                   TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}"
+                                   VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+                        <Label Text="{Binding BestDayLabel}"
+                               FontSize="20" FontFamily="InterSemiBold"
+                               TextColor="{AppThemeBinding Light=#111827, Dark=#F9FAFB}"/>
+                        <ProgressBar Progress="{Binding BestDayValue}"
+                                     ProgressColor="#639922"
+                                     BackgroundColor="{AppThemeBinding Light=#F3F4F6, Dark=#2D3748}"
+                                     HeightRequest="5"/>
+                        <Label Text="Nivel óptimo de recuperación"
+                               FontSize="11" FontFamily="InterRegular"
+                               TextColor="{AppThemeBinding Light=#D1D5DB, Dark=#4B5563}"/>
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
 
         </VerticalStackLayout>
     </ScrollView>
+
 </ContentPage>

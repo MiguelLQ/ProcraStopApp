@@ -5,8 +5,6 @@ using Plugin.LocalNotification;
 using ProcraStop.Core.Decisions.Context;
 using ProcraStop.Core.Decisions.Engine;
 using ProcraStop.Core.Decisions.Memory;
-using ProcraStop.Core.Decisions.Rules;
-using ProcraStop.Core.Decisions.Rules.Behavior;
 using ProcraStop.Modules.Dashboard.Application.Queries;
 using ProcraStop.Modules.Dashboard.Presentation.ViewModels;
 using ProcraStop.Modules.Dashboard.Presentation.Views;
@@ -14,10 +12,9 @@ using ProcraStop.Modules.Habits.Infraestructure.Registration;
 using ProcraStop.Modules.Stress.Infrastructure.Registration;
 using ProcraStop.Modules.Tasks.Infraestructure.Persistence;
 using ProcraStop.Modules.Tasks.Infraestructure.Registration;
-using ProcraStop.Modules.Tasks.Presentation.ViewModels;
 using ProcraStop.Shared.Services;
+using SkiaSharp.Views.Maui.Controls.Hosting;
 using Syncfusion.Maui.Toolkit.Hosting;
-
 namespace ProcraStop
 {
     public static class MauiProgram
@@ -28,6 +25,7 @@ namespace ProcraStop
             builder
                 .UseMauiApp<App>()
                 .UseMauiCommunityToolkit()
+                .UseSkiaSharp()               // ← agregar esta línea
                 .ConfigureSyncfusionToolkit()
                 .UseLocalNotification()
                 .ConfigureMauiHandlers(handlers =>

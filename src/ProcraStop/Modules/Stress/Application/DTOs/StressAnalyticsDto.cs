@@ -13,5 +13,7 @@ namespace ProcraStop.Modules.Stress.Application.DTOs
         public int HighStressDays { get; set; }
 
         public double RecoveryScore { get; set; }
+        // CLAVE PARA GRÁFICO
+        public List<StressPointDto> Points { get; set; } = new();
     }
 }

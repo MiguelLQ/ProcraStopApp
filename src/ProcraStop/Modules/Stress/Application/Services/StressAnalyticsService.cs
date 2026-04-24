@@ -28,7 +28,7 @@ namespace ProcraStop.Modules.Stress.Application.Services
             };
         }
 
-        private StressTrend CalculateTrend(List<double> values)
+        public StressTrend CalculateTrend(List<double> values)
         {
             if (values.Count < 2)
                 return StressTrend.Stable;
@@ -57,5 +57,6 @@ namespace ProcraStop.Modules.Stress.Application.Services
 
             return Math.Clamp(recovery, 0, 1);
         }
+
     }
 }
