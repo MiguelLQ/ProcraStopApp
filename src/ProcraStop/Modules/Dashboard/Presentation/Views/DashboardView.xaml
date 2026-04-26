@@ -3,87 +3,193 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ProcraStop.Modules.Dashboard.Presentation.Views.DashboardView"
              xmlns:stress="clr-namespace:ProcraStop.Modules.Stress.Presentation.Views"
+             xmlns:conv="clr-namespace:ProcraStop.Modules.Dashboard.Presentation.Converters"
              Title="DashboardView">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <conv:ProgressToWidthConverter x:Key="ProgressToWidthConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <ScrollView>
         <VerticalStackLayout Spacing="20" Padding="20">
             <stress:StressCheckInView/>
 
-            <!-- 🧠 HEADER / DECISION STATE -->
-            <Border 
-                   Padding="20"
-                   BackgroundColor="#F5F7FB"
-                   >
+            <!-- ========================= -->
+            <!-- HERO / CORE STATE -->
+            <!-- ========================= -->
 
-                <VerticalStackLayout Spacing="10">
+            <Border Padding="16" BackgroundColor="{StaticResource DarkSecondaryBackground}">
 
-                    <Label Text="{Binding Message}"
-                           FontSize="22"
+                <Grid RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="6">
+
+                    <Label Text="Sistema" Style="{StaticResource SubtitleLabel}" />
+
+                    <Label Grid.Row="1"
+                           Text="{Binding Message}"
+                           FontSize="20"
                            FontAttributes="Bold"
-                           TextColor="Black"/>
+                           TextColor="{Binding StateColor}" />
 
-                    <Label Text="{Binding Reason}"
-                           FontSize="14"
-                           TextColor="Gray"/>
+                    <Label Grid.Row="2"
+                           Text="{Binding Reason}"
+                           Style="{StaticResource SubtitleLabel}" />
+
+                    <Label Grid.Row="3"
+                           Text="{Binding SuggestedAction}"
+                           TextColor="{StaticResource primarioS}"
+                           FontSize="13"/>
+
+                </Grid>
+
+            </Border>
+            <!-- ===================== -->
+            <!-- SYSTEM STATE -->
+            <!-- ===================== -->
+
+            <!-- SYSTEM STATE -->
+            <Border Padding="16" BackgroundColor="{StaticResource DarkSecondaryBackground}">
+
+                <VerticalStackLayout Spacing="16">
+
+                    <Label Text="System Health"
+                           Style="{StaticResource SubtitleLabel}" />
+
+                    <!-- PERFORMANCE -->
+                    <VerticalStackLayout>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Performance"/>
+                            <Label Text="{Binding SystemState.PerformanceHealth, StringFormat='{0:P0}'}"
+                                   TextColor="{StaticResource primarioS}"/>
+                        </Grid>
+
+                        <Grid HeightRequest="6">
+                            <Border BackgroundColor="{StaticResource secondaryS}"/>
+                            <Border BackgroundColor="{StaticResource primarioS}"
+                                    WidthRequest="{Binding SystemState.PerformanceHealth, Converter={StaticResource ProgressToWidthConverter}}"/>
+                        </Grid>
+                    </VerticalStackLayout>
+
+                    <!-- HABITS -->
+                    <VerticalStackLayout>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Habits"/>
+                            <Label Text="{Binding SystemState.BehavioralStability, StringFormat='{0:P0}'}"
+                                   TextColor="{StaticResource saveButton}"/>
+                        </Grid>
+
+                        <Grid HeightRequest="6">
+                            <Border BackgroundColor="{StaticResource secondaryS}"/>
+                            <Border BackgroundColor="{StaticResource saveButton}"
+                                    WidthRequest="{Binding SystemState.BehavioralStability, Converter={StaticResource ProgressToWidthConverter}}"/>
+                        </Grid>
+                    </VerticalStackLayout>
+
+                    <!-- STRESS -->
+                    <VerticalStackLayout>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Stress"/>
+                            <Label Text="{Binding SystemState.StressPressure, StringFormat='{0:P0}'}"
+                                   TextColor="{StaticResource CancelButton}"/>
+                        </Grid>
+
+                        <Grid HeightRequest="6">
+                            <Border BackgroundColor="{StaticResource secondaryS}"/>
+                            <Border BackgroundColor="{StaticResource CancelButton}"
+                                    WidthRequest="{Binding SystemState.StressPressure, Converter={StaticResource ProgressToWidthConverter}}"/>
+                        </Grid>
+                    </VerticalStackLayout>
 
                 </VerticalStackLayout>
+
             </Border>
+            <!-- ===================== -->
+            <!-- SIGNALS -->
+            <!-- ===================== -->
 
+            <CollectionView ItemsSource="{Binding Signals}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Padding="12" BackgroundColor="{StaticResource DarkSecondaryBackground}">
+                            <VerticalStackLayout>
+
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Text="{Binding Name}" FontAttributes="Bold"/>
+                                    <Label Text="{Binding Score, StringFormat='{0:P0}'}"
+                                           TextColor="{StaticResource primarioS}"/>
+                                </Grid>
+
+                                <Grid HeightRequest="6">
+                                    <Border BackgroundColor="{StaticResource secondaryS}"/>
+                                    <Border BackgroundColor="{StaticResource primarioS}"
+                                            WidthRequest="{Binding Score, Converter={StaticResource ProgressToWidthConverter}}"/>
+                                </Grid>
+
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- ===================== -->
             <!-- INSIGHTS -->
-            <Border 
-                   Padding="15"
-                   BackgroundColor="White"
-                   >
+            <!-- ===================== -->
 
-                <VerticalStackLayout Spacing="10">
+            <Border Padding="16" BackgroundColor="{StaticResource DarkSecondaryBackground}">
 
-                    <Label Text="Insights"
-                           FontSize="16"
-                           FontAttributes="Bold"/>
+                <VerticalStackLayout>
 
-                    <CollectionView ItemsSource="{Binding Insights}">
+                    <Label Text="Insights" Style="{StaticResource SubtitleLabel}" />
+
+                    <CollectionView ItemsSource="{Binding TaskInsights}">
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <Border Padding="10"
-                                       Margin="0,5"
-                                       
-                                       BackgroundColor="#F9FAFB"
-                                       >
+                                <Label Text="{Binding .}" TextColor="{StaticResource primarioS}"/>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
 
-                                    <Label Text="{Binding .}"
-                                           FontSize="14"
-                                           TextColor="Black"/>
-                                </Border>
+                    <CollectionView ItemsSource="{Binding HabitInsights}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Label Text="{Binding .}" TextColor="{StaticResource saveButton}"/>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <CollectionView ItemsSource="{Binding StressInsights}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Label Text="{Binding .}" TextColor="{StaticResource CancelButton}"/>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
 
                 </VerticalStackLayout>
-            </Border>
-
-            <!-- SUGGESTED ACTION -->
-            <Border 
-                   Padding="20"
-                   BackgroundColor="#111827">
-
-                <VerticalStackLayout Spacing="10">
-
-                    <Label Text="Acción recomendada"
-                           TextColor="White"
-                           FontSize="16"
-                           FontAttributes="Bold"/>
-
-                    <Label Text="{Binding SuggestedAction}"
-                           TextColor="#D1D5DB"
-                           FontSize="14"/>
-
-                    <Button Text="Ejecutar ahora"
-                            BackgroundColor="#22C55E"
-                            TextColor="White"
-                            CornerRadius="12"/>
-                </VerticalStackLayout>
 
             </Border>
 
+            <!-- ===================== -->
+            <!-- TREND -->
+            <!-- ===================== -->
+
+            <VerticalStackLayout BindingContext="{Binding CurrentTrend}">
+
+                <Grid ColumnDefinitions="*,*,*">
+
+                    <Label Text="{Binding StressTrend}"
+               TextColor="{StaticResource CancelButton}" />
+
+                    <Label Grid.Column="1"
+               Text="{Binding PerformanceTrend}"
+               TextColor="{StaticResource primarioS}" />
+
+                    <Label Grid.Column="2"
+               Text="{Binding BehaviorTrend}"
+               TextColor="{StaticResource saveButton}" />
+
+                </Grid>
+
+            </VerticalStackLayout>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

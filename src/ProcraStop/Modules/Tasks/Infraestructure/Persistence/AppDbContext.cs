@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProcraStop.Modules.Dashboard.Infrastructure.Entities;
 using ProcraStop.Modules.Habits.Infraestructure.Persistence.Entities;
 using ProcraStop.Modules.Stress.Infrastructure.Persistences.Config;
 using ProcraStop.Modules.Stress.Infrastructure.Persistences.Entities;
@@ -23,7 +24,8 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Persistence
         public DbSet<HabitLogEntity> HabitLogs => Set<HabitLogEntity>();
         // streess
         public DbSet<StressRecordEntity> StressRecords => Set<StressRecordEntity>();
-
+        // memoria del sistema
+        public DbSet<SystemSnapshotEntity> SystemSnapshots => Set<SystemSnapshotEntity>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -144,8 +146,21 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Persistence
                     .HasForeignKey(x => x.HabitId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
-            // estress
-            
+            // memoria
+            modelBuilder.Entity<SystemSnapshotEntity>(entity =>
+            {
+                entity.ToTable("SystemSnapshots");
+
+                entity.HasKey(x => x.Id);
+
+                entity.Property(x => x.Timestamp)
+                    .IsRequired();
+
+                entity.Property(x => x.Stress).IsRequired();
+                entity.Property(x => x.Performance).IsRequired();
+                entity.Property(x => x.Behavior).IsRequired();
+            });
+
             modelBuilder.Entity<StudyTaskEntity>()
             .HasOne(t => t.Course)
             .WithMany()

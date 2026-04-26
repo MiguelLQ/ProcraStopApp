@@ -10,7 +10,7 @@ public partial class StressCheckInView : ContentView
     {
         InitializeComponent();
 
-        _vm = App.Current.Handler.MauiContext.Services
+        _vm = App.Current?.Handler?.MauiContext?.Services
             .GetService<StressCheckInViewModel>()!;
 
         BindingContext = _vm;

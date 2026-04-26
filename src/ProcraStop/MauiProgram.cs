@@ -6,6 +6,7 @@ using ProcraStop.Core.Decisions.Context;
 using ProcraStop.Core.Decisions.Engine;
 using ProcraStop.Core.Decisions.Memory;
 using ProcraStop.Modules.Dashboard.Application.Queries;
+using ProcraStop.Modules.Dashboard.Infrastructure.Registration;
 using ProcraStop.Modules.Dashboard.Presentation.ViewModels;
 using ProcraStop.Modules.Dashboard.Presentation.Views;
 using ProcraStop.Modules.Habits.Infraestructure.Registration;
@@ -93,18 +94,13 @@ namespace ProcraStop
             // Registro encapsulado del módulo Tasks , Habits
             // =========================
             builder.Services.AddTasksModule();
+            builder.Services.AddDashboardModule();
             builder.Services.AddHabitsModule();
             builder.Services.AddStressModule();
             // =========================
             // Registro del servicio de Snackbar
             // =========================
             builder.Services.AddSingleton<ISnackbarService, SnackbarService>();
-           
-            //dashboard principal
-            builder.Services.AddTransient<GetDashboardDecisionHandler>();
-            builder.Services.AddTransient<DashboardViewModel>();
-            builder.Services.AddTransient<DashboardView>();
-
 
             var app = builder.Build();
 

@@ -14,6 +14,10 @@ namespace ProcraStop.Core.Decisions.DTOs
         // motivo de la decision tomada por el motor de decisiones, puede ser una regla que
         // se cumplio o una condicion que se detecto
         public string? Reason { get; set; }
+        //  NUEVO
+        public double Score { get; set; }
+        // categoria de la decision tomada por el motor de decisiones, puede ser relacionada con la tarea actual,
+        public DecisionCategory Category { get; init; }
 
         // NUEVO (opcional, UX avanzado)
         // lista de insights generados por el motor de decisiones, pueden ser recomendaciones,

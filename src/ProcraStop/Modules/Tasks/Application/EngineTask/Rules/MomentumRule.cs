@@ -1,13 +1,14 @@
 ﻿using ProcraStop.Core.Decisions.Context;
 using ProcraStop.Core.Decisions.DTOs;
 using ProcraStop.Core.Decisions.Rules;
+using ProcraStop.Core.Decisions.Signals;
 using ProcraStop.Modules.Tasks.Application.EngineTask.Signals;
 namespace ProcraStop.Modules.Tasks.Application.EngineTask.Rules
 {
     public class MomentumRule : IDecisionRule
     {
         public int Priority => 60;
-
+        public DecisionCategory Category => DecisionCategory.Performance;
         public bool IsMatch(DecisionContext ctx)
         {
             var t = (TaskSignals)ctx.Tasks!;
@@ -17,7 +18,7 @@ namespace ProcraStop.Modules.Tasks.Application.EngineTask.Rules
                    !t.HasOverdueTasks;
         }
 
-        public DecisionResult CreateDecision(DecisionContext ctx)
+        public DecisionResult CreateDecision(DecisionContext ctx, IReadOnlyList<UnifiedSignal> signals)
         {
             var t = (TaskSignals)ctx.Tasks!;
 
@@ -25,6 +26,8 @@ namespace ProcraStop.Modules.Tasks.Application.EngineTask.Rules
             {
                 Message = "Te conviene generar impulso.",
                 Type = DecisionType.Info,
+                Category = Category,
+                Score = 0.55,
                 Reason = $"Tienes {t.QuickTasksCount} tareas rápidas disponibles y ninguna atrasada.",
                 SuggestedAction = "Empieza con una tarea corta para entrar en ritmo",
                 Insights = new List<string>

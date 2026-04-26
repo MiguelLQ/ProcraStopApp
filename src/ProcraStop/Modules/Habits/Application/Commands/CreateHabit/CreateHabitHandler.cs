@@ -31,7 +31,9 @@ namespace ProcraStop.Modules.Habits.Application.Commands.CreateHabit
                 command.Unit,
                 target,
                 schedule,
-                rule);
+                rule,
+                command.TrackingType,
+                command.Weight);
 
             await _repository.AddAsync(habit);
         }

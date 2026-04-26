@@ -18,9 +18,9 @@ namespace ProcraStop.Modules.Habits.Domain.Entities
         public HabitSchedule Schedule { get; private set; } = default!;
 
         public HabitCompletionRule CompletionRule { get; private set; } = default!;
-
+        public double Weight { get; private set; }
         public bool IsActive { get; private set; }
-
+        public HabitTrackingType TrackingType { get; private set; }
         private Habit() { } // ORM
         // constructor privado para forzar el uso del método de fábrica y garantizar la creación de objetos válidos
         private Habit(
@@ -29,7 +29,9 @@ namespace ProcraStop.Modules.Habits.Domain.Entities
             HabitUnit unit,
             HabitTarget target,
             HabitSchedule schedule,
-            HabitCompletionRule completionRule)
+            HabitCompletionRule completionRule,
+            double weight,
+            HabitTrackingType trackingType)
         {
             Id = id;
             SetName(name);
@@ -37,6 +39,8 @@ namespace ProcraStop.Modules.Habits.Domain.Entities
             Target = target;
             Schedule = schedule;
             CompletionRule = completionRule;
+            Weight = weight;
+            TrackingType = trackingType;
             IsActive = true;
         }
         //
@@ -47,15 +51,17 @@ namespace ProcraStop.Modules.Habits.Domain.Entities
             HabitTarget target,
             HabitSchedule schedule,
             HabitCompletionRule completionRule,
+            double weight,
+            HabitTrackingType trackingType,
             bool isActive)
-        {
-            var habit = new Habit(id, name, unit, target, schedule, completionRule);
+            {
+                var habit = new Habit(id, name, unit, target, schedule, completionRule, weight, trackingType);
 
-            if (!isActive)
-                habit.Deactivate();
+                if (!isActive)
+                    habit.Deactivate();
 
-            return habit;
-        }
+                return habit;
+            }
         // metodo de fábrica para crear hábitos de forma controlada,
         // asegurando que se cumplan las invariantes del dominio
         public static Habit Create(
@@ -63,7 +69,9 @@ namespace ProcraStop.Modules.Habits.Domain.Entities
             HabitUnit unit,
             HabitTarget target,
             HabitSchedule schedule,
-            HabitCompletionRule completionRule)
+            HabitCompletionRule completionRule,
+            HabitTrackingType trackingType,
+            double weight)
         {
             return new Habit(
                 Guid.NewGuid(),
@@ -71,9 +79,38 @@ namespace ProcraStop.Modules.Habits.Domain.Entities
                 unit,
                 target,
                 schedule,
-                completionRule);
+                completionRule,
+                weight,
+                trackingType);
         }
+        // método para calcular el progreso del hábito en una fecha específica, 
+        public double CalculateProgress(IEnumerable<HabitLog> logs, DateTime date)
+        {
+            if (logs is null || Target.Value == 0)
+                return 0;
 
+            var total = GetTotalValueForDate(logs, date);
+
+            return Math.Min((double)total / Target.Value, 1.0);
+        }
+        // método para verificar si el hábito se ha completado en una fecha específica,
+        public bool IsCompleted(IEnumerable<HabitLog> logs, DateTime date)
+        {
+            if (logs is null)
+                return false;
+
+            var total = GetTotalValueForDate(logs, date);
+
+            return CompletionRule.IsCompleted(total, Target.Value);
+        }
+        // método privado para obtener el valor total registrado en una fecha específica,
+        // utilizado internamente para calcular progreso y completitud
+        private int GetTotalValueForDate(IEnumerable<HabitLog> logs, DateTime date)
+        {
+            return logs
+                .Where(l => l.Date.Date == date.Date)
+                .Sum(l => l.Value);
+        }
         //BEHAVIOR
 
         public void SetName(string name)

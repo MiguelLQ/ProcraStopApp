@@ -1,5 +1,6 @@
-﻿using ProcraStop.Modules.Habits.Application.DTOs;
-using ProcraStop.Modules.Habits.Domain.Entities;
+﻿using ProcraStop.Core.Decisions.Mappers;
+using ProcraStop.Core.Decisions.Signals;
+using ProcraStop.Modules.Habits.Application.DTOs;
 using ProcraStop.Modules.Stress.Application.Abstractions;
 using ProcraStop.Modules.Stress.Application.DTOs;
 using ProcraStop.Modules.Stress.Application.Services;
@@ -21,28 +22,38 @@ namespace ProcraStop.Core.Decisions.Context
         }
 
         public async Task<DecisionContext> BuildAsync(
-            TaskSignals taskSignals,
-            HabitSignals habitSignals)
+        TaskSignals taskSignals,
+        HabitSignals habitSignals)
         {
-            // 1. Obtener datos de stress
+            var safeHabits = habitSignals ?? HabitSignals.Empty();
+
+            // 1. STRESS COMPUTATION
             var history = await _stressRepository.GetRecentAsync(7);
             var latest = history.FirstOrDefault();
 
-            // 2. Calcular signals
             var stressSignals = _stressService.Calculate(
                 taskSignals,
-                habitSignals ?? HabitSignals.Empty(),
+                safeHabits,
                 latest,
                 history
-            );
+            ) ?? StressSignals.Empty();
 
-            // 3. Construir contexto
+            // 2.  SIGNAL EXTRACTION LAYER (CORRECTO)
+            var unifiedSignals = new List<UnifiedSignal>();
+
+            unifiedSignals.AddRange(TaskSignalExtractor.Extract(taskSignals));
+            unifiedSignals.AddRange(HabitSignalExtractor.Extract(safeHabits));
+            unifiedSignals.AddRange(StressSignalExtractor.Extract(stressSignals));
+
+            // 3. CONTEXT FINAL
             return new DecisionContext
             {
                 Tasks = taskSignals,
-                Habits = habitSignals ?? HabitSignals.Empty(),
-                Stress = stressSignals ?? StressSignals.Empty()
+                Habits = safeHabits,
+                Stress = stressSignals,
+                Signals = unifiedSignals
             };
         }
     }
+    
 }

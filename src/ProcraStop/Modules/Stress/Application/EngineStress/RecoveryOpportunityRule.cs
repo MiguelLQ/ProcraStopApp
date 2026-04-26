@@ -3,6 +3,7 @@
 using ProcraStop.Core.Decisions.Context;
 using ProcraStop.Core.Decisions.DTOs;
 using ProcraStop.Core.Decisions.Rules;
+using ProcraStop.Core.Decisions.Signals;
 using ProcraStop.Modules.Stress.Application.DTOs;
 
 namespace ProcraStop.Modules.Stress.Application.EngineStress
@@ -10,7 +11,7 @@ namespace ProcraStop.Modules.Stress.Application.EngineStress
     public class RecoveryOpportunityRule :IDecisionRule
     {
         public int Priority => 70;
-
+        public DecisionCategory Category => DecisionCategory.Recovery;
         public bool IsMatch(DecisionContext ctx)
         {
             var s = ctx.Stress;
@@ -19,7 +20,7 @@ namespace ProcraStop.Modules.Stress.Application.EngineStress
                    s.Trend == StressTrend.Falling;
         }
 
-        public DecisionResult CreateDecision(DecisionContext ctx)
+        public DecisionResult CreateDecision(DecisionContext ctx, IReadOnlyList<UnifiedSignal> signals)
         {
             var s = ctx.Stress;
 
@@ -27,6 +28,8 @@ namespace ProcraStop.Modules.Stress.Application.EngineStress
             {
                 Message = "Estás mejorando, mantén el ritmo",
                 Type = DecisionType.Info,
+                Category = Category,
+                Score = 0.6,
                 Reason = "Tu estrés sigue bajando",
                 SuggestedAction = "Mantén hábitos actuales y evita sobrecargarte de nuevo",
                 Insights = new List<string>

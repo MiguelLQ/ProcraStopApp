@@ -2,13 +2,14 @@
 using ProcraStop.Core.Decisions.Context;
 using ProcraStop.Core.Decisions.DTOs;
 using ProcraStop.Core.Decisions.Rules;
+using ProcraStop.Core.Decisions.Signals;
 
 namespace ProcraStop.Modules.Stress.Application.EngineStress
 {
     internal class HighStressLowRecoveryRule : IDecisionRule
     {
         public int Priority => 90;
-
+        public DecisionCategory Category => DecisionCategory.Stress;
         public bool IsMatch(DecisionContext ctx)
         {
             var s = ctx.Stress;
@@ -17,7 +18,7 @@ namespace ProcraStop.Modules.Stress.Application.EngineStress
                    s.RecoveryCapacity < 0.4;
         }
 
-        public DecisionResult CreateDecision(DecisionContext ctx)
+        public DecisionResult CreateDecision(DecisionContext ctx, IReadOnlyList<UnifiedSignal> signals)
         {
             var s = ctx.Stress;
 
@@ -25,6 +26,8 @@ namespace ProcraStop.Modules.Stress.Application.EngineStress
             {
                 Message = "Tu recuperación es insuficiente",
                 Type = DecisionType.Warning,
+                Category = Category,
+                Score = 0.85,
                 Reason = "Tu nivel de estrés es alto y no estás recuperándote",
                 SuggestedAction = "Introduce pausas reales o reduce intensidad de hábitos",
                 Insights = new List<string>

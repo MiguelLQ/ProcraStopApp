@@ -22,6 +22,8 @@ namespace ProcraStop.Modules.Habits.Infraestructure.Registration
             services.AddTransient<IDecisionRule, HighDisciplineRule>();
             services.AddTransient<IDecisionRule, LowConsistencyRule>();
             services.AddTransient<IDecisionRule, RecoveryMomentumRule>();
+            services.AddTransient<IDecisionRule, HighFailureRule>();
+            services.AddTransient<IDecisionRule, MomentumGrowthRule>();
 
             return services;
         }

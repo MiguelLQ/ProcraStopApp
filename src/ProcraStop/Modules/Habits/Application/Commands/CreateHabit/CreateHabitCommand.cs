@@ -13,5 +13,7 @@ namespace ProcraStop.Modules.Habits.Application.Commands.CreateHabit
 
         public int[] DaysOfWeek { get; set; } = []; // 0-6 (domingo-sábado)
         public double RequiredPercentage { get; set; } // 0 - 1
+        public HabitTrackingType TrackingType { get; set; }
+        public double Weight { get; set; } = 1.0;
     }
 }

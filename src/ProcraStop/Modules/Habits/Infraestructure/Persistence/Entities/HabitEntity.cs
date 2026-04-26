@@ -1,4 +1,6 @@
 ﻿
+using ProcraStop.Modules.Habits.Domain.Enums;
+
 namespace ProcraStop.Modules.Habits.Infraestructure.Persistence.Entities
 {
     public class HabitEntity
@@ -15,6 +17,8 @@ namespace ProcraStop.Modules.Habits.Infraestructure.Persistence.Entities
         public string DaysOfWeek { get; set; } = string.Empty;
 
         public double RequiredPercentage { get; set; }
+        public double Weight { get; private set; }
+        public HabitTrackingType TrackingType { get; private set; }
 
         public bool IsActive { get; set; }
     }

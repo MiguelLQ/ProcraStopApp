@@ -1,56 +1,121 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using ProcraStop.Core.Decisions.DTOs;
+using ProcraStop.Modules.Dashboard.Application.Models;
+using ProcraStop.Modules.Dashboard.Application.Models.Historial;
 using ProcraStop.Modules.Dashboard.Application.Queries;
+using System.Collections.ObjectModel;
 namespace ProcraStop.Modules.Dashboard.Presentation.ViewModels
 {
     public partial class DashboardViewModel : ObservableObject
     {
         private readonly GetDashboardDecisionHandler _handler;
 
-        [ObservableProperty]
-        private string title = string.Empty;
-
-        [ObservableProperty]
-        private string message = string.Empty;
-
-        [ObservableProperty]
-        private string? reason;
-
-        [ObservableProperty]
-        private List<string> insights = new();
-
-        [ObservableProperty]
-        private string? suggestedAction;
-
-        [ObservableProperty]
-        private string typeColor = string.Empty; // opcional UX
-
         public DashboardViewModel(GetDashboardDecisionHandler handler)
         {
             _handler = handler;
         }
 
+        // =========================
+        // CORE STATE
+        // =========================
+
+        [ObservableProperty]
+        private string message = string.Empty;
+
+        [ObservableProperty]
+        private string reason = string.Empty;
+
+        [ObservableProperty]
+        private string suggestedAction = string.Empty;
+
+        [ObservableProperty]
+        private string stateColor = "#6B7280";
+
+        // =========================
+        // SYSTEM STATE
+        // =========================
+
+        [ObservableProperty]
+        private SystemStateReadModel? systemState;
+
+        // =========================
+        // COLLECTIONS
+        // =========================
+
+        public ObservableCollection<SignalReadModel> Signals { get; } = new();
+
+        public ObservableCollection<string> TaskInsights { get; } = new();
+        public ObservableCollection<string> HabitInsights { get; } = new();
+        public ObservableCollection<string> StressInsights { get; } = new();
+
+        public ObservableCollection<CategoryBalanceReadModel> Balance { get; } = new();
+        public ObservableCollection<TrendReadModel> Trends { get; } = new();
+        //
+        [ObservableProperty]
+        private TrendReadModel? currentTrend;
+        // =========================
+        // LOAD
+        // =========================
+
+        [RelayCommand]
         public async Task LoadAsync()
         {
-            var result = await _handler.Handle(new GetDashboardDecisionQuery());
+            var data = await _handler.Handle(new GetDashboardDecisionQuery());
 
-            Message = result.Message;
-            Reason = result.Reason;
-            Insights = result.Insights ?? new();
-            SuggestedAction = result.SuggestedAction;
+            if (data is null) return;
 
-            //  SOLO UI INTERPRETATION (NO lógica de dominio)
-            TypeColor = MapColor(result.Type);
+            // CORE
+            Message = data.CoreState?.Message ?? "";
+            Reason = data.CoreState?.Reason ?? "";
+            SuggestedAction = data.CoreState?.SuggestedAction ?? "";
+            StateColor = ResolveColor(data.CoreState?.Type);
+
+            // SYSTEM STATE
+            SystemState = data.SystemState;
+
+            // SIGNALS
+            Signals.Clear();
+            foreach (var s in data.Signals ?? new List<SignalReadModel>())
+                Signals.Add(s);
+
+            // INSIGHTS
+            Fill(TaskInsights, data.TaskInsights);
+            Fill(HabitInsights, data.HabitInsights);
+            Fill(StressInsights, data.StressInsights);
+
+            // BALANCE
+            Balance.Clear();
+            foreach (var b in data.CategoryBalance ?? new List<CategoryBalanceReadModel>())
+                Balance.Add(b);
+
+            // TREND ✅ FIX REAL
+            CurrentTrend = data.Trend;
         }
 
-        private static string MapColor(ProcraStop.Core.Decisions.DTOs.DecisionType type)
+        // =========================
+        // HELPERS
+        // =========================
+
+        private void Fill(ObservableCollection<string> target, List<string>? source)
+        {
+            target.Clear();
+
+            if (source == null) return;
+
+            foreach (var s in source)
+                target.Add(s);
+        }
+
+        private string ResolveColor(DecisionType? type)
         {
             return type switch
             {
-                ProcraStop.Core.Decisions.DTOs.DecisionType.Critical => "Red",
-                ProcraStop.Core.Decisions.DTOs.DecisionType.Warning => "Orange",
-                ProcraStop.Core.Decisions.DTOs.DecisionType.Success => "Green",
-                _ => "Blue"
+                DecisionType.Critical => "#FF5A5F",
+                DecisionType.Warning => "#FFB020",
+                DecisionType.Success => "#22C55E",
+                _ => "#6B7280"
             };
         }
     }

@@ -26,7 +26,9 @@ namespace ProcraStop.Modules.Habits.Infraestructure.Mappers
                 (HabitUnit)entity.Unit,
                 target,
                 schedule,
-                rule);
+                rule,
+                (HabitTrackingType)entity.TrackingType,
+                entity.Weight);
 
             // setear estado real
             if (!entity.IsActive)

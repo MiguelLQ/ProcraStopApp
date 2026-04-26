@@ -27,53 +27,74 @@ namespace ProcraStop.Core.Decisions.Engine
             var matchedRules = _rules
                 .Where(r => r.IsMatch(context))
                 .Where(r => !IsInCooldown(r, memory))
-                .OrderByDescending(r => r.Priority)
                 .ToList();
 
             if (!matchedRules.Any())
             {
-                return DefaultDecision();
+                return DefaultDecision(context);
             }
 
-            // 2. REGLA PRINCIPAL
-            var primaryRule = matchedRules.First();
-            var primary = primaryRule.CreateDecision(context);
+            // 2. EVALUAR TODAS (SCORING)
+            var evaluated = matchedRules
+                .Select(r =>
+                {
+                    var result = r.CreateDecision(context, context.Signals);
+                    return result;
+                })
+                .ToList();
 
-            // 3. REGLAS DE SOPORTE
-            var supportRules = matchedRules
+            // 3. AGRUPAR POR CATEGORÍA
+            var grouped = evaluated
+                .GroupBy(r => r.Category)
+                .Select(g => new
+                {
+                    Category = g.Key,
+                    TotalScore = g.Sum(x => x.Score),
+                    Top = g.OrderByDescending(x => x.Score).First()
+                })
+                .OrderByDescending(x => x.TotalScore)
+                .ToList();
+
+            // 4. SELECCIÓN PRINCIPAL
+            var winnerGroup = grouped.First();
+            var primary = winnerGroup.Top;
+
+            // 5. SOPORTE
+            var support = grouped
                 .Skip(1)
-                .Where(r => IsCompatible(primaryRule, r))
+                .Where(g => IsCategoryCompatible(winnerGroup.Category, g.Category))
                 .Take(2)
+                .Select(g => g.Top)
                 .ToList();
 
             var taskInsights = new List<string>();
             var habitInsights = new List<string>();
             var secondaryInsights = new List<string>();
 
-            foreach (var rule in supportRules)
+            foreach (var s in support)
             {
-                var result = rule.CreateDecision(context);
-
-                CategorizeInsight(rule, result.Message,
+                CategorizeInsightByCategory(
+                    s.Category,
+                    s.Message,
                     taskInsights,
                     habitInsights,
                     secondaryInsights);
             }
 
-            // 4. CONSTRUIR RESULTADO
+            // 6. CONSTRUIR RESULTADO
             primary.TaskInsights = taskInsights;
             primary.HabitInsights = habitInsights;
             primary.SecondaryInsights = secondaryInsights;
 
-            // 5. ACTUALIZAR MEMORIA - NUEVO)
-            UpdateMemory(memory, primaryRule, primary);
+            // 7. MEMORIA
+            UpdateMemory(memory, primary);
             _memoryStore.Save(memory);
 
             return primary;
         }
 
         // ============================
-        // MEMORY LOGIC
+        // MEMORY
         // ============================
 
         private static bool IsInCooldown(IDecisionRule rule, DecisionMemory memory)
@@ -88,57 +109,85 @@ namespace ProcraStop.Core.Decisions.Engine
         // TODO: Mejorar esta lógica para manejar diferentes tipos de cooldowns
         // y evitar penalizar reglas compatibles que se activan juntas.
         private static void UpdateMemory(
-            DecisionMemory memory,
-            IDecisionRule rule,
-            DecisionResult result)
+             DecisionMemory memory,
+             DecisionResult result)
         {
-            var name = rule.GetType().Name;
-
-            memory.LastRuleName = name;
             memory.LastDecisionType = result.Type;
             memory.LastDecisionTime = DateTime.UtcNow;
-
-            memory.RuleCooldowns[name] = DateTime.UtcNow;
 
             if (result.Type == DecisionType.Critical)
                 memory.BurnoutAlertsLast24h++;
         }
-
         // ============================
-        // EXISTENTE
+        // COMPATIBILIDAD
         // ============================
 
-        private static bool IsCompatible(IDecisionRule primary, IDecisionRule secondary)
+        private static bool IsCategoryCompatible(
+    DecisionCategory primary,
+    DecisionCategory secondary)
         {
-            var p = primary.GetType().Namespace ?? "";
-            var s = secondary.GetType().Namespace ?? "";
+            if (primary == secondary) return true;
 
-            return p == s || s.Contains("Core");
+            // permitir mezcla controlada
+            if (primary == DecisionCategory.Performance && secondary == DecisionCategory.Behavior)
+                return true;
+
+            if (primary == DecisionCategory.Risk)
+                return true;
+
+            return false;
         }
+        // ============================
+        // INSIGHTS
+        // ============================
 
-        private static void CategorizeInsight(
-            IDecisionRule rule,
+        private static void CategorizeInsightByCategory(
+            DecisionCategory category,
             string message,
             List<string> taskInsights,
             List<string> habitInsights,
             List<string> secondaryInsights)
         {
-            var ns = rule.GetType().Namespace ?? "";
+            switch (category)
+            {
+                case DecisionCategory.Performance:
+                    taskInsights.Add(message);
+                    break;
 
-            if (ns.Contains("Tasks"))
-                taskInsights.Add(message);
-            else if (ns.Contains("Habits"))
-                habitInsights.Add(message);
-            else
-                secondaryInsights.Add(message);
+                case DecisionCategory.Behavior:
+                case DecisionCategory.Recovery:
+                    habitInsights.Add(message);
+                    break;
+
+                default:
+                    secondaryInsights.Add(message);
+                    break;
+            }
         }
 
-        private static DecisionResult DefaultDecision()
+        // ============================
+        // DEFAULT
+        // ============================
+
+        private static DecisionResult DefaultDecision(DecisionContext ctx)
         {
+            if (ctx.Stress is not null && ctx.Stress.CurrentLevel > 0.6)
+            {
+                return new DecisionResult
+                {
+                    Message = "Reduce la carga y enfócate en lo esencial.",
+                    Type = DecisionType.Warning,
+                    Score = 0.5,
+                    Category = DecisionCategory.Stress
+                };
+            }
+
             return new DecisionResult
             {
-                Message = "Organiza tu día y enfócate en lo importante.",
-                Type = DecisionType.Info
+                Message = "Mantén el enfoque en tus prioridades.",
+                Type = DecisionType.Info,
+                Score = 0.3,
+                Category = DecisionCategory.Performance
             };
         }
     }
