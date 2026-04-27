@@ -21,11 +21,11 @@
                 <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,10">
                     <VerticalStackLayout Grid.Column="0" Spacing="2">
                         <Label Text="Nuevo curso"
-                               FontFamily="InterSemiBold"
+                               FontFamily="OpenSansRegular"
                                FontSize="18"
                                TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
                         <Label Text="Completa los campos para agregar"
-                               FontFamily="InterRegular"
+                               FontFamily="OpenSansRegular"
                                FontSize="14"
                                TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
                     </VerticalStackLayout>
@@ -42,7 +42,7 @@
                             <TapGestureRecognizer Command="{Binding CancelEditCommand}" />
                         </Border.GestureRecognizers>
                         <Label Text="Limpiar"
-                               FontFamily="InterRegular"
+                               FontFamily="OpenSansRegular"
                                FontSize="12"
                                TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />
                     </Border>
@@ -54,7 +54,7 @@
                 <!-- Campo: Nombre -->
                 <VerticalStackLayout Spacing="6" Margin="0,0,0,5">
                     <Label Text="Nombre"
-                           FontFamily="InterSemiBold"
+                           FontFamily="OpenSansRegular"
                            FontSize="12"
                            CharacterSpacing="0.5"
                            TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
@@ -67,7 +67,7 @@
                                BackgroundColor="Transparent"
                                PlaceholderColor="{AppThemeBinding Light={StaticResource PlaceHolderClar},  Dark={StaticResource PlaceHolderDarck}}"
                                TextColor="{AppThemeBinding Light=#111827, Dark=White}"
-                               FontFamily="InterRegular"
+                               FontFamily="OpenSansRegular"
                                FontSize="14" />
                     </Border>
                 </VerticalStackLayout>
@@ -75,7 +75,7 @@
                 <!-- Campo: Descripción -->
                 <VerticalStackLayout Spacing="6" Margin="0,0,0,8">
                     <Label Text="Descripción"
-                           FontFamily="InterSemiBold"
+                           FontFamily="OpenSansRegular"
                            FontSize="12"
                            CharacterSpacing="0.5"
                            TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
@@ -89,14 +89,14 @@
                                 BackgroundColor="Transparent"
                                 PlaceholderColor="{AppThemeBinding Light={StaticResource PlaceHolderClar}, Dark={StaticResource PlaceHolderDarck}}"
                                 TextColor="{AppThemeBinding Light=#111827, Dark=White}"
-                                FontFamily="InterRegular"
+                                FontFamily="OpenSansRegular"
                                 FontSize="14" />
                     </Border>
                 </VerticalStackLayout>
 
                 <!-- TU SELECTOR (NO TOCADO) -->
                 <Label Text="Selecciona un color de etiqueta"
-                       FontFamily="InterSemiBold"
+                       FontFamily="OpenSansRegular"
                        TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}"
                          FontSize="12"/>
 

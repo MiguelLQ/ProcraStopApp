@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProcraStop.Modules.Habits.Presentation.Views.HabitListPage"
+             Title="HabitListPage">
+    <VerticalStackLayout Padding="16">
+
+        <Button Text="Recargar"
+                Command="{Binding LoadCommand}" />
+        <Button Text="Agregar hábito"
+        Command="{Binding GoToCreateCommand}" />
+
+        <CollectionView ItemsSource="{Binding Habits}"
+                SelectionMode="None">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+
+                    <Border Padding="12"
+                    Margin="6"
+                    StrokeShape="RoundRectangle 16"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource shellDark}}">
+
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer
+                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.OpenHabitCommand}"
+                        CommandParameter="{Binding Id}" />
+                        </Border.GestureRecognizers>
+
+                        <Grid RowDefinitions="Auto,Auto,Auto"
+                      RowSpacing="6">
+
+                            <!-- NAME -->
+                            <Label Text="{Binding Name}"
+                           FontAttributes="Bold"
+                           FontSize="16" />
+
+                            <!-- UNIT + TARGET -->
+                            <Label Grid.Row="1"
+                           Text="{Binding Unit}" />
+
+                            <Label Grid.Row="1"
+                           HorizontalOptions="End"
+                           Text="{Binding Target}" />
+
+                            <!-- FOOTER -->
+                            <Grid Grid.Row="2"
+                          ColumnDefinitions="*,Auto">
+
+                                <Label Text="{Binding Weight}" />
+
+                                <Label Grid.Column="1"
+                               Text="{Binding IsActive}" />
+
+                            </Grid>
+
+                        </Grid>
+
+                    </Border>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </VerticalStackLayout>
+</ContentPage>

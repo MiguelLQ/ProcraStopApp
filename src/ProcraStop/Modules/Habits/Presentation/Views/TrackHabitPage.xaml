@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProcraStop.Modules.Habits.Presentation.Views.TrackHabitPage"
+             Title="TrackHabitPage">
+    
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <!-- TITLE -->
+            <Label Text="{Binding Name}"
+                   FontSize="22"
+                   FontAttributes="Bold" />
+
+            <!-- INFO -->
+            <Label Text="{Binding Unit}" />
+
+            <!-- YA REGISTRADO -->
+            <Label Text="Ya registraste hoy"
+                   TextColor="Green"
+                   IsVisible="{Binding AlreadyLoggedToday}" />
+
+            <!-- QUANTITATIVE INPUT -->
+            <VerticalStackLayout IsVisible="{Binding IsBinary, Converter={StaticResource InverseBoolConverter}}">
+
+                <Label Text="Valor" />
+
+                <Entry Text="{Binding Value}"
+                       Keyboard="Numeric"
+                       Placeholder="Ingresa valor" />
+
+            </VerticalStackLayout>
+
+            <!-- BINARY INPUT -->
+            <HorizontalStackLayout IsVisible="{Binding IsBinary}">
+
+                <CheckBox IsChecked="{Binding IsCompleted}" />
+
+                <Label Text="Completado" VerticalOptions="Center" />
+
+            </HorizontalStackLayout>
+
+            <!-- SAVE -->
+            <Button Text="Guardar"
+                    Command="{Binding SaveCommand}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

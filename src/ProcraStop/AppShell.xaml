@@ -8,6 +8,7 @@
     xmlns:inicio="clr-namespace:ProcraStop.Modules.Dashboard.Presentation.Views"
     xmlns:course="clr-namespace:ProcraStop.Modules.Tasks.Presentation.Views.CoursesView"
     xmlns:stress="clr-namespace:ProcraStop.Modules.Stress.Presentation.Views"
+    xmlns:habits="clr-namespace:ProcraStop.Modules.Habits.Presentation.Views"
     Shell.FlyoutBehavior="Flyout"
      FlyoutBackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource shellDark}}"
      Shell.TabBarBackgroundColor="{AppThemeBinding Light=#f2f3f8, Dark=#131821}"
@@ -101,6 +102,16 @@
             Title="home"
             ContentTemplate="{DataTemplate inicio:DashboardView}"
             Route="DashboardView"/>
+        </Tab>
+    </FlyoutItem>
+    <!-- MÓDULO habits -->
+    <FlyoutItem Title="Hábitos"
+     Icon="{StaticResource IconDashboard}">
+        <Tab Title="Habitos" Icon="{StaticResource IconDashboard}">
+            <ShellContent
+        Title="home"
+        ContentTemplate="{DataTemplate habits:HabitListPage}"
+        Route="HabitListPage"/>
         </Tab>
     </FlyoutItem>
     <!-- MÓDULO FUTURO — Configuración u otro -->

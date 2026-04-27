@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProcraStop.Modules.Habits.Presentation.Views.CreateHabitPage"
+             Title="CreateHabitPage">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="16">
+
+            <!-- NAME -->
+            <Label Text="Nombre del hábito" />
+            <Entry Text="{Binding Name}" Placeholder="Ej: Leer" />
+
+            <!-- UNIT -->
+            <Label Text="Unidad" />
+            <Picker ItemsSource="{Binding Units}"
+                    SelectedItem="{Binding SelectedUnit}" />
+
+            <!-- TRACKING TYPE -->
+            <Label Text="Tipo de seguimiento" />
+            <Picker ItemsSource="{Binding TrackingTypes}"
+                    SelectedItem="{Binding SelectedTrackingType}" />
+
+            <!-- TARGET -->
+            <Label Text="Objetivo" />
+            <Entry Text="{Binding TargetValue}" Keyboard="Numeric" />
+
+            <!-- REQUIRED % -->
+            <Label Text="Porcentaje requerido (0 - 1)" />
+            <Entry Text="{Binding RequiredPercentage}" Keyboard="Numeric" />
+
+            <!-- WEIGHT -->
+            <Label Text="Peso del hábito" />
+            <Entry Text="{Binding Weight}" Keyboard="Numeric" />
+
+            <!-- DAYS -->
+            <Label Text="Días" />
+
+            <CollectionView ItemsSource="{Binding Days}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <HorizontalStackLayout>
+                            <CheckBox IsChecked="{Binding IsSelected}" />
+                            <Label Text="{Binding Label}" />
+                        </HorizontalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- SAVE -->
+            <Button Text="Guardar hábito"
+                    Command="{Binding SaveCommand}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

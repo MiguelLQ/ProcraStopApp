@@ -131,7 +131,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.Models
 
         public string EstimatedMinutesText =>
             EstimatedMinutes.HasValue
-                ? $"Estimado: {EstimatedMinutes.Value} min"
+                ? $"Requerido: {EstimatedMinutes.Value} min"
                 : "Sin estimación";
 
         public string OverdueText => IsActuallyOverdue ? "Vencida" : string.Empty;

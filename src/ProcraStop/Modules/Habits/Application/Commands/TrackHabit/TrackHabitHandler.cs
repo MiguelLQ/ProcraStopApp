@@ -21,7 +21,7 @@ namespace ProcraStop.Modules.Habits.Application.Commands.TrackHabit
                 command.Value,
                 command.Notes);
 
-            await _logRepository.AddAsync(log);
+            await _logRepository.UpsertAsync(log);
         }
     }
 }

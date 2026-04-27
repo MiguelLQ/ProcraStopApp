@@ -88,6 +88,15 @@
 	  <MauiXaml Update="Modules\Dashboard\Presentation\Views\DashboardView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Modules\Habits\Presentation\Views\CreateHabitPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Modules\Habits\Presentation\Views\HabitListPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Modules\Habits\Presentation\Views\TrackHabitPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Modules\Stress\Presentation\Views\StressAnalyticsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -119,7 +128,6 @@
 
 	<ItemGroup>
 	  <Folder Include="Modules\Habits\Application\EngineHabits\Signals\" />
-	  <Folder Include="Modules\Habits\Presentation\" />
 	  <Folder Include="Modules\Tasks\Application\EngineTask\Context\" />
 	  <Folder Include="Modules\Tasks\Application\EngineTask\Queries\" />
 	  <Folder Include="Modules\Tasks\Domain\Rules\" />

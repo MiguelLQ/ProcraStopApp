@@ -1,6 +1,7 @@
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using ProcraStop.Modules.Dashboard.Presentation.Views;
+using ProcraStop.Modules.Habits.Presentation.Views;
 using ProcraStop.Modules.Tasks.Presentation.Views;
 using ProcraStop.Modules.Tasks.Presentation.Views.CoursesView;
 using Font = Microsoft.Maui.Font;
@@ -19,7 +20,9 @@ namespace ProcraStop
             Routing.RegisterRoute("edit-task", typeof(EditTaskPage));
             Routing.RegisterRoute(nameof(TaskAnalyticsPage), typeof(TaskAnalyticsPage));
             Routing.RegisterRoute(nameof(DashboardView), typeof(DashboardView));
-
+            Routing.RegisterRoute(nameof(CreateHabitPage), typeof(CreateHabitPage));
+            Routing.RegisterRoute(nameof(HabitListPage), typeof(HabitListPage));
+            Routing.RegisterRoute("habit-track", typeof(TrackHabitPage));
             var currentTheme = Application.Current!.RequestedTheme;
             ThemeSegmentedControl.SelectedIndex = currentTheme == AppTheme.Light ? 0 : 1;
         }
