@@ -11,6 +11,7 @@ namespace ProcraStop.Modules.Habits.Infraestructure.Mappers
     {
         public static Habit ToDomain(HabitEntity entity)
         {
+            //Console.WriteLine($"🛠 ENTITY ID: {entity.Id}");
             var target = HabitTarget.Create(entity.TargetValue);
 
             var days = entity.DaysOfWeek
@@ -21,19 +22,18 @@ namespace ProcraStop.Modules.Habits.Infraestructure.Mappers
 
             var rule = HabitCompletionRule.Create(entity.RequiredPercentage);
 
-            var habit = Habit.Create(
+            var habit = Habit.Rehydrate(
+                entity.Id,
                 entity.Name,
                 (HabitUnit)entity.Unit,
                 target,
                 schedule,
                 rule,
+                entity.Weight,
                 (HabitTrackingType)entity.TrackingType,
-                entity.Weight);
+                entity.IsActive);
 
-            // setear estado real
-            if (!entity.IsActive)
-                habit.Deactivate();
-
+            //Console.WriteLine($"🧠 DOMAIN ID: {habit.Id}");
             return habit;
         }
 

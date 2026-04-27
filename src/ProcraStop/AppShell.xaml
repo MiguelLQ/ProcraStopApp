@@ -109,10 +109,11 @@
      Icon="{StaticResource IconDashboard}">
         <Tab Title="Habitos" Icon="{StaticResource IconDashboard}">
             <ShellContent
-        Title="home"
-        ContentTemplate="{DataTemplate habits:HabitListPage}"
-        Route="HabitListPage"/>
+                Title="home"
+                ContentTemplate="{DataTemplate habits:HabitListPage}"
+                Route="HabitListPage"/>
         </Tab>
+        
     </FlyoutItem>
     <!-- MÓDULO FUTURO — Configuración u otro -->
     <FlyoutItem Title="Configuración"

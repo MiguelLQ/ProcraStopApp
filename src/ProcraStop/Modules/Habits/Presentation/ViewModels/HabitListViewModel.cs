@@ -41,6 +41,8 @@ namespace ProcraStop.Modules.Habits.Presentation.ViewModels
 
             foreach (var h in habits)
             {
+                //Console.WriteLine($"📋 LIST HabitId: {h.Id}");
+
                 Habits.Add(new HabitItemViewModel
                 {
                     Id = h.Id,

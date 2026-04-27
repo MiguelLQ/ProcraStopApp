@@ -1,9 +1,16 @@
+using ProcraStop.Modules.Habits.Presentation.ViewModels;
+
 namespace ProcraStop.Modules.Habits.Presentation.Views;
 
 public partial class TrackHabitPage : ContentPage
 {
-	public TrackHabitPage()
+    private readonly TrackHabitViewModel _vm;
+
+    public TrackHabitPage(TrackHabitViewModel vm)
 	{
 		InitializeComponent();
-	}
+        BindingContext = vm;
+        _vm = vm;
+    }
+  
 }

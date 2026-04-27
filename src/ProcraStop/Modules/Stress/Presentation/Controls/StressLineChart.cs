@@ -99,7 +99,7 @@ namespace ProcraStop.Modules.Stress.Presentation.Controls
             // ── Línea principal (suavizada con cubics) ──────────────────
             using var linePaint = new SKPaint
             {
-                Color = SKColor.Parse("#E24B4A"),
+                Color = SKColor.Parse("#4075ff"),
                 StrokeWidth = 3,
                 IsStroke = true,
                 IsAntialias = true,

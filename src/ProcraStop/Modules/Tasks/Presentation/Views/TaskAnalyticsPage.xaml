@@ -2,12 +2,132 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ProcraStop.Modules.Tasks.Presentation.Views.TaskAnalyticsPage"
+             Shell.BackgroundColor="{StaticResource DarkSecondaryBackground}"
              Title="TaskAnalyticsPage">
+    
     <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="20">
+        
+        <VerticalStackLayout Padding="0" Spacing="20">
+            <Grid RowDefinitions="Auto,*">
 
+                <!-- CONTENT -->
+                <Grid Grid.Row="1"
+                      Background="{StaticResource DarkSecondaryBackground}"
+                      RowDefinitions="Auto,*"
+                      Padding="0,0,0,-20">
+
+                    <!-- CARD GRANDE -->
+                    <Border
+                        BackgroundColor="{StaticResource DarkSecondaryBackground}"
+                        StrokeShape="RoundRectangle 40"
+                        HeightRequest="300"
+                        Padding="0,20,0,20"
+                        Margin="0,0,0,-30">
+
+                        <Grid RowDefinitions="Auto,*"
+                          RowSpacing="16"
+                          Padding="20,0">
+
+                            <!-- HEADER -->
+                            <Grid ColumnDefinitions="*,Auto,Auto"
+          VerticalOptions="Start">
+
+                                <Label Text="Average power usage"
+               FontSize="16"
+               TextColor="#D1D5DB"
+               VerticalOptions="Center"/>
+
+                                <Border Grid.Column="1"
+                Margin="10,0,0,0"
+                Stroke="#2563EB"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 10"
+                Padding="10"
+                HeightRequest="40"
+                WidthRequest="40">
+
+                                    <Label Text="≡"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   TextColor="#3B82F6"/>
+                                </Border>
+
+                                <Border Grid.Column="2"
+                Margin="8,0,0,0"
+                Stroke="#374151"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 10"
+                Padding="10"
+                HeightRequest="40"
+                WidthRequest="40">
+
+                                    <Label Text="▤"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   TextColor="#9CA3AF"/>
+                                </Border>
+
+                            </Grid>
+
+
+                            <!-- CONTENIDO FLEXIBLE -->
+                            <Grid Grid.Row="1"
+          VerticalOptions="Fill">
+
+                                <!-- CARD INTERNO -->
+                                <Border
+            BackgroundColor="#1F2937"
+            StrokeShape="RoundRectangle 20"
+            Padding="16"
+            Margin="0,10,0,0"
+            VerticalOptions="Start">
+
+                                    <Grid ColumnDefinitions="Auto,*"
+                  ColumnSpacing="12">
+
+                                        <Border
+                    BackgroundColor="#1E3A8A"
+                    StrokeShape="RoundRectangle 12"
+                    WidthRequest="48"
+                    HeightRequest="48"
+                    VerticalOptions="Center">
+
+                                            <Label Text="⚡"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           TextColor="#60A5FA"
+                           FontSize="20"/>
+                                        </Border>
+
+                                        <VerticalStackLayout Grid.Column="1"
+                                     Spacing="4"
+                                     VerticalOptions="Center">
+
+                                            <Label Text="Usage overview"
+                           FontSize="14"
+                           FontAttributes="Bold"
+                           TextColor="White"/>
+
+                                            <Label Text="Your consumption is higher than last week."
+                           FontSize="12"
+                           TextColor="#9CA3AF"/>
+
+                                        </VerticalStackLayout>
+
+                                    </Grid>
+
+                                </Border>
+
+                            </Grid>
+
+                        </Grid>
+                    </Border>
+
+                </Grid>
+
+            </Grid>
             <!-- HEADER -->
-            <VerticalStackLayout Spacing="4">
+            <VerticalStackLayout Spacing="4" Padding="20,30,20,0">
                 <Label Text="Task Analytics"
                        FontSize="28"
                        FontFamily="InterSemiBold"/>
@@ -19,6 +139,7 @@
 
             <!-- GRID DE MÉTRICAS -->
             <Grid ColumnDefinitions="*,*"
+                  Padding="20"
                   RowDefinitions="Auto,Auto,Auto"
                   ColumnSpacing="12"
                   RowSpacing="12">

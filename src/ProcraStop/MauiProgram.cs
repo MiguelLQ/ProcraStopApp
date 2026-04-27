@@ -62,9 +62,10 @@ namespace ProcraStop
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("Inter_18pt-Regular.ttf", "InterRegular");
-                    fonts.AddFont("Inter_18pt-SemiBold.ttf", "InterSemiBold");
+                    fonts.AddFont("Lato-Bold.ttf", "LatoBold");
+                    fonts.AddFont("Montserrat-Regular.ttf", "MontserratRegular");
+                    fonts.AddFont("Montserrat-SemiBold.ttf", "MontserratSemiBold");
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                    fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                     fonts.AddFont("SegoeUI-Semibold.ttf", "SegoeSemibold");
                     fonts.AddFont("FluentSystemIcons-Regular.ttf", FluentUI.FontFamily);
                 });
@@ -90,6 +91,7 @@ namespace ProcraStop
             // Registrar store de decisiones en memoria y el motor de decisiones
             builder.Services.AddSingleton<IDecisionMemoryStore, InMemoryDecisionMemoryStore>();
             builder.Services.AddSingleton<DecisionEngine>();
+
             // =========================
             // Registro encapsulado del módulo Tasks , Habits
             // =========================
@@ -97,6 +99,7 @@ namespace ProcraStop
             builder.Services.AddDashboardModule();
             builder.Services.AddHabitsModule();
             builder.Services.AddStressModule();
+
             // =========================
             // Registro del servicio de Snackbar
             // =========================
