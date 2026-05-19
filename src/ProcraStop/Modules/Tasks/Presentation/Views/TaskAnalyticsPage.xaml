@@ -30,41 +30,41 @@
 
                             <!-- HEADER -->
                             <Grid ColumnDefinitions="*,Auto,Auto"
-          VerticalOptions="Start">
+                                  VerticalOptions="Start">
 
                                 <Label Text="Average power usage"
-               FontSize="16"
-               TextColor="#D1D5DB"
-               VerticalOptions="Center"/>
+                                   FontSize="16"
+                                   TextColor="#D1D5DB"
+                                   VerticalOptions="Center"/>
 
                                 <Border Grid.Column="1"
-                Margin="10,0,0,0"
-                Stroke="#2563EB"
-                StrokeThickness="1"
-                StrokeShape="RoundRectangle 10"
-                Padding="10"
-                HeightRequest="40"
-                WidthRequest="40">
+                                    Margin="10,0,0,0"
+                                    Stroke="#2563EB"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 10"
+                                    Padding="10"
+                                    HeightRequest="40"
+                                    WidthRequest="40">
 
                                     <Label Text="≡"
-                   HorizontalOptions="Center"
-                   VerticalOptions="Center"
-                   TextColor="#3B82F6"/>
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"
+                                       TextColor="#3B82F6"/>
                                 </Border>
 
                                 <Border Grid.Column="2"
-                Margin="8,0,0,0"
-                Stroke="#374151"
-                StrokeThickness="1"
-                StrokeShape="RoundRectangle 10"
-                Padding="10"
-                HeightRequest="40"
-                WidthRequest="40">
+                                    Margin="8,0,0,0"
+                                    Stroke="#374151"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 10"
+                                    Padding="10"
+                                    HeightRequest="40"
+                                    WidthRequest="40">
 
                                     <Label Text="▤"
-                   HorizontalOptions="Center"
-                   VerticalOptions="Center"
-                   TextColor="#9CA3AF"/>
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"
+                                       TextColor="#9CA3AF"/>
                                 </Border>
 
                             </Grid>
@@ -72,31 +72,31 @@
 
                             <!-- CONTENIDO FLEXIBLE -->
                             <Grid Grid.Row="1"
-          VerticalOptions="Fill">
+                              VerticalOptions="Fill">
 
                                 <!-- CARD INTERNO -->
                                 <Border
-            BackgroundColor="#1F2937"
-            StrokeShape="RoundRectangle 20"
-            Padding="16"
-            Margin="0,10,0,0"
-            VerticalOptions="Start">
+                                    BackgroundColor="#1F2937"
+                                    StrokeShape="RoundRectangle 20"
+                                    Padding="16"
+                                    Margin="0,10,0,0"
+                                    VerticalOptions="Start">
 
                                     <Grid ColumnDefinitions="Auto,*"
-                  ColumnSpacing="12">
+                                      ColumnSpacing="12">
 
                                         <Border
-                    BackgroundColor="#1E3A8A"
-                    StrokeShape="RoundRectangle 12"
-                    WidthRequest="48"
-                    HeightRequest="48"
-                    VerticalOptions="Center">
+                                            BackgroundColor="#1E3A8A"
+                                            StrokeShape="RoundRectangle 12"
+                                            WidthRequest="48"
+                                            HeightRequest="48"
+                                            VerticalOptions="Center">
 
                                             <Label Text="⚡"
-                           HorizontalOptions="Center"
-                           VerticalOptions="Center"
-                           TextColor="#60A5FA"
-                           FontSize="20"/>
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"
+                                               TextColor="#60A5FA"
+                                               FontSize="20"/>
                                         </Border>
 
                                         <VerticalStackLayout Grid.Column="1"

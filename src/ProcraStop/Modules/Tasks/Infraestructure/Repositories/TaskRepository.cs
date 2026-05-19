@@ -14,48 +14,21 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Repositories
         {
             _dbContext = dbContext;
         }
-        // metodo para obtener todas las tareas, ordenadas por fecha de creación descendente
-        public async Task<IReadOnlyList<StudyTask>> GetAllAsync(CancellationToken cancellationToken = default)
-        {
-            var items = await _dbContext.Tasks
-                .AsNoTracking()
-                .OrderByDescending(x => x.CreatedAtUtc)
-                .ToListAsync(cancellationToken);
-
-            return items.Select(x => x.ToDomain()).ToList();
-        }
-        // metodo para obtener una tarea por su id, incluyendo sus subtareas
-        public async Task<StudyTask?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        public async Task<StudyTask?> GetByIdAsync(
+    Guid id,
+    CancellationToken cancellationToken = default)
         {
             var entity = await _dbContext.Tasks
-                .Include(x => x.Subtasks) // OBLIGATORIO
-                .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+                .Include(x => x.Subtasks)
+                .FirstOrDefaultAsync(
+                    x => x.Id == id,
+                    cancellationToken);
 
             if (entity is null)
                 return null;
 
-            //  MAPEO COMPLETO A DOMINIO
-            var task = StudyTask.FromPersistence(
-                entity.Id,
-                entity.Title,
-                entity.Description,
-                entity.DueDate,
-                entity.ReminderDate,
-                (TaskPriority)entity.Priority,
-                (TaskItemStatus)entity.Status,
-                entity.IsArchived,
-                entity.CourseId,
-                entity.EstimatedMinutes,
-                entity.CreatedAtUtc,
-                entity.CompletedAtUtc,
-                entity.Subtasks
-                    .Select(s => new Subtask(s.Id, s.Title, s.IsCompleted))
-                    .ToList()
-            );
-
-            return task;
+            return entity.ToDomain();
         }
-
         public async Task AddAsync(StudyTask task, CancellationToken cancellationToken = default)
         {
             var entity = task.ToEntity();

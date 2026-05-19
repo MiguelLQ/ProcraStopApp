@@ -24,19 +24,21 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Persistence
                 CreatedAtUtc = task.CreatedAtUtc,
                 CompletedAtUtc = task.CompletedAtUtc,
                 // SUBTASKS
-                Subtasks = task.Subtasks.Select(s => new SubtaskEntity
+                Subtasks = (task.Subtasks ?? [])
+                .Select(s => new SubtaskEntity
                 {
                     Id = s.Id,
                     Title = s.Title,
                     IsCompleted = s.IsCompleted,
                     TaskId = task.Id
-                }).ToList()
+                })
+                .ToList()
             };
         }
         // Método para convertir de entidad a dominio, incluyendo subtareas
         public static StudyTask ToDomain(this StudyTaskEntity entity)
         {
-            var subtasks = entity.Subtasks
+            var subtasks = (entity.Subtasks ?? new List<SubtaskEntity>())
                 .Select(s => new Subtask(
                     s.Id,
                     s.Title,

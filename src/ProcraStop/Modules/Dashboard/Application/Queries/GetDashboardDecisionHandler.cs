@@ -17,7 +17,7 @@ namespace ProcraStop.Modules.Dashboard.Application.Queries
 
         public Task<DashboardReadModel> Handle(GetDashboardDecisionQuery query)
         {
-            return _service.BuildAsync();
+            return _service.BuildAsync(CancellationToken.None);
         }
     }
 }

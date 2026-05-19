@@ -25,7 +25,7 @@ namespace ProcraStop.Modules.Tasks.Domain.Entities
         // Permite saber si la tarea está completa, considerando el estado de las subtareas
         public bool IsCompleted => Status == TaskItemStatus.Completed;
         // Permite saber si la tarea está en progreso, considerando el estado de las subtareas
-        private readonly List<Subtask> _subtasks = new();
+        private readonly List<Subtask> _subtasks = [];
         // Exponer las subtareas como una colección de solo lectura para mantener la encapsulación
         public IReadOnlyCollection<Subtask> Subtasks => _subtasks;
 

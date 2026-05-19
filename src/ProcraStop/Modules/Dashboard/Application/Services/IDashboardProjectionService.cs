@@ -5,7 +5,7 @@ namespace ProcraStop.Modules.Dashboard.Application.Services
 {
     public interface IDashboardProjectionService
     {
-        Task<DashboardReadModel> BuildAsync();
+        Task<DashboardReadModel> BuildAsync(CancellationToken ct);
 
     }
 }

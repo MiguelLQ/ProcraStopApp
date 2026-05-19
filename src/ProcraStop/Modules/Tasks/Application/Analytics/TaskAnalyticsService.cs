@@ -15,25 +15,42 @@ namespace ProcraStop.Modules.Tasks.Application.Analytics
 
         public async Task<TaskAnalyticsDto> GetAsync(CancellationToken ct)
         {
-            var tasks = await _readService.GetAllAsync(ct);
+            var tasks = await _readService.GetListAsync(
+                includeArchived: false,
+                ct);
 
             return new TaskAnalyticsDto
             {
                 Total = tasks.Count,
-                Completed = tasks.Count(t => t.Status == (int)TaskItemStatus.Completed),
-                Pending = tasks.Count(t => t.Status == (int)TaskItemStatus.Pending),
-                Overdue = tasks.Count(t => t.DueDate < DateTime.UtcNow && t.Status != (int)TaskItemStatus.Completed),
 
-                HighPriority = tasks.Count(t => t.Priority == (int)TaskPriority.High),
-                MediumPriority = tasks.Count(t => t.Priority == (int)TaskPriority.Medium),
-                LowPriority = tasks.Count(t => t.Priority == (int)TaskPriority.Low),
+                Completed = tasks.Count(t =>
+                    t.Status == TaskItemStatus.Completed),
+
+                Pending = tasks.Count(t =>
+                    t.Status == TaskItemStatus.Pending),
+
+                Overdue = tasks.Count(t =>
+                    t.DueDate < DateTime.UtcNow &&
+                    t.Status != TaskItemStatus.Completed),
+
+                HighPriority = tasks.Count(t =>
+                    t.Priority == TaskPriority.High),
+
+                MediumPriority = tasks.Count(t =>
+                    t.Priority == TaskPriority.Medium),
+
+                LowPriority = tasks.Count(t =>
+                    t.Priority == TaskPriority.Low),
 
                 ByCourse = tasks
                     .Where(t => t.CourseId != null)
                     .GroupBy(t => t.CourseName)
-                    .ToDictionary(g => g.Key ?? "Sin curso", g => g.Count()),
+                    .ToDictionary(
+                        g => g.Key ?? "Sin curso",
+                        g => g.Count()),
 
-                AvgEffort = tasks.Where(t => t.EstimatedMinutes != null)
+                AvgEffort = tasks
+                    .Where(t => t.EstimatedMinutes != null)
                     .Average(t => t.EstimatedMinutes ?? 0)
             };
         }

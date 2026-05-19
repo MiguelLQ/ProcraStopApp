@@ -4,25 +4,25 @@
              xmlns:models="clr-namespace:ProcraStop.Modules.Tasks.Presentation.Models"
              x:Class="ProcraStop.Modules.Tasks.Presentation.Views.TasksPage"
              xmlns:base="clr-namespace:ProcraStop.Shared.UI.Layouts"
-             Title="Mis tareas"
+             Title="Mi lista de tareas"
              Shell.TitleColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}"
              Shell.ForegroundColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}"
              BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
 
-    <Grid Padding="16"
+    <Grid Padding="15,10,15,0"
           RowDefinitions="Auto,Auto,*"
           RowSpacing="12">
 
         <!-- HEADER -->
         <VerticalStackLayout Grid.Row="0"  Margin="0,-10,0,0" Padding="0" Spacing="4">
-            <Label Text="Mi lista de tareas"
+            <!-- <Label Text="Mi lista de tareas"
                    FontSize="20"
                    FontFamily="MontserratSemiBold"
-                   TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+                   TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />-->
 
-            <Label Text="Organiza tus pendientes y vencimientos de tareas que te pueden ayudar a meorar en los estudios."
+            <Label Text="Organiza tus pendientes y vencimientos de tareas y reduce la procrastinación 😉..."
                    FontSize="14"
-                   FontFamily="InterRegular"
+                   FontFamily="OpenSansRegular"
                    TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
         </VerticalStackLayout>
 
@@ -113,7 +113,7 @@
                     <DataTemplate>
                         <Border Padding="12"
                                 
-                                BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource shellDark}}"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}"
                                 StrokeShape="RoundRectangle 18"
                                 MinimumHeightRequest="200">
 
@@ -254,7 +254,7 @@
                     CornerRadius="40"
                     HorizontalOptions="End"
                     VerticalOptions="End"
-                    Margin="0,0,8,8"
+                    Margin="0,0,0,0"
                     ZIndex="10" />
         </Grid>
 

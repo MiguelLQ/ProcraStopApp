@@ -1,7 +1,4 @@
 ﻿using ProcraStop.Modules.Tasks.Application.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ProcraStop.Modules.Tasks.Application.Commands.ToggleSubtask
 {
@@ -14,16 +11,21 @@ namespace ProcraStop.Modules.Tasks.Application.Commands.ToggleSubtask
             _repository = repository;
         }
 
-        public async Task HandleAsync(ToggleSubtaskCommand command, CancellationToken ct)
+        public async Task HandleAsync(
+            ToggleSubtaskCommand command,
+            CancellationToken ct)
         {
-            var task = await _repository.GetByIdAsync(command.TaskId, ct);
+            var task = await _repository.GetByIdAsync(
+                command.TaskId,
+                ct);
 
             if (task is null)
                 throw new Exception("Task no encontrada");
 
-            // DOMINIO HACE TODO
+            // DOMAIN LOGIC
             task.ToggleSubtask(command.SubtaskId);
 
+            // PERSIST
             await _repository.UpdateAsync(task, ct);
         }
     }

@@ -5,7 +5,7 @@
 
     <!-- Note: For Android please see also Platforms\Android\Resources\values\colors.xml -->
 
-    <Color x:Key="Primary">#512BD4</Color>
+    <Color x:Key="Primary">#3F75FF</Color>
     <Color x:Key="PrimaryDark">#ac99ea</Color>
     <Color x:Key="PrimaryDarkText">#242424</Color>
     <Color x:Key="Secondary">#DFD8F7</Color>
@@ -16,18 +16,21 @@
     <Color x:Key="Title">#feffff</Color>
     <Color x:Key="Subtitle">#aab0c0</Color>
     <!--colores texto tema claro-->
-    <Color x:Key="Titlecl">#1e1f21</Color>
-    <Color x:Key="Subtitlecl">#7d848b</Color>
+    <Color x:Key="Titlecl">#12141B</Color>
+    <Color x:Key="Subtitlecl">#6F7A8F</Color>
+    <Color x:Key="TextTertiaryColor">#A2AECC</Color>
     <!--colores buttom oscuro-->
     <Color x:Key="primarioS">#4075ff</Color>
     <Color x:Key="secondaryS">#1f2845</Color>
     <Color x:Key="TagsS">#4862bb</Color>
     <!--colores buttom claro-->
+    <Color
+    x:Key="PrimaryHighlightColor">#6590FF</Color>
     <Color x:Key="primarioO">#4075ff</Color>
     <Color x:Key="secondaryO">#d9e2ff</Color>
 
-    <Color x:Key="saveButton">#46c872</Color>
-    <Color x:Key="CancelButton">#ff2524</Color>
+    <Color x:Key="saveButton">#46C771</Color>
+    <Color x:Key="CancelButton">#FF2525</Color>
 
     <Color x:Key="EntryDark">#333949</Color>
     <Color x:Key="EntryClar">#dae0ec</Color>
@@ -41,13 +44,14 @@
     <!--<Color x:Key="DarkBackground">#17171a</Color>-->
     <Color x:Key="DarkBackground">#222631</Color>
     <Color x:Key="LightOnDarkBackground">#E0E0E0</Color>
-    <Color x:Key="LightBackground">#feffff</Color>
+    <Color x:Key="LightBackground">#F1F3F8</Color>
     <Color x:Key="shipsligth">#e9eaf0</Color>
 
     <!--<Color x:Key="DarkOnLightBackground">#0D0D0D</Color>-->
     <Color x:Key="DarkOnLightBackground">#222631</Color>
 
-    <Color x:Key="LightSecondaryBackground">#f2f3f8</Color>
+    <Color x:Key="LightSecondaryBackground">#FFFFFF</Color>
+    <Color x:Key="BackgroundTertiaryColor">#DBE0ED</Color>
     <!--<Color x:Key="DarkSecondaryBackground">#222228</Color>-->
     <Color x:Key="DarkSecondaryBackground">#171b24</Color>
 
@@ -56,6 +60,13 @@
     <Color x:Key="Magenta">#D600AA</Color>
     <Color x:Key="MidnightBlue">#190649</Color>
     <Color x:Key="OffBlack">#1f1f1f</Color>
+    <!-- INFO COLORS -->
+    <Color
+    x:Key="InfoColor">#3F75FF</Color>
+    <Color
+    x:Key="InfoSecondaryColor">#D9E3FF</Color>
+    <Color
+    x:Key="InfoTertiaryColor">#6590FF</Color>
 
     <Color x:Key="Gray100">#E1E1E1</Color>
     <Color x:Key="Gray200">#C8C8C8</Color>

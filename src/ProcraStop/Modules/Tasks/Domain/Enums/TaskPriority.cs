@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace ProcraStop.Modules.Tasks.Domain.Enums
 {
     public enum TaskPriority

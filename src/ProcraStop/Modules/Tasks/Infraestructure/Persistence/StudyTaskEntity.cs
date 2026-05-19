@@ -17,6 +17,6 @@ namespace ProcraStop.Modules.Tasks.Infraestructure.Persistence
         public int? EstimatedMinutes { get; set; }
         public DateTime CreatedAtUtc { get; set; }
         public DateTime? CompletedAtUtc { get; set; }
-        public List<SubtaskEntity> Subtasks { get; set; } = new();
+        public ICollection<SubtaskEntity> Subtasks { get; set; } = new List<SubtaskEntity>();
     }
 }

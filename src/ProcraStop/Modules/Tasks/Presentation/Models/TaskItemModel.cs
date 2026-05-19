@@ -159,7 +159,6 @@ namespace ProcraStop.Modules.Tasks.Presentation.Models
             {
                 Id = dto.Id,
                 Title = dto.Title,
-                Description = dto.Description,
                 DueDate = dto.DueDate,
                 EstimatedMinutes = dto.EstimatedMinutes,
                 Priority = dto.Priority,

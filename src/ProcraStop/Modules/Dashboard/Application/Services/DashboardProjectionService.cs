@@ -12,12 +12,13 @@ using ProcraStop.Modules.Habits.Application.Interfaces;
 using ProcraStop.Modules.Stress.Application.Services;
 using ProcraStop.Modules.Tasks.Application.Abstractions;
 using ProcraStop.Modules.Tasks.Application.EngineTask.Signals;
+using ProcraStop.Modules.Tasks.Infraestructure.Services;
 
 namespace ProcraStop.Modules.Dashboard.Application.Services
 {
     public class DashboardProjectionService : IDashboardProjectionService
     {
-        private readonly ITaskRepository _taskRepo;
+        private readonly ITaskReadService _taskReadService;
         private readonly IHabitRepository _habitRepo;
         private readonly IHabitLogRepository _habitLogRepo;
 
@@ -36,7 +37,7 @@ namespace ProcraStop.Modules.Dashboard.Application.Services
         private readonly CategoryBalanceBuilder _categoryBalanceBuilder;
         private readonly SystemStateBuilder _systemStateBuilder;
         public DashboardProjectionService(
-            ITaskRepository taskRepo,
+            ITaskReadService taskRepo,
             IHabitRepository habitRepo,
             IHabitLogRepository habitLogRepo,
             TaskSignalsBuilder taskSignals,
@@ -50,7 +51,7 @@ namespace ProcraStop.Modules.Dashboard.Application.Services
             CategoryBalanceBuilder categoryBalanceBuilder,
             SystemStateBuilder systemStateBuilder)
         {
-            _taskRepo = taskRepo;
+            _taskReadService = taskRepo;
             _habitRepo = habitRepo;
             _habitLogRepo = habitLogRepo;
             _taskSignals = taskSignals;
@@ -65,12 +66,12 @@ namespace ProcraStop.Modules.Dashboard.Application.Services
             _systemStateBuilder = systemStateBuilder;
         }
 
-        public async Task<DashboardReadModel> BuildAsync()
-        {
+            public async Task<DashboardReadModel> BuildAsync( CancellationToken cancellationToken= default)
+            {
             // 1. DATA
-            var tasks = await _taskRepo.GetAllAsync();
+            var tasks = await _taskReadService.GetDashboardDataAsync(cancellationToken);
             var habits = await _habitRepo.GetAllAsync();
-            var logs = await _habitLogRepo.GetAllAsync();
+                var logs = await _habitLogRepo.GetAllAsync();
 
             var now = DateTime.UtcNow;
             // 2. SIGNALS
