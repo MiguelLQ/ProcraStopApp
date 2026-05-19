@@ -1,6 +1,6 @@
 <Solution>
   <Folder Name="/src/">
-    <Project Path="ProcraStop.Domain/ProcraStop.Domain.csproj" Id="18834d10-afbf-43b6-9de9-48dab9aee742" />
+    <Project Path="src/ProcraStop.Domain/ProcraStop.Domain.csproj" />
     <Project Path="src/ProcraStop/ProcraStopApp.csproj">
       <Deploy Solution="Debug|*" />
     </Project>
