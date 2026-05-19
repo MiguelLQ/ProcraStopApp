@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ProcraStop.Domain\ProcraStop.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

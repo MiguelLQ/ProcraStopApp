@@ -135,6 +135,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\ProcraStop.Application\ProcraStop.Application.csproj" />
+	  <ProjectReference Include="..\ProcraStop.Infrastructure\ProcraStop.Infrastructure.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <Compile Update="Modules\Dashboard\Presentation\Views\DashboardView.xaml.cs">
 	    <DependentUpon>DashboardView.xaml</DependentUpon>
 	  </Compile>
