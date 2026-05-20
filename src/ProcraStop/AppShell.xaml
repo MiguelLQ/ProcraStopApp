@@ -11,7 +11,7 @@
     xmlns:habits="clr-namespace:ProcraStop.Modules.Habits.Presentation.Views"
     Shell.FlyoutBehavior="Flyout"
      FlyoutBackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource shellDark}}"
-     Shell.TabBarBackgroundColor="{AppThemeBinding Light=#f2f3f8, Dark=#131821}"
+     Shell.TabBarBackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#131821}"
     Shell.TabBarForegroundColor="{StaticResource primarioS}"
     Shell.TabBarUnselectedColor="{AppThemeBinding Light=#9CA3AF, Dark=#6B7280}"
     Shell.TabBarTitleColor="{StaticResource primarioS}"
