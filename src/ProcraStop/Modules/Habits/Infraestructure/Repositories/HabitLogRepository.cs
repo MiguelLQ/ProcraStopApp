@@ -1,10 +1,10 @@
 ﻿
 
 using Microsoft.EntityFrameworkCore;
+using ProcraStop.Infrastructure.DBContext;
 using ProcraStop.Modules.Habits.Application.Abstractions;
 using ProcraStop.Modules.Habits.Domain.Entities;
 using ProcraStop.Modules.Habits.Infraestructure.Mappers;
-using ProcraStop.Modules.Tasks.Infraestructure.Persistence;
 
 namespace ProcraStop.Modules.Habits.Infraestructure.Repositories
 {

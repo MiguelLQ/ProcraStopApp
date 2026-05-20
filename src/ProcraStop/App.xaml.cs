@@ -2,7 +2,7 @@
 
 namespace ProcraStop
 {
-    public partial class App : Application
+    public partial class App : Microsoft.Maui.Controls.Application
     {
         public App()
         {

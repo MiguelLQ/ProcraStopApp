@@ -127,10 +127,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="Modules\Dashboard\Infrastructure\Entities\" />
+	  <Folder Include="Modules\Dashboard\Infrastructure\Mappers\" />
 	  <Folder Include="Modules\Habits\Application\EngineHabits\Signals\" />
+	  <Folder Include="Modules\Habits\Infraestructure\Mappers\" />
 	  <Folder Include="Modules\Tasks\Application\EngineTask\Context\" />
 	  <Folder Include="Modules\Tasks\Application\EngineTask\Queries\" />
 	  <Folder Include="Modules\Tasks\Domain\Rules\" />
+	  <Folder Include="Modules\Tasks\Infraestructure\Persistence\" />
 	  <Folder Include="Shared\Abstractions\" />
 	</ItemGroup>
 

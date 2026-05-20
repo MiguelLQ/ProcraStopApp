@@ -1,5 +1,7 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
+using ProcraStop.Infrastructure.DBContext;
+using ProcraStop.Infrastructure.Stress.Persistence.Mappings;
 using ProcraStop.Modules.Stress.Application.Abstractions;
 using ProcraStop.Modules.Stress.Domain.Entities;
 using ProcraStop.Modules.Stress.Domain.Enums;

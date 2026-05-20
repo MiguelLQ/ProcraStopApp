@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProcraStop.Infrastructure.DBContext;
+using ProcraStop.Infrastructure.Tasks.Persistence.Mappings;
 using ProcraStop.Modules.Tasks.Application.Abstractions;
 using ProcraStop.Modules.Tasks.Domain.Entities;
 using ProcraStop.Modules.Tasks.Infraestructure.Persistence;

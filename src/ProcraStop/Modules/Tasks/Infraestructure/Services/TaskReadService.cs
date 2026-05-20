@@ -1,9 +1,9 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
+using ProcraStop.Infrastructure.DBContext;
 using ProcraStop.Modules.Tasks.Application.Abstractions;
 using ProcraStop.Modules.Tasks.Application.DTOs;
 using ProcraStop.Modules.Tasks.Domain.Enums;
-using ProcraStop.Modules.Tasks.Infraestructure.Persistence;
 
 namespace ProcraStop.Modules.Tasks.Infraestructure.Services
 {

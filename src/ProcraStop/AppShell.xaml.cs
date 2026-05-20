@@ -23,7 +23,7 @@ namespace ProcraStop
             Routing.RegisterRoute(nameof(CreateHabitPage), typeof(CreateHabitPage));
             Routing.RegisterRoute(nameof(HabitListPage), typeof(HabitListPage));
             Routing.RegisterRoute("habit-track", typeof(TrackHabitPage));
-            var currentTheme = Application.Current!.RequestedTheme;
+            var currentTheme = Microsoft.Maui.Controls.Application.Current!.RequestedTheme;
             ThemeSegmentedControl.SelectedIndex = currentTheme == AppTheme.Light ? 0 : 1;
         }
         public static async Task DisplaySnackbarAsync(string message)
@@ -59,7 +59,7 @@ namespace ProcraStop
 
         private void SfSegmentedControl_SelectionChanged(object? sender, Syncfusion.Maui.Toolkit.SegmentedControl.SelectionChangedEventArgs e)
         {
-            Application.Current!.UserAppTheme = e.NewIndex == 0 ? AppTheme.Light : AppTheme.Dark;
+            Microsoft.Maui.Controls.Application.Current!.UserAppTheme = e.NewIndex == 0 ? AppTheme.Light : AppTheme.Dark;
         }
     }
 }

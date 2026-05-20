@@ -1,9 +1,9 @@
 ﻿
 using ProcraStop.Modules.Dashboard.Application.Abstractions;
 using ProcraStop.Modules.Dashboard.Application.Models.Historial;
-using ProcraStop.Modules.Tasks.Infraestructure.Persistence;
 using Microsoft.EntityFrameworkCore;
-using ProcraStop.Modules.Dashboard.Infrastructure.Mappers;
+using ProcraStop.Infrastructure.DBContext;
+using ProcraStop.Infrastructure.Dashboard.Persistence.Mappings;
 namespace ProcraStop.Modules.Dashboard.Infrastructure.Repositories
 {
     public class SystemSnapshotRepository : ISystemSnapshotRepository
