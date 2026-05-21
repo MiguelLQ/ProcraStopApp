@@ -16,7 +16,7 @@ namespace ProcraStop.Application.Stress.EngineStress.Rules
             return s.CurrentLevel > 0.7 &&
                    s.RecoveryCapacity < 0.4;
         }
-
+        // TODO: Personalizar mensaje, razón y acción sugerida según el nivel de estrés y recuperación
         public DecisionResult CreateDecision(DecisionContext ctx, IReadOnlyList<UnifiedSignal> signals)
         {
             var s = ctx.Stress;
