@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/ProcraStop.Application/ProcraStop.Application.csproj" Id="9dac4743-09be-4234-a451-456c72c3e471" />
+    <Project Path="src/ProcraStop.Core/ProcraStop.Core.csproj" Id="f8500468-4446-46b4-a2ff-89e27bab0dad" />
     <Project Path="src/ProcraStop.Domain/ProcraStop.Domain.csproj" />
     <Project Path="src/ProcraStop.Infrastructure/ProcraStop.Infrastructure.csproj" Id="641057b0-b405-4017-a1a5-56823f7f0cd1" />
     <Project Path="src/ProcraStop.Shared/ProcraStop.Shared.csproj" Id="010d4205-b83f-47a5-905e-b65cc48e0eba" />

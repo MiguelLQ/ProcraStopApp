@@ -1,0 +1,20 @@
+﻿
+
+using ProcraStop.Domain.Habits.Enums;
+
+namespace ProcraStop.Application.Habits.Commands.CreateHabit
+{
+    public class CreateHabitCommand
+    {
+        public string Name { get; set; } = string.Empty;
+
+        public HabitUnit Unit { get; set; }
+
+        public int TargetValue { get; set; }
+
+        public int[] DaysOfWeek { get; set; } = []; // 0-6 (domingo-sábado)
+        public double RequiredPercentage { get; set; } // 0 - 1
+        public HabitTrackingType TrackingType { get; set; }
+        public double Weight { get; set; } = 1.0;
+    }
+}

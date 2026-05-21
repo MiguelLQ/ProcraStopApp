@@ -5,7 +5,7 @@ using ProcraStop.Domain.Habits.Enums;
 using ProcraStop.Domain.Habits.ValueObjects;
 using ProcraStop.Infrastructure.Habits.Persistence.Entities;
 
-namespace ProcraStop.Modules.Habits.Infraestructure.Mappers
+namespace ProcraStop.Infrastructure.Habits.Persistence.Mappings
 {
     public static class HabitMapper
     {

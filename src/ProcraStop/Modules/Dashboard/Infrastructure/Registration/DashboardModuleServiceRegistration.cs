@@ -1,5 +1,6 @@
 ﻿
 
+using ProcraStop.Application.Dashboard.Interfaces;
 using ProcraStop.Modules.Dashboard.Application.Abstractions;
 using ProcraStop.Modules.Dashboard.Application.Core;
 using ProcraStop.Modules.Dashboard.Application.Queries;

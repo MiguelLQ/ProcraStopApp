@@ -7,7 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ProcraStop.Core\ProcraStop.Core.csproj" />
     <ProjectReference Include="..\ProcraStop.Domain\ProcraStop.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Habits\EngineHabits\Signals\" />
   </ItemGroup>
 
 </Project>

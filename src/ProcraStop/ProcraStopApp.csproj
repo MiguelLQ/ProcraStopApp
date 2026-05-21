@@ -127,14 +127,21 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="Core\" />
+	  <Folder Include="Modules\Dashboard\Application\" />
 	  <Folder Include="Modules\Dashboard\Infrastructure\Entities\" />
 	  <Folder Include="Modules\Dashboard\Infrastructure\Mappers\" />
-	  <Folder Include="Modules\Habits\Application\EngineHabits\Signals\" />
+	  <Folder Include="Modules\Habits\Application\" />
+	  <Folder Include="Modules\Habits\Domain\" />
 	  <Folder Include="Modules\Habits\Infraestructure\Mappers\" />
+	  <Folder Include="Modules\Habits\Infraestructure\Repositories\" />
+	  <Folder Include="Modules\Stress\Application\" />
+	  <Folder Include="Modules\Stress\Domain\" />
 	  <Folder Include="Modules\Tasks\Application\EngineTask\Context\" />
 	  <Folder Include="Modules\Tasks\Application\EngineTask\Queries\" />
-	  <Folder Include="Modules\Tasks\Domain\Rules\" />
+	  <Folder Include="Modules\Tasks\Domain\" />
 	  <Folder Include="Modules\Tasks\Infraestructure\Persistence\" />
+	  <Folder Include="Modules\Tasks\Infraestructure\Repositories\" />
 	  <Folder Include="Shared\Abstractions\" />
 	</ItemGroup>
 

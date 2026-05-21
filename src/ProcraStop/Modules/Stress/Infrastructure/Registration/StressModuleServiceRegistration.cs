@@ -1,9 +1,9 @@
 ﻿
+using ProcraStop.Application.Stress.EngineStress.Rules;
 using ProcraStop.Core.Decisions.Rules;
 using ProcraStop.Core.Decisions.Rules.Behavior;
 using ProcraStop.Modules.Stress.Application.Abstractions;
 using ProcraStop.Modules.Stress.Application.Commands.RegisterStress;
-using ProcraStop.Modules.Stress.Application.EngineStress;
 using ProcraStop.Modules.Stress.Application.Queries.GetStressAnalytics;
 using ProcraStop.Modules.Stress.Application.Queries.GetStressHistory;
 using ProcraStop.Modules.Stress.Application.Services;

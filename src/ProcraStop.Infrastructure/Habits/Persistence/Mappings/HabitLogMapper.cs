@@ -3,7 +3,7 @@
 using ProcraStop.Domain.Habits.Entities;
 using ProcraStop.Infrastructure.Habits.Persistence.Entities;
 
-namespace ProcraStop.Modules.Habits.Infraestructure.Mappers
+namespace ProcraStop.Infrastructure.Habits.Persistence.Mappings
 {
     public static class HabitLogMapper
     {
