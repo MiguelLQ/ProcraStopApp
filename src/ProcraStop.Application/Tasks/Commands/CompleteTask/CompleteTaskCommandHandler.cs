@@ -1,0 +1,35 @@
+﻿
+using ProcraStop.Application.Tasks.Abstractions;
+
+namespace ProcraStop.Application.Tasks.Commands.CompleteTask
+{
+    public sealed class CompleteTaskCommandHandler
+    {
+        private readonly ITaskRepository _repository;
+
+        public CompleteTaskCommandHandler(ITaskRepository repository)
+        {
+            _repository = repository;
+        }
+
+        public async Task HandleAsync(
+            CompleteTaskCommand command,
+            CancellationToken cancellationToken = default)
+        {
+            var task = await _repository.GetByIdAsync(command.TaskId, cancellationToken);
+
+            if (task is null)
+                throw new Exception("Task no encontrada");
+
+            // REGLA DE NEGOCIO (IMPORTANTE)
+            if (task.Subtasks.Any())
+                throw new InvalidOperationException("No puedes completar una tarea con subtareas manualmente");
+
+            //DOMINIO
+            task.Complete();
+
+            //PERSISTENCIA
+            await _repository.UpdateAsync(task, cancellationToken);
+        }
+    }
+}

@@ -1,0 +1,40 @@
+﻿using ProcraStop.Application.Tasks.EngineTask.Signals;
+using ProcraStop.Core.Decisions.Context;
+using ProcraStop.Core.Decisions.DTOs;
+using ProcraStop.Core.Decisions.Rules;
+using ProcraStop.Core.Decisions.Signals;
+
+namespace ProcraStop.Application.Tasks.EngineTask.Rules
+{
+    public class OverPlanningRule : IDecisionRule
+    {
+        public int Priority => 80;
+        public DecisionCategory Category => DecisionCategory.Risk;
+        public bool IsMatch(DecisionContext ctx)
+        {
+            var t = (TaskSignals)ctx.Tasks!;
+
+            return t.PendingCount >= 8 && t.TotalEffort >= 240;
+        }
+
+        public DecisionResult CreateDecision(DecisionContext ctx, IReadOnlyList<UnifiedSignal> signals)
+        {
+            var t = (TaskSignals)ctx.Tasks!;
+
+            return new DecisionResult
+            {
+                Message = "Tienes demasiadas tareas planificadas.",
+                Type = DecisionType.Warning,
+                Category = Category,
+                Score = 0.75,
+                Reason = $"Tienes {t.PendingCount} tareas con una carga total de {t.TotalEffort} minutos.",
+                SuggestedAction = "Reduce tu lista y enfócate en 1–2 tareas clave",
+                Insights = new List<string>
+                {
+                    $"Tareas pendientes: {t.PendingCount}",
+                    $"Carga total: {t.TotalEffort} min"
+                }
+            };
+        }
+    }
+}

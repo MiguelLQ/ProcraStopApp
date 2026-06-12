@@ -1,11 +1,8 @@
 ﻿
 
 using ProcraStop.Application.Dashboard.Interfaces;
-using ProcraStop.Modules.Dashboard.Application.Abstractions;
-using ProcraStop.Modules.Dashboard.Application.Core;
-using ProcraStop.Modules.Dashboard.Application.Queries;
-using ProcraStop.Modules.Dashboard.Application.Services;
-using ProcraStop.Modules.Dashboard.Infrastructure.Repositories;
+using ProcraStop.Application.Dashboard.Queries;
+using ProcraStop.Application.Dashboard.Services;
 using ProcraStop.Modules.Dashboard.Presentation.ViewModels;
 using ProcraStop.Modules.Dashboard.Presentation.Views;
 

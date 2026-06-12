@@ -1,6 +1,6 @@
 ﻿
 
-namespace ProcraStop.
+namespace ProcraStop.Domain.Tasks.Enums
 {
     public enum ReminderOffset
     {

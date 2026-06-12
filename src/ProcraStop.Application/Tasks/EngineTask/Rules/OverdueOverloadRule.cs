@@ -1,0 +1,43 @@
+﻿
+using ProcraStop.Application.Tasks.EngineTask.Signals;
+using ProcraStop.Core.Decisions.Context;
+using ProcraStop.Core.Decisions.DTOs;
+using ProcraStop.Core.Decisions.Rules;
+using ProcraStop.Core.Decisions.Signals;
+
+namespace ProcraStop.Application.Tasks.EngineTask.Rules
+{
+    public class OverdueOverloadRule : IDecisionRule
+    {
+
+        public int Priority => 100;
+        public DecisionCategory Category => DecisionCategory.Risk;
+        public bool IsMatch(DecisionContext ctx)
+        {
+            var t = (TaskSignals)ctx.Tasks!;
+
+            return t.OverdueCount >= 3;
+        }
+
+        public DecisionResult CreateDecision(DecisionContext ctx, IReadOnlyList<UnifiedSignal> signals)
+        {
+            var t = (TaskSignals)ctx.Tasks!;
+
+            return new DecisionResult
+            {
+                Message = "Estás acumulando retrasos y mucha carga. Reduce el alcance hoy.",
+                Type = DecisionType.Warning,
+                Category = Category,
+                Score = 0.9,
+                Reason = $"Tienes {t.OverdueCount} tareas atrasadas y una carga estimada de {t.TotalEffort} minutos.",
+                SuggestedAction = "No intentes hacer todo. Recupera control con una tarea pequeña.",
+                Insights = new List<string>
+                {
+                    $"Tareas pendientes: {t.PendingCount}",
+                    $"Tareas atrasadas: {t.OverdueCount}",
+                    $"Carga total: {t.TotalEffort} min"
+                }
+            };
+        }
+    }
+}

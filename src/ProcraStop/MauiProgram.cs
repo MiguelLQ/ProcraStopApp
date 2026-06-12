@@ -6,7 +6,6 @@ using ProcraStop.Core.Decisions.Context;
 using ProcraStop.Core.Decisions.Engine;
 using ProcraStop.Core.Decisions.Memory;
 using ProcraStop.Infrastructure.DBContext;
-using ProcraStop.Modules.Dashboard.Application.Queries;
 using ProcraStop.Modules.Dashboard.Infrastructure.Registration;
 using ProcraStop.Modules.Dashboard.Presentation.ViewModels;
 using ProcraStop.Modules.Dashboard.Presentation.Views;

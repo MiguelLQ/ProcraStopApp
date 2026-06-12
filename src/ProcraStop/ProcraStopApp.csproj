@@ -137,8 +137,11 @@
 	  <Folder Include="Modules\Habits\Infraestructure\Repositories\" />
 	  <Folder Include="Modules\Stress\Application\" />
 	  <Folder Include="Modules\Stress\Domain\" />
-	  <Folder Include="Modules\Tasks\Application\EngineTask\Context\" />
-	  <Folder Include="Modules\Tasks\Application\EngineTask\Queries\" />
+	  <Folder Include="Modules\Tasks\Application\Commands\" />
+	  <Folder Include="Modules\Tasks\Application\DTOs\" />
+	  <Folder Include="Modules\Tasks\Application\EngineTask\" />
+	  <Folder Include="Modules\Tasks\Application\Facade\" />
+	  <Folder Include="Modules\Tasks\Application\Queries\" />
 	  <Folder Include="Modules\Tasks\Domain\" />
 	  <Folder Include="Modules\Tasks\Infraestructure\Persistence\" />
 	  <Folder Include="Modules\Tasks\Infraestructure\Repositories\" />
