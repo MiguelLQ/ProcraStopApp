@@ -5,7 +5,7 @@ using ProcraStop.Infrastructure.DBContext;
 using ProcraStop.Infrastructure.Tasks.Persistence.Mappings;
 
 
-namespace ProcraStop.Modules.Tasks.Infraestructure.Repositories
+namespace ProcraStop.Infrastructure.Tasks.Repositories
 {
     public sealed class CourseRepository : ICourseRepository
     {

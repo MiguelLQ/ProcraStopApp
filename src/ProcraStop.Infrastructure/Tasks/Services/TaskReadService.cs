@@ -5,7 +5,7 @@ using ProcraStop.Application.Tasks.DTOs;
 using ProcraStop.Domain.Tasks.Enums;
 using ProcraStop.Infrastructure.DBContext;
 
-namespace ProcraStop.Modules.Tasks.Infraestructure.Services
+namespace ProcraStop.Infraestructure.Tasks.Services
 {
     public sealed class TaskReadService : ITaskReadService
     {

@@ -1,8 +1,8 @@
 ﻿using Plugin.LocalNotification;
 using Plugin.LocalNotification.Core.Models;
-using ProcraStop.Modules.Tasks.Application.Abstractions;
+using ProcraStop.Application.Tasks.Abstractions;
 
-namespace ProcraStop.Modules.Tasks.Infraestructure.Services
+namespace ProcraStop.Infrastructure.Tasks.Services
 {
     public class TaskReminderService : ITaskReminderService
     {

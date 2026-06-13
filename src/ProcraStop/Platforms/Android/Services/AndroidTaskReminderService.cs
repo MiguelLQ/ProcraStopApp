@@ -1,6 +1,5 @@
 ﻿using AndroidX.Work;
 using Java.Util.Concurrent;
-using Microsoft.Maui.ApplicationModel;
 using ProcraStop.Application.Tasks.Abstractions;
 using AndroidApp = Android.App.Application;
 namespace ProcraStop.Platforms.Android.Services;

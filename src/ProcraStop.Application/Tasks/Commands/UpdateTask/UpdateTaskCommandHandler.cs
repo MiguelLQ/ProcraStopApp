@@ -1,9 +1,7 @@
-﻿using ProcraStop.Modules.Tasks.Application.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using ProcraStop.Application.Tasks.Abstractions;
 
-namespace ProcraStop.Modules.Tasks.Application.Commands.UpdateTask
+
+namespace ProcraStop.Application.Tasks.Commands.UpdateTask
 {
     public sealed class UpdateTaskCommandHandler
     {

@@ -5,7 +5,7 @@ using ProcraStop.Infrastructure.Tasks.Persistence.Mappings;
 using ProcraStop.Application.Tasks.Abstractions;
 using ProcraStop.Domain.Tasks.Entities;
 
-namespace ProcraStop.Modules.Tasks.Infraestructure.Repositories
+namespace ProcraStop.Infrastructure.Tasks.Repositories
 {
     internal class TaskRepository : ITaskRepository
     {

@@ -1,10 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ProcraStop.Application.Dashboard
 {
-    internal class DependencyInjection
+    public static class DependencyInjection
     {
+        public static IServiceCollection AddDashboardApplication(
+       this IServiceCollection services)
+        {
+            return services;
+        }
     }
 }

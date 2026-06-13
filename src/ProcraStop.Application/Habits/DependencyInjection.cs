@@ -1,10 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ProcraStop.Application.Habits
 {
-    internal class DependencyInjection
+    public static class DependencyInjection
     {
+        public static IServiceCollection AddHabitsApplication(
+        this IServiceCollection services)
+        {
+            return services;
+        }
     }
 }
