@@ -1,8 +1,7 @@
 ﻿
 
-namespace ProcraStop.Application.Habits.DTOs
+namespace ProcraStop.Core.Decisions.Signals
 {
-
     public sealed class HabitSignals
     {
         // CORE SIGNALS (para engine)

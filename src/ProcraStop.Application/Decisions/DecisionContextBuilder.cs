@@ -1,12 +1,10 @@
-﻿using ProcraStop.Core.Decisions.Mappers;
+﻿using ProcraStop.Application.Stress.Abstractions;
+using ProcraStop.Application.Stress.Services;
+using ProcraStop.Core.Decisions.Context;
+using ProcraStop.Core.Decisions.Mappers;
 using ProcraStop.Core.Decisions.Signals;
-using ProcraStop.Modules.Habits.Application.DTOs;
-using ProcraStop.Modules.Stress.Application.Abstractions;
-using ProcraStop.Modules.Stress.Application.DTOs;
-using ProcraStop.Modules.Stress.Application.Services;
-using ProcraStop.Modules.Tasks.Application.EngineTask.Signals;
 
-namespace ProcraStop.Core.Decisions.Context
+namespace ProcraStop.Application.Decisions
 {
     public class DecisionContextBuilder
     {
@@ -22,37 +20,31 @@ namespace ProcraStop.Core.Decisions.Context
         }
 
         public async Task<DecisionContext> BuildAsync(
-        TaskSignals taskSignals,
-        HabitSignals habitSignals)
+    TaskSignals taskSignals,
+    HabitSignals habitSignals)
         {
-            var safeHabits = habitSignals ?? HabitSignals.Empty();
-
-            // 1. STRESS COMPUTATION
             var history = await _stressRepository.GetRecentAsync(7);
             var latest = history.FirstOrDefault();
 
             var stressSignals = _stressService.Calculate(
                 taskSignals,
-                safeHabits,
+                habitSignals,
                 latest,
                 history
             ) ?? StressSignals.Empty();
 
-            // 2.  SIGNAL EXTRACTION LAYER (CORRECTO)
             var unifiedSignals = new List<UnifiedSignal>();
 
             unifiedSignals.AddRange(TaskSignalExtractor.Extract(taskSignals));
-            unifiedSignals.AddRange(HabitSignalExtractor.Extract(safeHabits));
+            unifiedSignals.AddRange(HabitSignalExtractor.Extract(habitSignals));
             unifiedSignals.AddRange(StressSignalExtractor.Extract(stressSignals));
 
-            // 3. CONTEXT FINAL
-            return new DecisionContext
-            {
-                Tasks = taskSignals,
-                Habits = safeHabits,
-                Stress = stressSignals,
-                Signals = unifiedSignals
-            };
+            return new DecisionContext(
+                 taskSignals,
+                 habitSignals,
+                 stressSignals,
+                 unifiedSignals
+             );
         }
     }
     

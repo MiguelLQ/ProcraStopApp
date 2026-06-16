@@ -1,7 +1,6 @@
 ﻿
 using ProcraStop.Core.Decisions.DTOs;
 using ProcraStop.Core.Decisions.Signals;
-using ProcraStop.Modules.Habits.Application.DTOs;
 
 namespace ProcraStop.Core.Decisions.Mappers
 {

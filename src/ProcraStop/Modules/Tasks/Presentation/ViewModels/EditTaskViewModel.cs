@@ -1,10 +1,12 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ProcraStop.Modules.Tasks.Application.Commands.UpdateTask;
-using ProcraStop.Modules.Tasks.Application.DTOs;
-using ProcraStop.Modules.Tasks.Application.Facade;
-using ProcraStop.Modules.Tasks.Domain.Enums;
+using ProcraStop.Application.Tasks.Commands.UpdateTask;
+using ProcraStop.Application.Tasks.DTOs;
+using ProcraStop.Application.Tasks.Facade;
+using ProcraStop.Application.Tasks.Queries.GetCourses;
+using ProcraStop.Application.Tasks.Queries.GetTaskById;
+using ProcraStop.Domain.Tasks.Enums;
 using ProcraStop.Modules.Tasks.Presentation.Models;
 using ProcraStop.Shared.Services;
 using System.Collections.ObjectModel;
@@ -14,11 +16,17 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
     [QueryProperty(nameof(TaskIdRaw), "taskId")]
     public partial class EditTaskViewModel : ObservableObject
     {
-        private readonly ITasksFacade _tasksFacade;
-
-        public EditTaskViewModel(ITasksFacade tasksFacade)
+        private readonly UpdateTaskCommandHandler _tasksUpdate;
+        private readonly GetCoursesQueryHandler _getCoursesQuery;
+        private readonly GetTaskByIdQueryHandler getTaskByIdQuery;
+        public EditTaskViewModel(
+            UpdateTaskCommandHandler tasksUpdate,
+            GetCoursesQueryHandler getCoursesQuery,
+            GetTaskByIdQueryHandler getTaskByIdQuery)
         {
-            _tasksFacade = tasksFacade;
+            _tasksUpdate = tasksUpdate;
+            _getCoursesQuery = getCoursesQuery;
+            this.getTaskByIdQuery = getTaskByIdQuery;
         }
 
         // =========================
@@ -189,10 +197,11 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
         {
             TaskId = id;
 
-            var dto = await _tasksFacade.GetTaskByIdAsync(id);
-            if (dto == null)
+            var dto = await getTaskByIdQuery.HandleAsync(
+                new() { TaskId = id },
+                CancellationToken.None); if (dto == null)
                 return;
-            var list = (await _tasksFacade.GetCoursesAsync()).ToList();
+            var list = (await _getCoursesQuery.HandleAsync(new GetCoursesQuery(), CancellationToken.None)).ToList();
 
             list.Insert(0, new CourseDto
             {
@@ -305,7 +314,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
                   
                 };
 
-                await _tasksFacade.UpdateTaskAsync(command);
+                await _tasksUpdate.HandleAsync(command, CancellationToken.None);
 
                 PendingNotificationService.Set("Tarea actualizada");
                 // redirigir atras

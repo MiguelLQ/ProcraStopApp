@@ -1,7 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ProcraStop.Modules.Tasks.Application.Facade;
-using ProcraStop.Modules.Tasks.Domain.Enums;
+using ProcraStop.Application.Tasks.Commands.ArchiveTask;
+using ProcraStop.Application.Tasks.Commands.CompleteTask;
+using ProcraStop.Application.Tasks.Commands.ToggleSubtask;
+using ProcraStop.Application.Tasks.Queries.GetTaskById;
+using ProcraStop.Domain.Tasks.Enums;
 using ProcraStop.Modules.Tasks.Presentation.Models;
 using ProcraStop.Shared.Services;
 using ProcraStop.Shared.UI.Components;
@@ -12,13 +15,24 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
     [QueryProperty(nameof(TaskIdRaw), "taskId")]
     public partial class TaskDetailViewModel : ObservableObject
     {
-        private readonly ITasksFacade _tasksFacade;
+        private readonly ToggleSubtaskCommandHandler _toggleSubtaskCommandHandler;
+        private readonly GetTaskByIdQueryHandler _getTaskByIdQuery;
+        private readonly CompleteTaskCommandHandler _completeTaskCommandHandler;
+        private readonly ArchiveTaskCommandHandler _archiveTaskCommandHandler;
         private readonly ISnackbarService _snackbarService;
         public Guid CurrentTaskId => CurrentTask?.Id ?? Guid.Empty;
         public bool CanEdit => CurrentTask?.Status != TaskItemStatus.Completed;
-        public TaskDetailViewModel(ITasksFacade tasksFacade, ISnackbarService snackbarService)
+        public TaskDetailViewModel(
+            ToggleSubtaskCommandHandler toggleSubtaskCommandHandler,
+            GetTaskByIdQueryHandler getTaskByIdQuery,
+            CompleteTaskCommandHandler completeTaskCommandHandler,
+            ArchiveTaskCommandHandler archiveTaskCommandHandler,
+            ISnackbarService snackbarService)
         {
-            _tasksFacade = tasksFacade;
+            _toggleSubtaskCommandHandler = toggleSubtaskCommandHandler;
+            _getTaskByIdQuery = getTaskByIdQuery;
+            _completeTaskCommandHandler = completeTaskCommandHandler;
+            _archiveTaskCommandHandler = archiveTaskCommandHandler;
             _snackbarService = snackbarService;
         }
         [RelayCommand]
@@ -39,7 +53,13 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             var wasCompleted = previousProgress >= 1;
             Console.WriteLine($"[TaskDetailViewModel] wasCompleted={wasCompleted}, previousProgress={previousProgress}, currentProgress={CurrentTask.Progress}");
 
-            await _tasksFacade.ToggleSubtaskAsync(CurrentTask.Id, subtask.Id);
+            await _toggleSubtaskCommandHandler.HandleAsync(
+                new ToggleSubtaskCommand
+                {
+                    TaskId = CurrentTask.Id,
+                    SubtaskId = subtask.Id
+                },
+                CancellationToken.None);
 
             await LoadAsync(CurrentTask.Id);
             // esto es lo que te falta
@@ -77,7 +97,9 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
 
         private async Task LoadAsync(Guid id)
         {
-            var dto = await _tasksFacade.GetTaskByIdAsync(id);
+            var dto = await _getTaskByIdQuery.HandleAsync(
+                new GetTaskByIdQuery { TaskId = id },
+                CancellationToken.None);
 
             if (dto is null)
                 return;
@@ -117,7 +139,9 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             if (CurrentTask.Subtasks.Count > 0)
                 return; // protección extra
 
-            await _tasksFacade.CompleteTaskAsync(CurrentTask.Id);
+            await _completeTaskCommandHandler.HandleAsync(
+                new CompleteTaskCommand { TaskId = CurrentTask.Id },
+                CancellationToken.None);
 
             await LoadAsync(CurrentTask.Id);
 
@@ -136,7 +160,9 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
 
             if (!confirm) return;
 
-            await _tasksFacade.ArchiveTaskAsync(CurrentTask.Id);
+            await _archiveTaskCommandHandler.HandleAsync(
+                new ArchiveTaskCommand { TaskId = CurrentTask.Id },
+                CancellationToken.None);
 
             // Guarda el mensaje ANTES de navegar
             // Success (default)

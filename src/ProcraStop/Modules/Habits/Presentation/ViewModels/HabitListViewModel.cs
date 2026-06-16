@@ -2,7 +2,7 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ProcraStop.Modules.Habits.Application.Queries.GetAllHabits;
+using ProcraStop.Application.Habits.Queries.GetAllHabits;
 using ProcraStop.Modules.Habits.Presentation.Models;
 using ProcraStop.Modules.Habits.Presentation.Views;
 using System.Collections.ObjectModel;

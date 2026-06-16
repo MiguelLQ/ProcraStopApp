@@ -1,6 +1,6 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
-using ProcraStop.Modules.Stress.Domain.Enums;
+using ProcraStop.Domain.Stress.Enums;
 
 namespace ProcraStop.Modules.Stress.Presentation.Models
 {

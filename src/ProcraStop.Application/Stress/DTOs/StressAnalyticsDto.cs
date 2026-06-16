@@ -1,6 +1,6 @@
 ﻿
 
-using ProcraStop.Domain.Stress.Enums;
+using ProcraStop.Core.Decisions.Enums;
 
 namespace ProcraStop.Application.Stress.DTOs
 {

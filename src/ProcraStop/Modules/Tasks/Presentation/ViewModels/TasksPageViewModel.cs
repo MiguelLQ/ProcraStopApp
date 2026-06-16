@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ProcraStop.Modules.Tasks.Application.Facade;
-using ProcraStop.Modules.Tasks.Domain.Enums;
+using ProcraStop.Application.Tasks.Queries.GetTasks;
+using ProcraStop.Domain.Tasks.Enums;
 using ProcraStop.Modules.Tasks.Presentation.Models;
 using System.Collections.ObjectModel;
 
@@ -9,7 +9,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
 {
     public partial class TasksPageViewModel : ObservableObject
     {
-        private readonly ITasksFacade _tasksFacade;
+        private readonly GetTasksQueryHandler _tasksQuery;
 
         private List<TaskItemModel> _allTasks = new();
 
@@ -28,9 +28,9 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
         public bool IsCompletedSelected => SelectedFilter == TaskFilterOption.Completed;
         public bool IsOverdueSelected => SelectedFilter == TaskFilterOption.Overdue;
 
-        public TasksPageViewModel(ITasksFacade tasksFacade)
+        public TasksPageViewModel(GetTasksQueryHandler tasksQuery)
         {
-            _tasksFacade = tasksFacade;
+            _tasksQuery = tasksQuery;
         }
 
         partial void OnSelectedFilterChanged(TaskFilterOption value)
@@ -51,7 +51,9 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             {
                 IsBusy = true;
 
-                var result = await _tasksFacade.GetTasksAsync(includeArchived: false);
+                var result = await _tasksQuery.HandleAsync(
+                    new GetTasksQuery { IncludeArchived = false },
+                    CancellationToken.None);
 
                 _allTasks = result
                     .Select(TaskItemModel.FromDto)

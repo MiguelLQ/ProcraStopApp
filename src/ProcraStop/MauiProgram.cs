@@ -1,11 +1,11 @@
 ﻿using CommunityToolkit.Maui;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Plugin.LocalNotification;
 using ProcraStop.Core.Decisions;
 using ProcraStop.Infrastructure.DBContext;
-using ProcraStop.Modules.Habits.Infraestructure.Registration;
-using ProcraStop.Modules.Stress.Infrastructure.Registration;
+using ProcraStop.Modules.Dashboard;
+using ProcraStop.Modules.Habits;
+using ProcraStop.Modules.Stress;
 using ProcraStop.Modules.Tasks;
 using ProcraStop.Shared.Services;
 using SkiaSharp.Views.Maui.Controls.Hosting;
@@ -68,23 +68,15 @@ namespace ProcraStop
             builder.Logging.AddDebug();
             builder.Services.AddLogging(configure => configure.AddDebug());
 #endif
-
-            // =========================
-            // Base de datos SQLite (EF Core)
-            // =========================
-            //builder.Services.AddDbContext<AppDbContext>(options =>
-            //{
-            //    options.UseSqlite(Constants.DatabasePath);
-            //});
-            builder.Services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlite(
-                    $"Data Source={Path.Combine(FileSystem.AppDataDirectory, "procra.db")}"
-                ));
-            
-
+            // Configuración de la ruta de la base de datos
+            var databasePath = Path.Combine(
+                FileSystem.AppDataDirectory,
+                "procra.db");
             // registro mejorado por modulos
             builder.Services
+            .AddPersistence(databasePath)
             .AddCoreDependencyInjection()
+            .AddDashboardModule()
             .AddTasksModule()
             .AddStressModule()
             .AddHabitsModule();
@@ -94,16 +86,9 @@ namespace ProcraStop
             builder.Services.AddSingleton<ISnackbarService, SnackbarService>();
 
             var app = builder.Build();
-
-            // =========================
-            // Crear la base de datos al iniciar
-            // =========================
-            using (var scope = app.Services.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                dbContext.Database.EnsureCreated();
-            }
-
+            // Inicializar la base de datos al iniciar la aplicación
+            PersistenceDependencyInjection.InitializeDatabase(app.Services);
+            // 
             return app;
         }
     }

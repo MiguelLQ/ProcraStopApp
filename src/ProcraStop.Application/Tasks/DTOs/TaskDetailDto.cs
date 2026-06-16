@@ -1,6 +1,8 @@
 ﻿
 
 
+using ProcraStop.Domain.Tasks.Enums;
+
 namespace ProcraStop.Application.Tasks.DTOs
 {
     public sealed class TaskDetailDto

@@ -1,5 +1,6 @@
 ﻿using ProcraStop.Core.Decisions.Context;
 using ProcraStop.Core.Decisions.DTOs;
+using ProcraStop.Core.Decisions.Enums;
 using ProcraStop.Core.Decisions.Rules;
 using ProcraStop.Core.Decisions.Signals;
 using ProcraStop.Domain.Stress.Enums;

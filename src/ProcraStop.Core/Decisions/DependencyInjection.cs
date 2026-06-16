@@ -1,6 +1,5 @@
 ﻿
 using Microsoft.Extensions.DependencyInjection;
-using ProcraStop.Core.Decisions.Context;
 using ProcraStop.Core.Decisions.Engine;
 using ProcraStop.Core.Decisions.Memory;
 using ProcraStop.Core.Decisions.Rules;
@@ -13,8 +12,7 @@ namespace ProcraStop.Core.Decisions
         public static IServiceCollection AddCoreDependencyInjection(
         this IServiceCollection services)
         {
-            // core
-            services.AddScoped<DecisionContextBuilder>();
+            
             // Registrar store de decisiones en memoria y el motor de decisiones
             services.AddSingleton<IDecisionMemoryStore, InMemoryDecisionMemoryStore>();
             services.AddSingleton<DecisionEngine>();

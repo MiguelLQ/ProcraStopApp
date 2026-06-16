@@ -1,9 +1,9 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ProcraStop.Modules.Stress.Application.Abstractions;
-using ProcraStop.Modules.Stress.Application.Commands.RegisterStress;
-using ProcraStop.Modules.Stress.Domain.Enums;
+using ProcraStop.Application.Stress.Abstractions;
+using ProcraStop.Application.Stress.Commands.RegisterStress;
+using ProcraStop.Domain.Stress.Enums;
 using ProcraStop.Modules.Stress.Presentation.Models;
 
 namespace ProcraStop.Modules.Stress.Presentation.ViewModel

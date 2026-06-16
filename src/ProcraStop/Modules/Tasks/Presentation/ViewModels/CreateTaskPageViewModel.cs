@@ -1,8 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ProcraStop.Modules.Tasks.Application.DTOs;
-using ProcraStop.Modules.Tasks.Application.Facade;
-using ProcraStop.Modules.Tasks.Domain.Enums;
+using ProcraStop.Application.Tasks.Commands.CreateTask;
+using ProcraStop.Application.Tasks.DTOs;
+using ProcraStop.Application.Tasks.Queries.GetCourses;
+using ProcraStop.Domain.Tasks.Enums;
 using ProcraStop.Shared.Services;
 using System.Collections.ObjectModel;
 
@@ -10,9 +11,10 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
 {
     public partial class CreateTaskPageViewModel : ObservableObject
     {
-        private readonly ITasksFacade _tasksFacade;
-        // subtareas
-        [ObservableProperty]
+        private readonly CreateTaskCommandHandler _createTaskHandler;
+        private readonly GetCoursesQueryHandler _getCoursesHandler;
+            // subtareas
+            [ObservableProperty]
         private ObservableCollection<string> subtasks = new();
         
         [ObservableProperty]
@@ -104,9 +106,10 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
         }
         public event Action? TaskCreated;
 
-        public CreateTaskPageViewModel(ITasksFacade tasksFacade)
+        public CreateTaskPageViewModel(CreateTaskCommandHandler createTaskHandler, GetCoursesQueryHandler getCoursesHandler)
         {
-            _tasksFacade = tasksFacade;
+            _createTaskHandler = createTaskHandler;
+            _getCoursesHandler = getCoursesHandler;
         }
 
         public DateTime? ComputedDueDate =>
@@ -210,7 +213,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             {
                 IsSaving = true;
 
-                var request = new CreateTaskRequest
+                var command = new CreateTaskCommand
                 {
                     Title = Title.Trim(),
                     Description = string.IsNullOrWhiteSpace(Description)
@@ -224,8 +227,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
                     CourseId = selectedCourseId,
                     Subtasks = Subtasks.ToList()
                 };
-
-                await _tasksFacade.CreateTaskAsync(request);
+                await _createTaskHandler.HandleAsync(command);
                 Console.WriteLine($"OFFSET FINAL: {SelectedReminderOffset}");
                 Console.WriteLine($"INDEX: {SelectedReminderOffsetIndex}");
 
@@ -258,8 +260,9 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
         }
         public async Task LoadAsync()
         {
-            var list = (await _tasksFacade.GetCoursesAsync()).ToList();
-
+            var list = (await _getCoursesHandler.HandleAsync(
+                new GetCoursesQuery()))
+                .ToList();
             //Insertamos opción "Sin curso"
             list.Insert(0, new CourseDto
             {

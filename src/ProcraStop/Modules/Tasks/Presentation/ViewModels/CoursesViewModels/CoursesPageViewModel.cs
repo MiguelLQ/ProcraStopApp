@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ProcraStop.Modules.Tasks.Application.DTOs;
-using ProcraStop.Modules.Tasks.Application.Facade;
+using ProcraStop.Application.Tasks.DTOs;
+using ProcraStop.Application.Tasks.Facade;
 using ProcraStop.Modules.Tasks.Presentation.Models;
 using System.Collections.ObjectModel;
 

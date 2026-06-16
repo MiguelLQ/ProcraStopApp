@@ -1,6 +1,8 @@
 ﻿
 
 using Microsoft.Extensions.DependencyInjection;
+using ProcraStop.Application.Dashboard.Abstractions;
+using ProcraStop.Infrastructure.Dashboard.Repositories;
 
 namespace ProcraStop.Infrastructure.Dashboard
 {
@@ -9,6 +11,8 @@ namespace ProcraStop.Infrastructure.Dashboard
         public static IServiceCollection AddDashboardInfrastructure(
         this IServiceCollection services)
         {
+            // SNAPSHOT
+            services.AddScoped<ISystemSnapshotRepository, SystemSnapshotRepository>();
             return services;
         }
     }

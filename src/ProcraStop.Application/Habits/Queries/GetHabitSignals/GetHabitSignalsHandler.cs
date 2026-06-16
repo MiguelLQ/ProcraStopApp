@@ -1,8 +1,8 @@
 ﻿
 
 using ProcraStop.Application.Habits.Abstractions;
-using ProcraStop.Application.Habits.DTOs;
 using ProcraStop.Application.Habits.Interfaces;
+using ProcraStop.Core.Decisions.Signals;
 
 namespace ProcraStop.Application.Habits.Queries.GetHabitSignals
 {

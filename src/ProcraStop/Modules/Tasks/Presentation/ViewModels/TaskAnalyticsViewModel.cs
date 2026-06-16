@@ -1,7 +1,7 @@
 ﻿
 
 using CommunityToolkit.Mvvm.ComponentModel;
-using ProcraStop.Modules.Tasks.Application.Analytics;
+using ProcraStop.Application.Tasks.Analytics;
 
 namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
 {

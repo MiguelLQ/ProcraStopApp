@@ -2,10 +2,6 @@
 using ProcraStop.Core.Decisions.Context;
 using ProcraStop.Core.Decisions.DTOs;
 using ProcraStop.Core.Decisions.Signals;
-using ProcraStop.Modules.Habits.Application.DTOs;
-using ProcraStop.Modules.Stress.Application.DTOs;
-using ProcraStop.Modules.Tasks.Application.EngineTask.Signals;
-
 namespace ProcraStop.Core.Decisions.Rules.Behavior
 {
     public class BurnoutWithStressRule : IDecisionRule

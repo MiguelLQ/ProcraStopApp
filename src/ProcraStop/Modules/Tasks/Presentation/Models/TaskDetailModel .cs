@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using ProcraStop.Modules.Tasks.Domain.Enums;
+using ProcraStop.Domain.Tasks.Enums;
 using System.Collections.ObjectModel;
 
 

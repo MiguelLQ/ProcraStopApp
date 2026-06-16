@@ -1,10 +1,10 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using ProcraStop.Application.Dashboard.Models;
+using ProcraStop.Application.Dashboard.Models.Historial;
+using ProcraStop.Application.Dashboard.Queries;
 using ProcraStop.Core.Decisions.DTOs;
-using ProcraStop.Modules.Dashboard.Application.Models;
-using ProcraStop.Modules.Dashboard.Application.Models.Historial;
-using ProcraStop.Modules.Dashboard.Application.Queries;
 using System.Collections.ObjectModel;
 namespace ProcraStop.Modules.Dashboard.Presentation.ViewModels
 {

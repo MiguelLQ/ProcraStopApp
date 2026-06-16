@@ -1,6 +1,6 @@
 ﻿using ProcraStop.Application.Tasks.Abstractions;
-
-
+using ProcraStop.Application.Tasks.Mappers;
+using ProcraStop.Domain.Tasks.Entities;
 namespace ProcraStop.Application.Tasks.Commands.UpdateTask
 {
     public sealed class UpdateTaskCommandHandler
@@ -17,7 +17,11 @@ namespace ProcraStop.Application.Tasks.Commands.UpdateTask
 
             if (task is null)
                 throw new Exception("Task no encontrada");
-
+            // mapeo de subtareas
+            var subtasks = command.Subtasks?
+            .Select(x => x.ToDomain())
+            .ToList()
+            ?? new List<Subtask>();
             // dominio
             task.Update(
                 command.Title,
@@ -27,7 +31,7 @@ namespace ProcraStop.Application.Tasks.Commands.UpdateTask
                 command.Priority,
                 command.CourseId,
                 command.EstimatedMinutes,
-                command.Subtasks
+                subtasks
             );
 
             await _repository.UpdateAsync(task, ct);

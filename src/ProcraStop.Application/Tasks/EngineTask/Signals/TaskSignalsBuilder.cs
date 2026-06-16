@@ -1,5 +1,6 @@
 ﻿
 using ProcraStop.Application.Tasks.DTOs;
+using ProcraStop.Core.Decisions.Signals;
 using ProcraStop.Domain.Tasks.Enums;
 
 namespace ProcraStop.Application.Tasks.EngineTask.Signals

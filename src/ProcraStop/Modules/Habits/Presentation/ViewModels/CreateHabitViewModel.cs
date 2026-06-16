@@ -1,8 +1,8 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ProcraStop.Modules.Habits.Application.Commands.CreateHabit;
-using ProcraStop.Modules.Habits.Domain.Enums;
+using ProcraStop.Application.Habits.Commands.CreateHabit;
+using ProcraStop.Domain.Habits.Enums;
 using ProcraStop.Modules.Habits.Presentation.Models;
 using System.Collections.ObjectModel;
 

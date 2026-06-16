@@ -1,5 +1,5 @@
 ﻿
-namespace ProcraStop.Application.Tasks.EngineTask.Signals
+namespace ProcraStop.Core.Decisions.Signals
 {
     public class TaskSignals
     {

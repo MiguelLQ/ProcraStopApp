@@ -1,5 +1,6 @@
-﻿using ProcraStop.Modules.Tasks.Application.DTOs;
-using ProcraStop.Modules.Tasks.Domain.Enums;
+﻿
+using ProcraStop.Application.Tasks.DTOs;
+using ProcraStop.Domain.Tasks.Enums;
 
 namespace ProcraStop.Modules.Tasks.Presentation.Models
 {

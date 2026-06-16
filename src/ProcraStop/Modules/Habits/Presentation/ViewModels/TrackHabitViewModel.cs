@@ -2,12 +2,10 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ProcraStop.Modules.Habits.Application.Commands.TrackHabit;
-using ProcraStop.Modules.Habits.Application.Queries.GetHabitById;
-using ProcraStop.Modules.Habits.Application.Queries.GetHabitLogByDate;
-using ProcraStop.Modules.Habits.Domain.Enums;
-
-
+using ProcraStop.Application.Habits.Commands.TrackHabit;
+using ProcraStop.Application.Habits.Queries.GetHabitById;
+using ProcraStop.Application.Habits.Queries.GetHabitLogByDate;
+using ProcraStop.Domain.Habits.Enums;
 namespace ProcraStop.Modules.Habits.Presentation.ViewModels
 {
     [QueryProperty(nameof(HabitIdRaw), "habitId")]

@@ -1,7 +1,7 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
-using ProcraStop.Modules.Stress.Application.DTOs;
-using ProcraStop.Modules.Stress.Application.Queries.GetStressAnalytics;
+using ProcraStop.Application.Stress.DTOs;
+using ProcraStop.Application.Stress.Queries.GetStressAnalytics;
 using System.Globalization;
 
 namespace ProcraStop.Modules.Stress.Presentation.ViewModel
@@ -62,7 +62,7 @@ namespace ProcraStop.Modules.Stress.Presentation.ViewModel
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"🔥 ERROR: {ex}");
+                Console.WriteLine($"ERROR: {ex}");
             }
         }
 

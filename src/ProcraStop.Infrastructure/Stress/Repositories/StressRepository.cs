@@ -6,7 +6,7 @@ using ProcraStop.Domain.Stress.Enums;
 using ProcraStop.Infrastructure.DBContext;
 using ProcraStop.Infrastructure.Stress.Persistence.Entities;
 using ProcraStop.Infrastructure.Stress.Persistence.Mappings;
-namespace ProcraStop.Modules.Stress.Infrastructure.Repositories
+namespace ProcraStop.Infrastructure.Stress.Repositories
 {
     public class StressRepository : IStressRepository
     {

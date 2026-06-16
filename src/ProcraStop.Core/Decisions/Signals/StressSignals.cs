@@ -1,7 +1,8 @@
 ﻿
-using ProcraStop.Domain.Stress.Enums;
 
-namespace ProcraStop.Application.Stress.DTOs
+using ProcraStop.Core.Decisions.Enums;
+
+namespace ProcraStop.Core.Decisions.Signals
 {
     public class StressSignals
     {

@@ -1,7 +1,7 @@
 ﻿
 using ProcraStop.Core.Decisions.DTOs;
+using ProcraStop.Core.Decisions.Enums;
 using ProcraStop.Core.Decisions.Signals;
-using ProcraStop.Modules.Stress.Application.DTOs;
 
 namespace ProcraStop.Core.Decisions.Mappers
 {

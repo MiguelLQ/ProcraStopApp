@@ -1,5 +1,4 @@
-﻿using ProcraStop.Modules.Tasks.Domain.Enums;
-namespace ProcraStop.Core.Decisions.DTOs
+﻿namespace ProcraStop.Core.Decisions.DTOs
 {
     public class DecisionResult
     {

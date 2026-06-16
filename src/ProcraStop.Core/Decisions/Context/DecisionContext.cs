@@ -1,24 +1,24 @@
-﻿using ProcraStop.Core.Decisions.Signals;
-using ProcraStop.Modules.Habits.Application.DTOs;
-using ProcraStop.Modules.Stress.Application.DTOs;
-using ProcraStop.Modules.Tasks.Application.EngineTask.Signals;
-
+﻿
+using ProcraStop.Core.Decisions.Signals;
 namespace ProcraStop.Core.Decisions.Context
 {
     public class DecisionContext
     {
-        // Indicadores relacionados con la tarea actual
-        // Señales del módulo Tasks
-        public TaskSignals Tasks { get; init; } = default!;
+        public TaskSignals Tasks { get; }
+        public HabitSignals Habits { get; }
+        public StressSignals Stress { get; }
+        public List<UnifiedSignal> Signals { get; }
 
-        // Señales del módulo Habits
-        public HabitSignals Habits { get; init; } = default!;
-        // futuro
-
-        public StressSignals Stress { get; init; } = default!;
-
-        //
-        // NUEVO (clave)
-        public List<UnifiedSignal> Signals { get; init; } = new();
+        public DecisionContext(
+            TaskSignals tasks,
+            HabitSignals habits,
+            StressSignals stress,
+            List<UnifiedSignal> signals)
+        {
+            Tasks = tasks;
+            Habits = habits;
+            Stress = stress;
+            Signals = signals;
+        }
     }
 }

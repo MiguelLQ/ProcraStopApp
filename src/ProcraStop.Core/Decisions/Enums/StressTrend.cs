@@ -1,6 +1,6 @@
 ﻿
 
-namespace ProcraStop.Domain.Stress.Enums
+namespace ProcraStop.Core.Decisions.Enums
 {
      public enum StressTrend
     {

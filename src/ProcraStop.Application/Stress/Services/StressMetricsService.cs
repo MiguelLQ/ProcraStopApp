@@ -1,7 +1,6 @@
 ﻿
-
-using ProcraStop.Application.Habits.DTOs;
-using ProcraStop.Application.Stress.DTOs;
+using ProcraStop.Core.Decisions.Enums;
+using ProcraStop.Core.Decisions.Signals;
 using ProcraStop.Domain.Stress.Entities;
 using ProcraStop.Domain.Stress.Enums;
 

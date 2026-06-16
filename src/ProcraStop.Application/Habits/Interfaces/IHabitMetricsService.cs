@@ -1,6 +1,6 @@
 ﻿
 
-using ProcraStop.Application.Habits.DTOs;
+using ProcraStop.Core.Decisions.Signals;
 using ProcraStop.Domain.Habits.Entities;
 
 namespace ProcraStop.Application.Habits.Interfaces

@@ -1,8 +1,7 @@
 ﻿
 using ProcraStop.Application.Stress.DTOs;
+using ProcraStop.Core.Decisions.Enums;
 using ProcraStop.Domain.Stress.Entities;
-using ProcraStop.Domain.Stress.Enums;
-
 namespace ProcraStop.Application.Stress.Services
 {
     public class StressAnalyticsService
