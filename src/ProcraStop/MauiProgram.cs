@@ -61,6 +61,8 @@ namespace ProcraStop
                     fonts.AddFont("Montserrat-SemiBold.ttf", "MontserratSemiBold");
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("SegoeUI-Semibold.ttf", "SegoeSemibold");
+                    fonts.AddFont("Manrope-SemiBold.ttf","ManropeSemiBold");
+                    fonts.AddFont("Manrope-Regular.ttf", "ManropeRegular");
                     fonts.AddFont("FluentSystemIcons-Regular.ttf", FluentUI.FontFamily);
                 });
 

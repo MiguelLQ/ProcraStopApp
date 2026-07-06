@@ -73,7 +73,24 @@
                 ContentTemplate="{DataTemplate task:TasksPage}"
                 Route="TasksPage"/>
         </Tab>
-
+        <Tab Title="Tareas2" Icon="{StaticResource IconDashboard}">
+            <ShellContent
+                Title="Tareas"
+                ContentTemplate="{DataTemplate task:ListTasks}"
+                Route="ListTasks"/>
+        </Tab>
+        <Tab Title="detalle 2" Icon="{StaticResource IconDashboard}">
+            <ShellContent
+                Title="Tarea detalle"
+                ContentTemplate="{DataTemplate task:DetailTask}"
+                Route="DetailTasks"/>
+        </Tab>
+        <Tab Title="create" Icon="{StaticResource IconDashboard}">
+            <ShellContent
+                Title="Create Task"
+                ContentTemplate="{DataTemplate task:CreateTask}"
+                Route="CreateTasks"/>
+        </Tab>
         <Tab Title="Cursos" Icon="{StaticResource IconProjects}">
             <ShellContent
                 Title="Cursos"

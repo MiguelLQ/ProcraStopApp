@@ -56,12 +56,12 @@
 
                                 <Label Text="{Binding CurrentTask.Title}"
                                        FontSize="18"
-                                       FontFamily="MontserratSemiBold"
+                                       FontFamily="SegoeSemibold"
                                        TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
 
                                 <Label Text="{Binding CurrentTask.Description}"
                                        FontSize="14"
-                                       FontFamily="OpenSansRegular"
+                                       FontFamily="ManropeRegular"
                                        TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}"
                                        LineBreakMode="WordWrap" />
 

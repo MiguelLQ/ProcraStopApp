@@ -43,8 +43,8 @@
                                        TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />-->
 
                                     <Label Text="Organiza tus pendientes y vencimientos de tareas y reduce la procrastinación 😉..."
-                                       FontSize="14"
-                                       FontFamily="OpenSansRegular"
+                                       FontSize="15"
+                                       FontFamily="ManropeRegular"
                                        TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
                                 </VerticalStackLayout>
                                 <Button

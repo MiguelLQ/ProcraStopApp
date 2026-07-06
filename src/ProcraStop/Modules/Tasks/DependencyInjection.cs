@@ -24,6 +24,9 @@ namespace ProcraStop.Modules.Tasks
             services.AddTransient<TaskDetailPage>();
             services.AddTransient<EditTaskPage>();
             services.AddTransient<TaskAnalyticsPage>();
+            services.AddTransient<ListTasks>();
+            services.AddTransient<DetailTask>();
+            services.AddTransient<CreateTask>();
             //curso views
             services.AddTransient<CoursesPage>();
             return services;
