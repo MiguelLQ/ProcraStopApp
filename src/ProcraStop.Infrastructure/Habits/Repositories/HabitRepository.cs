@@ -34,5 +34,43 @@ namespace ProcraStop.Infrastructure.Habits.Repositories
                 .Select(HabitMapper.ToDomain)
                 .ToList();
         }
+
+        public async Task<IReadOnlyList<Habit>> GetActiveAsync(CancellationToken ct)
+        {
+            var entities = await _context.Habits
+                .AsNoTracking()
+                .Where(x => x.IsActive)
+                .OrderBy(x => x.Name)
+                .ToListAsync(ct);
+
+            return entities.Select(HabitMapper.ToDomain).ToList();
+        }
+
+        public async Task<Habit?> GetByIdAsync(Guid id, CancellationToken ct)
+        {
+            var entity = await _context.Habits
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id, ct);
+
+            return entity is null ? null : HabitMapper.ToDomain(entity); // editbycodex: consulta directa, no carga toda la tabla.
+        }
+
+        public async Task UpdateAsync(Habit habit, CancellationToken ct)
+        {
+            var existing = await _context.Habits.FirstOrDefaultAsync(x => x.Id == habit.Id, ct);
+            if (existing is null)
+                throw new InvalidOperationException("Hábito no encontrado.");
+
+            var updated = HabitMapper.ToEntity(habit);
+            existing.Name = updated.Name;
+            existing.Unit = updated.Unit;
+            existing.TargetValue = updated.TargetValue;
+            existing.DaysOfWeek = updated.DaysOfWeek;
+            existing.RequiredPercentage = updated.RequiredPercentage;
+            existing.Weight = updated.Weight;
+            existing.TrackingType = updated.TrackingType;
+            existing.IsActive = updated.IsActive;
+            await _context.SaveChangesAsync(ct);
+        }
     }
 }

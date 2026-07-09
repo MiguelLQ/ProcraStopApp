@@ -13,8 +13,10 @@ using ProcraStop.Application.Tasks.EngineTask.Rules;
 using ProcraStop.Application.Tasks.EngineTask.Signals;
 using ProcraStop.Application.Tasks.Facade;
 using ProcraStop.Application.Tasks.Queries.GetCourses;
+using ProcraStop.Application.Tasks.Queries.GetTaskDaySummaries;
 using ProcraStop.Application.Tasks.Queries.GetTaskById;
 using ProcraStop.Application.Tasks.Queries.GetTasks;
+using ProcraStop.Application.Tasks.Queries.SearchTasks;
 using ProcraStop.Core.Decisions.Rules;
 
 namespace ProcraStop.Application.Tasks
@@ -27,6 +29,8 @@ namespace ProcraStop.Application.Tasks
 
             // CQRS Handlers para Tareas
             services.AddTransient<GetTasksQueryHandler>();
+            services.AddTransient<GetTaskDaySummariesQueryHandler>(); // editbycodex: resumen CQRS del calendario.
+            services.AddTransient<SearchTasksQueryHandler>(); // editbycodex: handler CQRS para busqueda dinamica.
             services.AddTransient<CreateTaskCommandHandler>();
             services.AddTransient<CompleteTaskCommandHandler>();
             services.AddTransient<ArchiveTaskCommandHandler>();

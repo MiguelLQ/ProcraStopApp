@@ -1,66 +1,252 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="ProcraStop.Modules.Habits.Presentation.Views.HabitListPage"
-             Title="HabitListPage">
-    <VerticalStackLayout Padding="16">
+<base:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:base="clr-namespace:ProcraStop.Shared.UI.Layouts"
+               xmlns:models="clr-namespace:ProcraStop.Modules.Habits.Presentation.Models"
+               x:Class="ProcraStop.Modules.Habits.Presentation.Views.HabitListPage"
+               Title="Hábitos"
+               Shell.BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource shellDark}}"
+               Shell.TitleColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}"
+               BackgroundColor="{AppThemeBinding Light=#F4F6F9, Dark=#0D131C}">
 
-        <Button Text="Recargar"
-                Command="{Binding LoadCommand}" />
-        <Button Text="Agregar hábito"
-        Command="{Binding GoToCreateCommand}" />
-
-        <CollectionView ItemsSource="{Binding Habits}"
-                SelectionMode="None">
-
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-
-                    <Border Padding="12"
-                    Margin="6"
-                    StrokeShape="RoundRectangle 16"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource shellDark}}">
-
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer
-                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.OpenHabitCommand}"
-                        CommandParameter="{Binding Id}" />
-                        </Border.GestureRecognizers>
-
-                        <Grid RowDefinitions="Auto,Auto,Auto"
-                      RowSpacing="6">
-
-                            <!-- NAME -->
-                            <Label Text="{Binding Name}"
-                           FontAttributes="Bold"
-                           FontSize="16" />
-
-                            <!-- UNIT + TARGET -->
-                            <Label Grid.Row="1"
-                           Text="{Binding Unit}" />
-
-                            <Label Grid.Row="1"
-                           HorizontalOptions="End"
-                           Text="{Binding Target}" />
-
-                            <!-- FOOTER -->
-                            <Grid Grid.Row="2"
-                          ColumnDefinitions="*,Auto">
-
-                                <Label Text="{Binding Weight}" />
-
-                                <Label Grid.Column="1"
-                               Text="{Binding IsActive}" />
-
-                            </Grid>
-
-                        </Grid>
-
+    <!-- editbycodex: experiencia Hoy, diseñada para registrar sin abandonar la lista. -->
+    <Grid RowDefinitions="Auto,Auto,*" RowSpacing="12">
+        <Border Grid.Row="0"
+                BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource shellDark}}"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 0,0,28,28"
+                Padding="16,12,16,16">
+            <VerticalStackLayout Spacing="12">
+                <Grid ColumnDefinitions="*,Auto">
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="{Binding SelectedDateText}"
+                               FontFamily="MontserratSemiBold"
+                               FontSize="22"
+                               TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+                        <Label Text="{Binding SummaryText}"
+                               FontFamily="OpenSansRegular"
+                               FontSize="13"
+                               TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                    </VerticalStackLayout>
+                    <Border Grid.Column="1"
+                            BackgroundColor="{AppThemeBinding Light=#E8F1FF, Dark=#20334F}"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 8"
+                            Padding="10,6"
+                            VerticalOptions="Center">
+                        <Label Text="{Binding DailyProgress, StringFormat='{0:P0}'}"
+                               FontFamily="MontserratSemiBold"
+                               FontSize="14"
+                               TextColor="#4075FF" />
                     </Border>
+                </Grid>
 
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+                <ProgressBar Progress="{Binding DailyProgress}"
+                             ProgressColor="#4075FF"
+                             BackgroundColor="{AppThemeBinding Light=#E5EAF1, Dark=#293648}"
+                             HeightRequest="6" />
 
-    </VerticalStackLayout>
-</ContentPage>
+                <CollectionView ItemsSource="{Binding WeekDays}"
+                                ItemsLayout="HorizontalList"
+                                SelectionMode="None"
+                                HorizontalScrollBarVisibility="Never">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:HabitCalendarDayItem">
+                            <VerticalStackLayout WidthRequest="46" Spacing="5" HorizontalOptions="Center">
+                                <Label Text="{Binding DayName}"
+                                       FontSize="10"
+                                       FontFamily="ManropeRegular"
+                                       HorizontalTextAlignment="Center"
+                                       TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                                <Border WidthRequest="36"
+                                        HeightRequest="36"
+                                        Padding="0"
+                                        StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 18"
+                                        BackgroundColor="Transparent">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type base:BasePage}}, Path=BindingContext.SelectDateCommand}"
+                                            CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border" Binding="{Binding IsToday}" Value="True">
+                                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#E8F1FF, Dark=#20334F}" />
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="BackgroundColor" Value="#4075FF" />
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Label Text="{Binding DayNumber}"
+                                           FontSize="12"
+                                           FontFamily="MontserratSemiBold"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"
+                                           TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}">
+                                        <Label.Triggers>
+                                            <DataTrigger TargetType="Label" Binding="{Binding IsSelected}" Value="True">
+                                                <Setter Property="TextColor" Value="White" />
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                </Border>
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+        </Border>
+
+        <Label Grid.Row="1"
+               Text="Rutina del día"
+               Margin="16,0"
+               FontFamily="MontserratSemiBold"
+               FontSize="15"
+               TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+
+        <Grid Grid.Row="2" Margin="12,0,12,0">
+            <RefreshView Command="{Binding LoadCommand}" IsRefreshing="{Binding IsBusy, Mode=OneWay}">
+                <CollectionView ItemsSource="{Binding Habits}"
+                                SelectionMode="None"
+                                VerticalScrollBarVisibility="Never">
+                    <CollectionView.EmptyView>
+                        <VerticalStackLayout Padding="28" Spacing="8" VerticalOptions="Center">
+                            <Label Text="Día despejado"
+                                   FontFamily="MontserratSemiBold"
+                                   FontSize="18"
+                                   HorizontalTextAlignment="Center"
+                                   TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+                            <Label Text="No tienes hábitos programados para esta fecha."
+                                   FontFamily="OpenSansRegular"
+                                   FontSize="13"
+                                   HorizontalTextAlignment="Center"
+                                   TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                        </VerticalStackLayout>
+                    </CollectionView.EmptyView>
+
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="8" />
+                    </CollectionView.ItemsLayout>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:HabitItemViewModel">
+                            <Border Padding="14"
+                                    Stroke="{AppThemeBinding Light=#E3E8EF, Dark=#273447}"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 8"
+                                    BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#171F2B}">
+                                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="8">
+                                    <VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="2">
+                                        <VerticalStackLayout.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type base:BasePage}}, Path=BindingContext.OpenHabitCommand}"
+                                                CommandParameter="{Binding Id}" />
+                                        </VerticalStackLayout.GestureRecognizers>
+                                        <Label Text="{Binding Name}"
+                                               FontFamily="MontserratSemiBold"
+                                               FontSize="15"
+                                               TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+                                        <Label Text="{Binding ScheduleText}"
+                                               FontFamily="OpenSansRegular"
+                                               FontSize="11"
+                                               TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                                    </VerticalStackLayout>
+
+                                    <!-- editbycodex: check grande y accionable para hábito binario. -->
+                                    <Border Grid.RowSpan="2" Grid.Column="1"
+                                            IsVisible="{Binding IsBinary}"
+                                            IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type base:BasePage}}, Path=BindingContext.CanEditSelectedDate}"
+                                            WidthRequest="44" HeightRequest="44"
+                                            Padding="0"
+                                            Stroke="#4075FF"
+                                            StrokeThickness="2"
+                                            StrokeShape="RoundRectangle 22"
+                                            BackgroundColor="Transparent"
+                                            VerticalOptions="Center">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type base:BasePage}}, Path=BindingContext.ToggleHabitCommand}"
+                                                CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+                                        <Border.Triggers>
+                                            <DataTrigger TargetType="Border" Binding="{Binding IsCompleted}" Value="True">
+                                                <Setter Property="BackgroundColor" Value="#4075FF" />
+                                            </DataTrigger>
+                                        </Border.Triggers>
+                                        <Label Text="✓"
+                                               FontSize="22"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"
+                                               TextColor="White"
+                                               IsVisible="{Binding IsCompleted}" />
+                                    </Border>
+
+                                    <!-- editbycodex: control cuantitativo estable, evita abrir otra página. -->
+                                    <HorizontalStackLayout Grid.RowSpan="2" Grid.Column="1"
+                                                           IsVisible="{Binding IsQuantitative}"
+                                                           IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type base:BasePage}}, Path=BindingContext.CanEditSelectedDate}"
+                                                           Spacing="6" VerticalOptions="Center">
+                                        <Button Text="−"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type base:BasePage}}, Path=BindingContext.DecreaseHabitCommand}"
+                                                CommandParameter="{Binding .}"
+                                                WidthRequest="36" HeightRequest="36" Padding="0"
+                                                CornerRadius="18"
+                                                FontSize="18"
+                                                BackgroundColor="{AppThemeBinding Light=#EEF1F5, Dark=#263246}"
+                                                TextColor="{AppThemeBinding Light=#374151, Dark=#D8E0EC}" />
+                                        <Label Text="{Binding CurrentValue}"
+                                               WidthRequest="34"
+                                               HorizontalTextAlignment="Center"
+                                               VerticalTextAlignment="Center"
+                                               FontFamily="MontserratSemiBold"
+                                               FontSize="15"
+                                               TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+                                        <Button Text="+"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type base:BasePage}}, Path=BindingContext.IncreaseHabitCommand}"
+                                                CommandParameter="{Binding .}"
+                                                WidthRequest="36" HeightRequest="36" Padding="0"
+                                                CornerRadius="18"
+                                                FontSize="18"
+                                                BackgroundColor="#4075FF"
+                                                TextColor="White" />
+                                    </HorizontalStackLayout>
+
+                                    <ProgressBar Grid.Row="1" Grid.Column="0"
+                                                 Progress="{Binding Progress}"
+                                                 ProgressColor="{AppThemeBinding Light=#34C77B, Dark=#5DDB9A}"
+                                                 BackgroundColor="{AppThemeBinding Light=#E8EDF3, Dark=#293648}"
+                                                 HeightRequest="6" />
+
+                                    <Grid Grid.Row="2" Grid.ColumnSpan="2" ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding ProgressText}"
+                                               FontSize="11"
+                                               FontFamily="OpenSansRegular"
+                                               TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                                        <Label Grid.Column="1"
+                                               Text="{Binding StreakText}"
+                                               FontSize="11"
+                                               FontFamily="ManropeSemiBold"
+                                               TextColor="#F59E0B" />
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </RefreshView>
+
+            <Button Text="+"
+                    Command="{Binding GoToCreateCommand}"
+                    WidthRequest="62" HeightRequest="62"
+                    CornerRadius="31"
+                    FontSize="26"
+                    Padding="0"
+                    HorizontalOptions="End"
+                    VerticalOptions="End"
+                    Margin="0,0,4,12"
+                    ZIndex="10"
+                    BackgroundColor="#4075FF"
+                    TextColor="White" />
+        </Grid>
+    </Grid>
+</base:BasePage>

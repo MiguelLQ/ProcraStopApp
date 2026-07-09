@@ -1,155 +1,140 @@
-﻿
-
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using ProcraStop.Application.Habits.Commands.DeactivateHabit;
 using ProcraStop.Application.Habits.Commands.TrackHabit;
 using ProcraStop.Application.Habits.Queries.GetHabitById;
 using ProcraStop.Application.Habits.Queries.GetHabitLogByDate;
 using ProcraStop.Domain.Habits.Enums;
-namespace ProcraStop.Modules.Habits.Presentation.ViewModels
+using ProcraStop.Shared.Services;
+using ProcraStop.Shared.UI.Components;
+
+namespace ProcraStop.Modules.Habits.Presentation.ViewModels;
+
+[QueryProperty(nameof(HabitIdRaw), "habitId")]
+public partial class TrackHabitViewModel : ObservableObject
 {
-    [QueryProperty(nameof(HabitIdRaw), "habitId")]
-    public partial class TrackHabitViewModel : ObservableObject
+    private readonly GetHabitByIdHandler _habitHandler;
+    private readonly GetHabitLogByDateHandler _logHandler;
+    private readonly TrackHabitHandler _trackHandler;
+    private readonly DeactivateHabitHandler _deactivateHandler;
+    private Guid _currentHabitId;
+
+    [ObservableProperty] private string? habitIdRaw;
+    [ObservableProperty] private string name = string.Empty;
+    [ObservableProperty] private string unit = string.Empty;
+    [ObservableProperty] private int targetValue;
+    [ObservableProperty] private HabitTrackingType trackingType;
+    [ObservableProperty] private bool isBinary;
+    [ObservableProperty] private int value;
+    [ObservableProperty] private bool isCompleted;
+    [ObservableProperty] private bool alreadyLoggedToday;
+    [ObservableProperty] private double progress;
+    [ObservableProperty] private string progressText = string.Empty;
+    [ObservableProperty] private bool isBusy;
+
+    public bool IsQuantitative => !IsBinary;
+
+    public TrackHabitViewModel(
+        GetHabitByIdHandler habitHandler,
+        GetHabitLogByDateHandler logHandler,
+        TrackHabitHandler trackHandler,
+        DeactivateHabitHandler deactivateHandler)
     {
-        private readonly GetHabitByIdHandler _habitHandler;
-        private readonly GetHabitLogByDateHandler _logHandler;
-        private readonly TrackHabitHandler _trackHandler;
+        _habitHandler = habitHandler;
+        _logHandler = logHandler;
+        _trackHandler = trackHandler;
+        _deactivateHandler = deactivateHandler;
+    }
 
-        public TrackHabitViewModel(
-            GetHabitByIdHandler habitHandler,
-            GetHabitLogByDateHandler logHandler,
-            TrackHabitHandler trackHandler)
+    partial void OnHabitIdRawChanged(string? value)
+    {
+        if (Guid.TryParse(value, out var id))
+            _ = Load(id);
+    }
+
+    partial void OnValueChanged(int value) => UpdateProgress();
+    partial void OnIsCompletedChanged(bool value) => UpdateProgress();
+
+    public async Task Load(Guid habitId)
+    {
+        _currentHabitId = habitId;
+        var habit = await _habitHandler.Handle(new GetHabitByIdQuery { HabitId = habitId });
+        if (habit is null)
+            return;
+
+        Name = habit.Name;
+        Unit = habit.Unit switch
         {
-            _habitHandler = habitHandler;
-            _logHandler = logHandler;
-            _trackHandler = trackHandler;
-        }
+            HabitUnit.Minutes => "minutos",
+            HabitUnit.Repetitions => "repeticiones",
+            HabitUnit.Sessions => "sesiones",
+            _ => string.Empty
+        };
+        TargetValue = habit.Target.Value;
+        TrackingType = habit.TrackingType;
+        IsBinary = TrackingType == HabitTrackingType.Binary;
+        OnPropertyChanged(nameof(IsQuantitative));
 
-        // ----------- NAV PARAM -----------
-
-        [ObservableProperty]
-        private string? habitIdRaw;
-
-        // ----------- STATE -----------
-
-        [ObservableProperty]
-        private string name = string.Empty;
-
-        [ObservableProperty]
-        private string unit = string.Empty;
-
-        [ObservableProperty]
-        private HabitTrackingType trackingType;
-
-        [ObservableProperty]
-        private bool isBinary;
-
-        // ----------- INPUT -----------
-
-        [ObservableProperty]
-        private int value;
-
-        [ObservableProperty]
-        private bool isCompleted;
-
-        [ObservableProperty]
-        private bool alreadyLoggedToday;
-
-        // ----------- INIT -----------
-        private Guid _currentHabitId;
-
-        partial void OnHabitIdRawChanged(string? value)
+        var log = await _logHandler.Handle(new GetHabitLogByDateQuery
         {
-            Console.WriteLine($"🔥 OnHabitIdRawChanged TRIGGERED");
-            Console.WriteLine($"👉 Raw value: {value}");
+            HabitId = habitId,
+            Date = DateTime.Today
+        });
+        AlreadyLoggedToday = log is not null;
+        Value = log?.Value ?? 0;
+        IsCompleted = IsBinary && Value > 0;
+        UpdateProgress();
+    }
 
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                Console.WriteLine("❌ value vacío");
-                return;
-            }
+    [RelayCommand]
+    private async Task Save()
+    {
+        if (IsBusy || _currentHabitId == Guid.Empty)
+            return;
 
-            if (Guid.TryParse(value, out var guid))
-            {
-                Console.WriteLine($"✅ GUID válido: {guid}");
-                _ = Load(guid);
-            }
-            else
-            {
-                Console.WriteLine("❌ GUID INVÁLIDO: " + value);
-            }
-        }
-        public async Task Load(Guid habitId)
+        try
         {
-            Console.WriteLine($"🚀 Load iniciado con ID: {habitId}");
-
-            _currentHabitId = habitId;
-
-            var today = DateTime.Today;
-
-            var habit = await _habitHandler.Handle(
-                new GetHabitByIdQuery { HabitId = habitId });
-
-            if (habit == null)
-            {
-                Console.WriteLine("❌ Habit es NULL");
-                return;
-            }
-            Console.WriteLine($"✅ Habit encontrado: {habit.Name}");
-            Name = habit.Name;
-            Unit = habit.Unit.ToString();
-            TrackingType = habit.TrackingType;
-            IsBinary = TrackingType == HabitTrackingType.Binary;
-
-            var log = await _logHandler.Handle(
-                new GetHabitLogByDateQuery
-                {
-                    HabitId = habitId,
-                    Date = today
-                });
-
-            if (log != null)
-            {
-                Console.WriteLine("✅ Log encontrado para hoy");
-
-                AlreadyLoggedToday = true;
-
-                Value = log.Value;
-                IsCompleted = log.Value > 0;
-            }
-            else
-            {
-                Console.WriteLine("⚠️ No hay log para hoy");
-
-            }
-        }
-        // ----------- SAVE -----------
-
-        [RelayCommand]
-        private async Task Save()
-        {
-            int finalValue;
-
-            if (IsBinary)
-                finalValue = IsCompleted ? 1 : 0;
-            else
-                finalValue = Value;
-
-            var command = new TrackHabitCommand
+            IsBusy = true;
+            var finalValue = IsBinary ? (IsCompleted ? 1 : 0) : Math.Max(0, Value);
+            await _trackHandler.Handle(new TrackHabitCommand
             {
                 HabitId = _currentHabitId,
                 Date = DateTime.Today,
-                Value = finalValue,
-                Notes = null
-            };
-
-            await _trackHandler.Handle(command);
-
+                Value = finalValue
+            });
+            PendingNotificationService.Set("Progreso del hábito actualizado.");
             await Shell.Current.GoToAsync("..");
         }
-        public void SetTaskId(Guid id)
+        finally
         {
-            _ = Load(id);
+            IsBusy = false;
         }
+    }
+
+    [RelayCommand]
+    private async Task Pause()
+    {
+        var confirmed = await Shell.Current.DisplayAlertAsync(
+            "Pausar hábito",
+            "Dejará de aparecer en tu rutina, pero conservará su historial.",
+            "Pausar",
+            "Cancelar");
+        if (!confirmed)
+            return;
+
+        await _deactivateHandler.Handle(
+            new DeactivateHabitCommand { HabitId = _currentHabitId },
+            CancellationToken.None);
+        PendingNotificationService.Set("Hábito pausado.", SnackbarType.Info);
+        await Shell.Current.GoToAsync("..");
+    }
+
+    private void UpdateProgress()
+    {
+        var current = IsBinary ? (IsCompleted ? 1 : 0) : Value;
+        Progress = TargetValue <= 0 ? 0 : Math.Min(1, (double)current / TargetValue);
+        ProgressText = IsBinary
+            ? (IsCompleted ? "Completado hoy" : "Pendiente para hoy")
+            : $"{current} de {TargetValue} {Unit}";
     }
 }

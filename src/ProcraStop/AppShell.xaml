@@ -73,12 +73,13 @@
                 ContentTemplate="{DataTemplate task:TasksPage}"
                 Route="TasksPage"/>
         </Tab>
-        <Tab Title="Tareas2" Icon="{StaticResource IconDashboard}">
+        <Tab Title="Dashboard" Icon="{StaticResource IconDashboard}">
             <ShellContent
-                Title="Tareas"
-                ContentTemplate="{DataTemplate task:ListTasks}"
-                Route="ListTasks"/>
+        Title="Dashboard"
+        ContentTemplate="{DataTemplate task:TaskAnalyticsPage}"
+        Route="AnalyticsPage"/>
         </Tab>
+
         <Tab Title="detalle 2" Icon="{StaticResource IconDashboard}">
             <ShellContent
                 Title="Tarea detalle"
@@ -103,13 +104,7 @@
                 ContentTemplate="{DataTemplate stress:StressAnalyticsPage}"
                 Route="StressAnalyticsPage"/>
         </Tab>
-        <Tab Title="Dashboard" Icon="{StaticResource IconDashboard}">
-            <ShellContent
-                Title="Dashboard"
-                ContentTemplate="{DataTemplate task:TaskAnalyticsPage}"
-                Route="AnalyticsPage"/>
-        </Tab>
-
+        
     </FlyoutItem>
     <!-- MÓDULO Dashboard -->
     <FlyoutItem Title="Inicio"

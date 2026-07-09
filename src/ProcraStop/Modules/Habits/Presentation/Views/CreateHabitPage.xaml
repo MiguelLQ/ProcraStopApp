@@ -1,55 +1,140 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:ProcraStop.Modules.Habits.Presentation.Models"
              x:Class="ProcraStop.Modules.Habits.Presentation.Views.CreateHabitPage"
-             Title="CreateHabitPage">
+             Title="Nuevo hábito"
+             Shell.BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource shellDark}}"
+             BackgroundColor="{AppThemeBinding Light=#F4F6F9, Dark=#0D131C}">
     <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="16">
+        <VerticalStackLayout Padding="16,12,16,28" Spacing="18">
+            <!-- editbycodex: formulario progresivo; oculta parámetros internos del motor. -->
+            <VerticalStackLayout Spacing="4">
+                <Label Text="Construye una rutina"
+                       FontFamily="MontserratSemiBold"
+                       FontSize="22"
+                       TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+                <Label Text="Haz que empezar sea sencillo y repetible."
+                       FontFamily="OpenSansRegular"
+                       FontSize="13"
+                       TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+            </VerticalStackLayout>
 
-            <!-- NAME -->
-            <Label Text="Nombre del hábito" />
-            <Entry Text="{Binding Name}" Placeholder="Ej: Leer" />
+            <Border Style="{StaticResource HabitFormCardStyle}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Nombre" Style="{StaticResource HabitFormLabelStyle}" />
+                    <Entry Text="{Binding Name}"
+                           Placeholder="Ej. Repasar apuntes"
+                           ReturnType="Next"
+                           BackgroundColor="Transparent"
+                           FontFamily="MontserratRegular" />
+                </VerticalStackLayout>
+            </Border>
 
-            <!-- UNIT -->
-            <Label Text="Unidad" />
-            <Picker ItemsSource="{Binding Units}"
-                    SelectedItem="{Binding SelectedUnit}" />
+            <Border Style="{StaticResource HabitFormCardStyle}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="¿Cómo quieres registrarlo?" Style="{StaticResource HabitFormLabelStyle}" />
+                    <CollectionView ItemsSource="{Binding TrackingTypes}" SelectionMode="Single"
+                                    SelectedItem="{Binding SelectedTrackingType}" HeightRequest="118">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Vertical" ItemSpacing="6" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:HabitTrackingOption">
+                                <Grid RowDefinitions="Auto,Auto" Padding="10,6">
+                                    <Label Text="{Binding Label}" FontFamily="MontserratSemiBold" FontSize="14"
+                                           TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+                                    <Label Grid.Row="1" Text="{Binding Description}" FontFamily="OpenSansRegular" FontSize="11"
+                                           TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
 
-            <!-- TRACKING TYPE -->
-            <Label Text="Tipo de seguimiento" />
-            <Picker ItemsSource="{Binding TrackingTypes}"
-                    SelectedItem="{Binding SelectedTrackingType}" />
+            <Border Style="{StaticResource HabitFormCardStyle}" IsVisible="{Binding IsQuantitative}">
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Unidad" Style="{StaticResource HabitFormLabelStyle}" />
+                        <Picker ItemsSource="{Binding Units}"
+                                ItemDisplayBinding="{Binding Label}"
+                                SelectedItem="{Binding SelectedUnit}"
+                                BackgroundColor="Transparent" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1" Spacing="8">
+                        <Label Text="Objetivo diario" Style="{StaticResource HabitFormLabelStyle}" />
+                        <Entry Text="{Binding TargetValue}"
+                               Keyboard="Numeric"
+                               BackgroundColor="Transparent" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
 
-            <!-- TARGET -->
-            <Label Text="Objetivo" />
-            <Entry Text="{Binding TargetValue}" Keyboard="Numeric" />
+            <Border Style="{StaticResource HabitFormCardStyle}">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Días de práctica" Style="{StaticResource HabitFormLabelStyle}" />
+                    <CollectionView ItemsSource="{Binding Days}"
+                                    ItemsLayout="HorizontalList"
+                                    SelectionMode="None"
+                                    HorizontalScrollBarVisibility="Never">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border WidthRequest="42" HeightRequest="42" Margin="0,0,6,0"
+                                        Padding="0" StrokeThickness="1"
+                                        Stroke="{AppThemeBinding Light=#D7DDE7, Dark=#344156}"
+                                        StrokeShape="RoundRectangle 21"
+                                        BackgroundColor="Transparent">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ToggleDayCommand}"
+                                            CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="BackgroundColor" Value="#4075FF" />
+                                            <Setter Property="Stroke" Value="#4075FF" />
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Label Text="{Binding Label}" FontSize="11" FontFamily="MontserratSemiBold"
+                                           HorizontalOptions="Center" VerticalOptions="Center"
+                                           TextColor="{AppThemeBinding Light=#374151, Dark=#D8E0EC}">
+                                        <Label.Triggers>
+                                            <DataTrigger TargetType="Label" Binding="{Binding IsSelected}" Value="True">
+                                                <Setter Property="TextColor" Value="White" />
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
 
-            <!-- REQUIRED % -->
-            <Label Text="Porcentaje requerido (0 - 1)" />
-            <Entry Text="{Binding RequiredPercentage}" Keyboard="Numeric" />
-
-            <!-- WEIGHT -->
-            <Label Text="Peso del hábito" />
-            <Entry Text="{Binding Weight}" Keyboard="Numeric" />
-
-            <!-- DAYS -->
-            <Label Text="Días" />
-
-            <CollectionView ItemsSource="{Binding Days}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <HorizontalStackLayout>
-                            <CheckBox IsChecked="{Binding IsSelected}" />
-                            <Label Text="{Binding Label}" />
-                        </HorizontalStackLayout>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-
-            <!-- SAVE -->
-            <Button Text="Guardar hábito"
-                    Command="{Binding SaveCommand}" />
-
+            <Button Text="Crear hábito"
+                    Command="{Binding SaveCommand}"
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"
+                    HeightRequest="52"
+                    CornerRadius="8"
+                    FontFamily="MontserratSemiBold"
+                    BackgroundColor="#4075FF"
+                    TextColor="White" />
         </VerticalStackLayout>
     </ScrollView>
+
+    <ContentPage.Resources>
+        <Style x:Key="HabitFormCardStyle" TargetType="Border">
+            <Setter Property="Padding" Value="14" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="Stroke" Value="{AppThemeBinding Light=#E3E8EF, Dark=#273447}" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 8" />
+            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#FFFFFF, Dark=#171F2B}" />
+        </Style>
+        <Style x:Key="HabitFormLabelStyle" TargetType="Label">
+            <Setter Property="FontFamily" Value="MontserratSemiBold" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light=#4B5563, Dark=#B8C3D2}" />
+        </Style>
+    </ContentPage.Resources>
 </ContentPage>

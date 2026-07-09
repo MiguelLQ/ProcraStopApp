@@ -2,48 +2,89 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ProcraStop.Modules.Habits.Presentation.Views.TrackHabitPage"
-             Title="TrackHabitPage">
-    
+             Title="Detalle del hábito"
+             Shell.BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource shellDark}}"
+             BackgroundColor="{AppThemeBinding Light=#F4F6F9, Dark=#0D131C}">
     <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="20">
+        <VerticalStackLayout Padding="16" Spacing="16">
+            <!-- editbycodex: detalle reservado para ajuste preciso y administración. -->
+            <Border Padding="18"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 8"
+                    BackgroundColor="{AppThemeBinding Light=#172231, Dark=#101923}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="{Binding Name}"
+                           FontFamily="MontserratSemiBold"
+                           FontSize="22"
+                           TextColor="White" />
+                    <Label Text="{Binding ProgressText}"
+                           FontFamily="OpenSansRegular"
+                           FontSize="13"
+                           TextColor="#A8B4C5" />
+                    <ProgressBar Progress="{Binding Progress}"
+                                 ProgressColor="#5DDB9A"
+                                 BackgroundColor="#2A394D"
+                                 HeightRequest="8" />
+                </VerticalStackLayout>
+            </Border>
 
-            <!-- TITLE -->
-            <Label Text="{Binding Name}"
-                   FontSize="22"
-                   FontAttributes="Bold" />
+            <Border Padding="16"
+                    Stroke="{AppThemeBinding Light=#E3E8EF, Dark=#273447}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 8"
+                    BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#171F2B}">
+                <VerticalStackLayout Spacing="14">
+                    <Label Text="Registro de hoy"
+                           FontFamily="MontserratSemiBold"
+                           FontSize="15"
+                           TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
 
-            <!-- INFO -->
-            <Label Text="{Binding Unit}" />
+                    <Grid IsVisible="{Binding IsBinary}" ColumnDefinitions="*,Auto">
+                        <Label Text="Marcar como completado"
+                               VerticalOptions="Center"
+                               FontFamily="OpenSansRegular"
+                               TextColor="{AppThemeBinding Light=#374151, Dark=#D8E0EC}" />
+                        <CheckBox Grid.Column="1"
+                                  IsChecked="{Binding IsCompleted}"
+                                  Color="#4075FF" />
+                    </Grid>
 
-            <!-- YA REGISTRADO -->
-            <Label Text="Ya registraste hoy"
-                   TextColor="Green"
-                   IsVisible="{Binding AlreadyLoggedToday}" />
+                    <Grid IsVisible="{Binding IsQuantitative}" ColumnDefinitions="*,120" ColumnSpacing="12">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Cantidad realizada"
+                                   FontFamily="MontserratSemiBold"
+                                   FontSize="13"
+                                   TextColor="{AppThemeBinding Light=#374151, Dark=#D8E0EC}" />
+                            <Label Text="{Binding Unit}"
+                                   FontSize="11"
+                                   TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                        </VerticalStackLayout>
+                        <Entry Grid.Column="1"
+                               Text="{Binding Value}"
+                               Keyboard="Numeric"
+                               HorizontalTextAlignment="Center"
+                               BackgroundColor="Transparent" />
+                    </Grid>
 
-            <!-- QUANTITATIVE INPUT -->
-            <VerticalStackLayout IsVisible="{Binding IsBinary, Converter={StaticResource InverseBoolConverter}}">
+                    <Button Text="Guardar cambios"
+                            Command="{Binding SaveCommand}"
+                            HeightRequest="50"
+                            CornerRadius="8"
+                            FontFamily="MontserratSemiBold"
+                            BackgroundColor="#4075FF"
+                            TextColor="White" />
+                </VerticalStackLayout>
+            </Border>
 
-                <Label Text="Valor" />
-
-                <Entry Text="{Binding Value}"
-                       Keyboard="Numeric"
-                       Placeholder="Ingresa valor" />
-
-            </VerticalStackLayout>
-
-            <!-- BINARY INPUT -->
-            <HorizontalStackLayout IsVisible="{Binding IsBinary}">
-
-                <CheckBox IsChecked="{Binding IsCompleted}" />
-
-                <Label Text="Completado" VerticalOptions="Center" />
-
-            </HorizontalStackLayout>
-
-            <!-- SAVE -->
-            <Button Text="Guardar"
-                    Command="{Binding SaveCommand}" />
-
+            <Button Text="Pausar hábito"
+                    Command="{Binding PauseCommand}"
+                    HeightRequest="46"
+                    CornerRadius="8"
+                    BackgroundColor="Transparent"
+                    BorderColor="#EF5B5B"
+                    BorderWidth="1"
+                    TextColor="#EF5B5B"
+                    FontFamily="MontserratSemiBold" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

@@ -8,8 +8,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.Views;
 
 public partial class TasksPage : BasePage
 {
-    protected override Color StatusBarColor => Colors.White;
-    protected override StatusBarStyle StatusBarStyle => StatusBarStyle.DarkContent;
+    // editbycodex: usa el status bar primario definido por BasePage.
     private readonly TasksPageViewModel _viewModel;
     private readonly IServiceProvider _serviceProvider;
 

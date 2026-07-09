@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProcraStop.Modules.Tasks.Presentation.Controls.TaskCalendarView"
+             x:Name="Root">
+
+    <ContentView.Resources>
+        <Style x:Key="CalendarWeekLabelStyle" TargetType="Label">
+            <Setter Property="FontFamily" Value="ManropeRegular" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="HorizontalTextAlignment" Value="Center" />
+            <Setter Property="TextColor"
+                    Value="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+        </Style>
+    </ContentView.Resources>
+
+    <Border Padding="15,5"
+            BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkBackground}}"
+            StrokeThickness="0"
+            StrokeShape="RoundRectangle 24">
+
+        <Grid RowDefinitions="Auto,Auto,Auto"
+              RowSpacing="5">
+
+            <Grid Grid.Row="0"
+                  ColumnDefinitions="*,Auto,Auto"
+                  ColumnSpacing="10">
+
+                <VerticalStackLayout Spacing="2"
+                                     VerticalOptions="Center">
+                    <Label Text="{Binding VisibleMonthText, Source={x:Reference Root}}"
+                           FontFamily="MontserratSemiBold"
+                           FontSize="20"
+                           TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+
+                    <Label Text="Selecciona una fecha para organizar tus tareas"
+                           FontFamily="ManropeRegular"
+                           FontSize="12"
+                           TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+
+                    <VerticalStackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ToggleCalendarCommand, Source={x:Reference Root}}" />
+                    </VerticalStackLayout.GestureRecognizers>
+                </VerticalStackLayout>
+
+                <Border Grid.Column="1"
+                        WidthRequest="36"
+                        HeightRequest="36"
+                        Padding="1"
+                        StrokeThickness="0"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource shipsligth}, Dark={StaticResource DarkBackground}}"
+                        StrokeShape="RoundRectangle 18">
+                    <Label Text="&lt;"
+                           FontSize="22"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding PreviousMonthCommand, Source={x:Reference Root}}" />
+                    </Border.GestureRecognizers>
+                </Border>
+
+                <Border Grid.Column="2"
+                        WidthRequest="36"
+                        HeightRequest="36"
+                        StrokeThickness="0"
+                        Padding="1"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource shipsligth}, Dark={StaticResource DarkBackground}}"
+                        StrokeShape="RoundRectangle 18">
+                    <Label Text="&gt;"
+                           FontSize="22"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding NextMonthCommand, Source={x:Reference Root}}" />
+                    </Border.GestureRecognizers>
+                </Border>
+            </Grid>
+
+            <!-- editbycodex: contenedor fijo; evita el costo de CollectionView para solo 7 dias. -->
+            <HorizontalStackLayout x:Name="WeekHost"
+                                   Grid.Row="1"
+                                   HeightRequest="62"
+                                   Spacing="1"
+                                   IsVisible="{Binding IsCompactVisible, Source={x:Reference Root}}" />
+
+            <Grid Grid.Row="2"
+                  RowDefinitions="Auto,Auto"
+                  RowSpacing="1"
+                  IsVisible="{Binding IsExpanded, Source={x:Reference Root}}">
+
+                <Grid Grid.Row="0"
+                      ColumnDefinitions="*,*,*,*,*,*,*">
+                    <Label Grid.Column="0" Text="lun" Style="{StaticResource CalendarWeekLabelStyle}" />
+                    <Label Grid.Column="1" Text="mar" Style="{StaticResource CalendarWeekLabelStyle}" />
+                    <Label Grid.Column="2" Text="mie" Style="{StaticResource CalendarWeekLabelStyle}" />
+                    <Label Grid.Column="3" Text="jue" Style="{StaticResource CalendarWeekLabelStyle}" />
+                    <Label Grid.Column="4" Text="vie" Style="{StaticResource CalendarWeekLabelStyle}" />
+                    <Label Grid.Column="5" Text="sab" Style="{StaticResource CalendarWeekLabelStyle}" />
+                    <Label Grid.Column="6" Text="dom" Style="{StaticResource CalendarWeekLabelStyle}" />
+                </Grid>
+
+                <!-- editbycodex: grilla fija 7x6; se crea una vez y solo se actualizan valores. -->
+                <Grid x:Name="MonthGrid"
+                      Grid.Row="1"
+                      HeightRequest="262"
+                      RowSpacing="2"
+                      ColumnSpacing="0"
+                      Margin="0,2,0,0" />
+            </Grid>
+        </Grid>
+    </Border>
+</ContentView>

@@ -66,5 +66,20 @@ namespace ProcraStop.Modules.Habits.Infraestructure.Repositories
 
             await _context.SaveChangesAsync();
         }
+
+        public async Task<IReadOnlyList<HabitLog>> GetRangeAsync(
+            DateTime startDate,
+            DateTime endDate,
+            CancellationToken ct)
+        {
+            var start = startDate.Date;
+            var endExclusive = endDate.Date.AddDays(1);
+            var entities = await _context.HabitLogs
+                .AsNoTracking()
+                .Where(x => x.Date >= start && x.Date < endExclusive)
+                .ToListAsync(ct);
+
+            return entities.Select(HabitLogMapper.ToDomain).ToList(); // editbycodex: solo historial necesario para rachas.
+        }
     }
 }

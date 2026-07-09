@@ -16,15 +16,7 @@ namespace ProcraStop.Application.Habits.Queries.GetHabitById
 
         public async Task<Habit?> Handle(GetHabitByIdQuery query)
         {
-            var habits = await _repository.GetAllAsync();
-            foreach (var h in habits)
-            {
-                Console.WriteLine($"🧩 DB HabitId: {h.Id}");
-            }
-
-            Console.WriteLine($"🔍 Buscando: {query.HabitId}");
-
-            return habits.FirstOrDefault(h => h.Id == query.HabitId);
+            return await _repository.GetByIdAsync(query.HabitId, CancellationToken.None); // editbycodex: búsqueda indexada por clave.
         }
     }
 }

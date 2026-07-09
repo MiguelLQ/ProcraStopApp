@@ -132,6 +132,8 @@ namespace ProcraStop.Infrastructure.DBContext
                 entity.Property(x => x.RequiredPercentage).IsRequired();
 
                 entity.Property(x => x.IsActive).IsRequired();
+                entity.Property(x => x.Weight).IsRequired();
+                entity.Property(x => x.TrackingType).IsRequired();
             });
 
             modelBuilder.Entity<HabitLogEntity>(entity =>
@@ -143,6 +145,9 @@ namespace ProcraStop.Infrastructure.DBContext
                 entity.Property(x => x.Date).IsRequired();
 
                 entity.Property(x => x.Value).IsRequired();
+
+                entity.HasIndex(x => new { x.HabitId, x.Date })
+                    .IsUnique(); // editbycodex: garantiza un registro diario por hábito en bases nuevas.
 
                 entity.HasOne<HabitEntity>()
                     .WithMany()

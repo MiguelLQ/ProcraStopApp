@@ -6,6 +6,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.Models
         All = 1,
         Pending = 2,
         Completed = 3,
-        Overdue = 4
+        Overdue = 4,
+        WithoutDate = 5 // editbycodex: bandeja explicita para tareas aun no programadas.
     }
 }

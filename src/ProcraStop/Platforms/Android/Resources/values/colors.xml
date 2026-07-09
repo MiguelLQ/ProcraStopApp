@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#512BD4</color>
-    <color name="colorPrimaryDark">#2B0B98</color>
-    <color name="colorAccent">#2B0B98</color>
+    <!-- editbycodex: el tema Android ya no usa el morado predeterminado de MAUI. -->
+    <color name="colorPrimary">#4075FF</color>
+    <color name="colorPrimaryDark">#4075FF</color>
+    <color name="colorAccent">#4075FF</color>
 </resources>

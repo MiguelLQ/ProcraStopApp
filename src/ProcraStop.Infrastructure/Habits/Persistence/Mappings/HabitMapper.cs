@@ -29,8 +29,10 @@ namespace ProcraStop.Infrastructure.Habits.Persistence.Mappings
                 target,
                 schedule,
                 rule,
-                entity.Weight,
-                (HabitTrackingType)entity.TrackingType,
+                entity.Weight > 0 ? entity.Weight : 1.0,
+                Enum.IsDefined(entity.TrackingType) && entity.TrackingType != 0
+                    ? entity.TrackingType
+                    : HabitTrackingType.Quantitative, // editbycodex: compatibilidad con filas antiguas guardadas en cero.
                 entity.IsActive);
 
             //Console.WriteLine($"🧠 DOMAIN ID: {habit.Id}");
@@ -47,6 +49,8 @@ namespace ProcraStop.Infrastructure.Habits.Persistence.Mappings
                 TargetValue = habit.Target.Value,
                 DaysOfWeek = string.Join(",", habit.Schedule.Days.Select(d => (int)d)),
                 RequiredPercentage = habit.CompletionRule.RequiredPercentage,
+                Weight = habit.Weight,
+                TrackingType = habit.TrackingType, // editbycodex: preserva el tipo real al persistir.
                 IsActive = habit.IsActive
             };
         }

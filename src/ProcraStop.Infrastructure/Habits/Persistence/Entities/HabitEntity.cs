@@ -18,8 +18,8 @@ namespace ProcraStop.Infrastructure.Habits.Persistence.Entities
         public string DaysOfWeek { get; set; } = string.Empty;
 
         public double RequiredPercentage { get; set; }
-        public double Weight { get; private set; }
-        public HabitTrackingType TrackingType { get; private set; }
+        public double Weight { get; set; }
+        public HabitTrackingType TrackingType { get; set; }
 
         public bool IsActive { get; set; }
     }

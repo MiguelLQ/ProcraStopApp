@@ -12,6 +12,10 @@ namespace ProcraStop.Application.Habits.Abstractions
         Task<HabitLog?> GetByHabitAndDateAsync(Guid habitId, DateTime date);
         //
         Task UpsertAsync(HabitLog log);
+        Task<IReadOnlyList<HabitLog>> GetRangeAsync(
+            DateTime startDate,
+            DateTime endDate,
+            CancellationToken ct);
 
     }
 }

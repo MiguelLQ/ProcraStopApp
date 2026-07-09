@@ -18,7 +18,6 @@ namespace ProcraStop
             Routing.RegisterRoute(nameof(CreateTaskPage), typeof(CreateTaskPage));
             Routing.RegisterRoute(nameof(CoursesPage), typeof(CoursesPage));
             // add
-            Routing.RegisterRoute(nameof(ListTasks), typeof(ListTasks));
             Routing.RegisterRoute(nameof(DetailTask), typeof(DetailTask));
             Routing.RegisterRoute(nameof(CreateTask), typeof(CreateTask));
             Routing.RegisterRoute("edit-task", typeof(EditTaskPage));

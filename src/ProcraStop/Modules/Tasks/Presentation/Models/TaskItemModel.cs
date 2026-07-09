@@ -14,6 +14,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.Models
         public TaskPriority Priority { get; init; }
         public TaskItemStatus Status { get; init; }
         public bool IsOverdue { get; init; }
+        public bool HasSubtasks { get; init; } // editbycodex: decide si el card admite check directo.
         public string? CourseName { get; set; }
         public string? CourseColor { get; set; }
         public bool HasCourse => !string.IsNullOrWhiteSpace(CourseName);
@@ -138,6 +139,9 @@ namespace ProcraStop.Modules.Tasks.Presentation.Models
         public string OverdueText => IsActuallyOverdue ? "Vencida" : string.Empty;
 
         public bool CanComplete => Status != TaskItemStatus.Completed;
+        public bool IsCompleted => Status == TaskItemStatus.Completed;
+        public bool HasNoSubtasks => !HasSubtasks;
+        public bool CanQuickComplete => !HasSubtasks && !IsCompleted; // editbycodex: regla visual equivalente al handler.
         public bool HasDescription => !string.IsNullOrWhiteSpace(Description);
 
         public bool HasDueDate => DueDate.HasValue;
@@ -160,11 +164,13 @@ namespace ProcraStop.Modules.Tasks.Presentation.Models
             {
                 Id = dto.Id,
                 Title = dto.Title,
+                Description = dto.Description,
                 DueDate = dto.DueDate,
                 EstimatedMinutes = dto.EstimatedMinutes,
                 Priority = dto.Priority,
                 Status = dto.Status,
                 IsOverdue = dto.IsOverdue,
+                HasSubtasks = dto.HasSubtasks,
                 // mapear curso
                 CourseName = dto.CourseName,
                 CourseColor = dto.CourseColor ?? "#6B7280"

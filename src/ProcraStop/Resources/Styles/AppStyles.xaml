@@ -284,5 +284,11 @@
         <Setter Property="PullingThreshold" Value="100"/>
         <Setter Property="ProgressColor" Value="{StaticResource Primary}"/>
     </Style>
-
+    <!--calendario-->
+    <Style x:Key="CalendarWeekLabelStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="ManropeRegular" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+        <Setter Property="HorizontalTextAlignment" Value="Center" />
+    </Style>
 </ResourceDictionary>
