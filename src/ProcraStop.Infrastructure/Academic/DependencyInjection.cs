@@ -10,6 +10,7 @@ namespace ProcraStop.Infrastructure.Academic
             this IServiceCollection services)
         {
             services.AddScoped<ICourseRepository, CourseRepository>();
+            services.AddScoped<IClassScheduleRepository, ClassScheduleRepository>();
 
             return services;
         }

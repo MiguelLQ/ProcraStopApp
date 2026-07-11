@@ -21,6 +21,7 @@ namespace ProcraStop.Infrastructure.DBContext
         public DbSet<StudyTaskEntity> Tasks => Set<StudyTaskEntity>();
         // DbSet para los cursos
         public DbSet<CourseEntity> Courses => Set<CourseEntity>();
+        public DbSet<ClassScheduleEntity> ClassSchedules => Set<ClassScheduleEntity>();
         // DbSet para las subtareas
         public DbSet<SubtaskEntity> Subtasks => Set<SubtaskEntity>();
         // para habits
@@ -93,6 +94,27 @@ namespace ProcraStop.Infrastructure.DBContext
 
                 entity.Property(x => x.CreatedAtUtc)
                     .IsRequired();
+            });
+            modelBuilder.Entity<ClassScheduleEntity>(entity =>
+            {
+                entity.ToTable("ClassSchedules");
+
+                entity.HasKey(x => x.Id);
+                entity.Property(x => x.CourseId).IsRequired();
+                entity.Property(x => x.DayOfWeek).IsRequired();
+                entity.Property(x => x.StartTicks).IsRequired();
+                entity.Property(x => x.EndTicks).IsRequired();
+                entity.Property(x => x.Classroom).HasMaxLength(120);
+                entity.Property(x => x.Instructor).HasMaxLength(120);
+                entity.Property(x => x.ReminderMinutesBefore).IsRequired();
+                entity.Property(x => x.IsActive).IsRequired();
+                entity.Property(x => x.CreatedAtUtc).IsRequired();
+
+                entity.HasIndex(x => new { x.CourseId, x.DayOfWeek, x.StartTicks });
+                entity.HasOne(x => x.Course)
+                    .WithMany()
+                    .HasForeignKey(x => x.CourseId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
             // Configuración de la entidad SubtaskEntity
             modelBuilder.Entity<SubtaskEntity>(entity =>

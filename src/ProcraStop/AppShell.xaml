@@ -79,19 +79,6 @@
         ContentTemplate="{DataTemplate task:TaskAnalyticsPage}"
         Route="AnalyticsPage"/>
         </Tab>
-
-        <Tab Title="detalle 2" Icon="{StaticResource IconDashboard}">
-            <ShellContent
-                Title="Tarea detalle"
-                ContentTemplate="{DataTemplate task:DetailTask}"
-                Route="DetailTasks"/>
-        </Tab>
-        <Tab Title="create" Icon="{StaticResource IconDashboard}">
-            <ShellContent
-                Title="Create Task"
-                ContentTemplate="{DataTemplate task:CreateTask}"
-                Route="CreateTasks"/>
-        </Tab>
         <Tab Title="Stress" Icon="{StaticResource IconDashboard}">
             <ShellContent
                 Title="Stress"
@@ -103,6 +90,12 @@
     <!-- MÓDULO ACADÉMICO -->
     <FlyoutItem Title="Académico"
                 Icon="{StaticResource IconProjects}">
+        <Tab Title="Horario" Icon="{StaticResource IconProjects}">
+            <ShellContent
+                Title="Horario"
+                ContentTemplate="{DataTemplate academic:SchedulePage}"
+                Route="SchedulePage"/>
+        </Tab>
         <Tab Title="Cursos" Icon="{StaticResource IconProjects}">
             <ShellContent
                 Title="Cursos"

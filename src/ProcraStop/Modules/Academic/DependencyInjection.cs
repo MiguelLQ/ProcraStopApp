@@ -10,6 +10,8 @@ namespace ProcraStop.Modules.Academic
         {
             services.AddTransient<CoursesPageViewModel>();
             services.AddTransient<CoursesPage>();
+            services.AddTransient<SchedulePageViewModel>();
+            services.AddTransient<SchedulePage>();
 
             return services;
         }

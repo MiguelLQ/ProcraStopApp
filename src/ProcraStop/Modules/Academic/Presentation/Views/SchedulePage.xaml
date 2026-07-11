@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:ProcraStop.Modules.Academic.Presentation.Models"
+             xmlns:dto="clr-namespace:ProcraStop.Application.Academic.DTOs;assembly=ProcraStop.Application"
+             x:Class="ProcraStop.Modules.Academic.Presentation.Views.SchedulePage"
+             Title="Horario"
+             Shell.BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource shellDark}}"
+             Shell.TitleColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}"
+             BackgroundColor="{AppThemeBinding Light=#F4F6F9, Dark={StaticResource DarkBackground}}">
+
+    <RefreshView Command="{Binding LoadCommand}"
+                 IsRefreshing="{Binding IsBusy, Mode=OneWay}">
+        <ScrollView>
+            <VerticalStackLayout Padding="16,12,16,28" Spacing="14">
+
+                <Border Style="{StaticResource ScheduleHeroStyle}">
+                    <VerticalStackLayout Spacing="12">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout Spacing="3">
+                                <Label Text="Horario académico"
+                                       FontFamily="MontserratSemiBold"
+                                       FontSize="22"
+                                       TextColor="White" />
+                                <Label Text="Organiza tus cursos, aulas y avisos de clase"
+                                       FontFamily="OpenSansRegular"
+                                       FontSize="12"
+                                       TextColor="#A8B4C5" />
+                            </VerticalStackLayout>
+                            <Border Grid.Column="1"
+                                    BackgroundColor="#203A32"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 8"
+                                    Padding="10,6"
+                                    VerticalOptions="Start">
+                                <Label Text="{Binding DaySummary}"
+                                       FontFamily="MontserratSemiBold"
+                                       FontSize="11"
+                                       TextColor="#5DDB9A" />
+                            </Border>
+                        </Grid>
+
+                        <CollectionView ItemsSource="{Binding Days}"
+                                        ItemsLayout="HorizontalList"
+                                        SelectionMode="None"
+                                        HorizontalScrollBarVisibility="Never">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="models:ScheduleDayOption">
+                                    <Border WidthRequest="48"
+                                            HeightRequest="62"
+                                            Margin="0,0,8,0"
+                                            Padding="0"
+                                            StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 12"
+                                            BackgroundColor="#223148">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectDayCommand}"
+                                                CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+                                        <Border.Triggers>
+                                            <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                                <Setter Property="BackgroundColor" Value="#4075FF" />
+                                            </DataTrigger>
+                                        </Border.Triggers>
+                                        <VerticalStackLayout Spacing="4" HorizontalOptions="Center" VerticalOptions="Center">
+                                            <Label Text="{Binding ShortName}"
+                                                   FontFamily="OpenSansRegular"
+                                                   FontSize="10"
+                                                   TextColor="#C7D0DE"
+                                                   HorizontalTextAlignment="Center" />
+                                            <Label Text="{Binding DayNumber}"
+                                                   FontFamily="MontserratSemiBold"
+                                                   FontSize="17"
+                                                   TextColor="White"
+                                                   HorizontalTextAlignment="Center" />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource ScheduleCardStyle}">
+                    <VerticalStackLayout Spacing="12">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding SelectedDayTitle}" Style="{StaticResource ScheduleSectionTitleStyle}" />
+                                <Label Text="{Binding DaySummary}" Style="{StaticResource ScheduleMutedStyle}" />
+                            </VerticalStackLayout>
+                            <Label Grid.Column="1"
+                                   Text="Semana"
+                                   FontFamily="MontserratSemiBold"
+                                   FontSize="11"
+                                   TextColor="#91A0B6"
+                                   VerticalOptions="Center" />
+                        </Grid>
+
+                        <CollectionView ItemsSource="{Binding DayClasses}"
+                                        SelectionMode="None"
+                                        VerticalScrollBarVisibility="Never">
+                            <CollectionView.EmptyView>
+                                <VerticalStackLayout Padding="16" Spacing="4">
+                                    <Label Text="Día libre"
+                                           FontFamily="MontserratSemiBold"
+                                           FontSize="16"
+                                           HorizontalTextAlignment="Center"
+                                           TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+                                    <Label Text="Agrega una clase para construir tu horario semanal."
+                                           FontFamily="OpenSansRegular"
+                                           FontSize="12"
+                                           HorizontalTextAlignment="Center"
+                                           TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                                </VerticalStackLayout>
+                            </CollectionView.EmptyView>
+                            <CollectionView.ItemsLayout>
+                                <LinearItemsLayout Orientation="Vertical" ItemSpacing="8" />
+                            </CollectionView.ItemsLayout>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="dto:ClassScheduleDto">
+                                    <Border BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#111827}"
+                                            Stroke="{AppThemeBinding Light=#E6EAF0, Dark=#263246}"
+                                            StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 10"
+                                            Padding="12">
+                                        <Grid ColumnDefinitions="6,*,Auto" ColumnSpacing="12">
+                                            <BoxView Color="{Binding CourseColor}"
+                                                     WidthRequest="6"
+                                                     CornerRadius="3"
+                                                     VerticalOptions="Fill" />
+                                            <VerticalStackLayout Grid.Column="1" Spacing="3">
+                                                <Label Text="{Binding CourseName}"
+                                                       FontFamily="MontserratSemiBold"
+                                                       FontSize="15"
+                                                       TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+                                                <Label Text="{Binding TimeRangeText}"
+                                                       FontFamily="OpenSansRegular"
+                                                       FontSize="12"
+                                                       TextColor="#4F8CFF" />
+                                                <Label Text="{Binding Classroom, TargetNullValue='Aula sin definir'}"
+                                                       FontFamily="OpenSansRegular"
+                                                       FontSize="11"
+                                                       TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                                            </VerticalStackLayout>
+                                            <HorizontalStackLayout Grid.Column="2" Spacing="6" VerticalOptions="Center">
+                                                <Button Text="Editar"
+                                                        FontSize="11"
+                                                        HeightRequest="32"
+                                                        Padding="10,0"
+                                                        BackgroundColor="{AppThemeBinding Light=#EEF2FF, Dark=#20334F}"
+                                                        TextColor="#4075FF"
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditCommand}"
+                                                        CommandParameter="{Binding .}" />
+                                                <Button Text="Eliminar"
+                                                        FontSize="11"
+                                                        HeightRequest="32"
+                                                        Padding="10,0"
+                                                        BackgroundColor="#EF4444"
+                                                        TextColor="White"
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteCommand}"
+                                                        CommandParameter="{Binding .}" />
+                                            </HorizontalStackLayout>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource ScheduleCardStyle}">
+                    <VerticalStackLayout Spacing="12">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Programar clase" Style="{StaticResource ScheduleSectionTitleStyle}" />
+                            <Button Grid.Column="1"
+                                    Text="Limpiar"
+                                    FontSize="11"
+                                    HeightRequest="30"
+                                    Padding="10,0"
+                                    BackgroundColor="Transparent"
+                                    TextColor="{AppThemeBinding Light=#6B7280, Dark=#91A0B6}"
+                                    Command="{Binding CancelEditCommand}" />
+                        </Grid>
+
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Curso" Style="{StaticResource ScheduleFieldLabelStyle}" />
+                            <Border Style="{StaticResource ScheduleInputBorderStyle}">
+                                <Picker ItemsSource="{Binding Courses}"
+                                        ItemDisplayBinding="{Binding Name}"
+                                        SelectedItem="{Binding SelectedCourse}"
+                                        BackgroundColor="Transparent"
+                                        TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="Inicio" Style="{StaticResource ScheduleFieldLabelStyle}" />
+                                <Border Style="{StaticResource ScheduleInputBorderStyle}">
+                                    <TimePicker Time="{Binding StartTime}"
+                                                BackgroundColor="Transparent"
+                                                TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+                                </Border>
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1" Spacing="6">
+                                <Label Text="Fin" Style="{StaticResource ScheduleFieldLabelStyle}" />
+                                <Border Style="{StaticResource ScheduleInputBorderStyle}">
+                                    <TimePicker Time="{Binding EndTime}"
+                                                BackgroundColor="Transparent"
+                                                TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+                                </Border>
+                            </VerticalStackLayout>
+                        </Grid>
+
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="Aula" Style="{StaticResource ScheduleFieldLabelStyle}" />
+                                <Border Style="{StaticResource ScheduleInputBorderStyle}">
+                                    <Entry Text="{Binding Classroom}"
+                                           Placeholder="Ej: B-204"
+                                           BackgroundColor="Transparent"
+                                           TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+                                </Border>
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1" Spacing="6">
+                                <Label Text="Docente" Style="{StaticResource ScheduleFieldLabelStyle}" />
+                                <Border Style="{StaticResource ScheduleInputBorderStyle}">
+                                    <Entry Text="{Binding Instructor}"
+                                           Placeholder="Opcional"
+                                           BackgroundColor="Transparent"
+                                           TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+                                </Border>
+                            </VerticalStackLayout>
+                        </Grid>
+
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Aviso antes de clase" Style="{StaticResource ScheduleFieldLabelStyle}" />
+                            <Border Style="{StaticResource ScheduleInputBorderStyle}">
+                                <Picker ItemsSource="{Binding ReminderOptions}"
+                                        SelectedItem="{Binding SelectedReminder}"
+                                        BackgroundColor="Transparent"
+                                        TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <Button Text="Guardar clase"
+                                Command="{Binding SaveCommand}"
+                                HeightRequest="44"
+                                CornerRadius="10"
+                                FontFamily="MontserratSemiBold"
+                                BackgroundColor="#4075FF"
+                                TextColor="White" />
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+
+    <ContentPage.Resources>
+        <Style x:Key="ScheduleHeroStyle" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#172231, Dark=#101923}" />
+            <Setter Property="StrokeThickness" Value="0" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 18" />
+            <Setter Property="Padding" Value="18" />
+        </Style>
+        <Style x:Key="ScheduleCardStyle" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#FFFFFF, Dark={StaticResource DarkSecondaryBackground}}" />
+            <Setter Property="Stroke" Value="{AppThemeBinding Light=#E6EAF0, Dark=#263246}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 18" />
+            <Setter Property="Padding" Value="16" />
+        </Style>
+        <Style x:Key="ScheduleSectionTitleStyle" TargetType="Label">
+            <Setter Property="FontFamily" Value="MontserratSemiBold" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+        </Style>
+        <Style x:Key="ScheduleMutedStyle" TargetType="Label">
+            <Setter Property="FontFamily" Value="OpenSansRegular" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+        </Style>
+        <Style x:Key="ScheduleFieldLabelStyle" TargetType="Label">
+            <Setter Property="FontFamily" Value="MontserratSemiBold" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light=#6B7280, Dark=#91A0B6}" />
+        </Style>
+        <Style x:Key="ScheduleInputBorderStyle" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource EntryClar}, Dark={StaticResource EntryDark}}" />
+            <Setter Property="StrokeThickness" Value="0" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 10" />
+            <Setter Property="Padding" Value="10,2" />
+        </Style>
+    </ContentPage.Resources>
+</ContentPage>
