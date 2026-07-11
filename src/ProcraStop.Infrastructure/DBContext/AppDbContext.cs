@@ -1,6 +1,7 @@
 ﻿
 
 using Microsoft.EntityFrameworkCore;
+using ProcraStop.Infrastructure.Academic.Persistence.Entities;
 using ProcraStop.Infrastructure.Dashboard.Persistence.Entities;
 using ProcraStop.Infrastructure.Habits.Persistence.Entities;
 using ProcraStop.Infrastructure.Stress.Persistence.Configs;

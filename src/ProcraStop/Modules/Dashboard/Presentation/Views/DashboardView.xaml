@@ -1,195 +1,339 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="ProcraStop.Modules.Dashboard.Presentation.Views.DashboardView"
              xmlns:stress="clr-namespace:ProcraStop.Modules.Stress.Presentation.Views"
-             xmlns:conv="clr-namespace:ProcraStop.Modules.Dashboard.Presentation.Converters"
-             Title="DashboardView">
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <conv:ProgressToWidthConverter x:Key="ProgressToWidthConverter"/>
-        </ResourceDictionary>
-    </ContentPage.Resources>
-    <ScrollView>
-        <VerticalStackLayout Spacing="20" Padding="20">
-            <stress:StressCheckInView/>
+             xmlns:controls="clr-namespace:ProcraStop.Modules.Dashboard.Presentation.Controls"
+             x:Class="ProcraStop.Modules.Dashboard.Presentation.Views.DashboardView"
+             Title="Inicio"
+             Shell.BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource shellDark}}"
+             Shell.TitleColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}"
+             BackgroundColor="{AppThemeBinding Light=#F4F6F9, Dark={StaticResource DarkBackground}}">
 
-            <!-- ========================= -->
-            <!-- HERO / CORE STATE -->
-            <!-- ========================= -->
+    <RefreshView Command="{Binding LoadCommand}">
+        <ScrollView>
+            <VerticalStackLayout Padding="16,12,16,28" Spacing="16">
 
-            <Border Padding="16" BackgroundColor="{StaticResource DarkSecondaryBackground}">
+                <stress:StressCheckInView />
 
-                <Grid RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="6">
-
-                    <Label Text="Sistema" Style="{StaticResource SubtitleLabel}" />
-
-                    <Label Grid.Row="1"
-                           Text="{Binding Message}"
-                           FontSize="20"
-                           FontAttributes="Bold"
-                           TextColor="{Binding StateColor}" />
-
-                    <Label Grid.Row="2"
-                           Text="{Binding Reason}"
-                           Style="{StaticResource SubtitleLabel}" />
-
-                    <Label Grid.Row="3"
-                           Text="{Binding SuggestedAction}"
-                           TextColor="{StaticResource primarioS}"
-                           FontSize="13"/>
-
-                </Grid>
-
-            </Border>
-            <!-- ===================== -->
-            <!-- SYSTEM STATE -->
-            <!-- ===================== -->
-
-            <!-- SYSTEM STATE -->
-            <Border Padding="16" BackgroundColor="{StaticResource DarkSecondaryBackground}">
-
-                <VerticalStackLayout Spacing="16">
-
-                    <Label Text="System Health"
-                           Style="{StaticResource SubtitleLabel}" />
-
-                    <!-- PERFORMANCE -->
-                    <VerticalStackLayout>
-                        <Grid ColumnDefinitions="*,Auto">
-                            <Label Text="Performance"/>
-                            <Label Text="{Binding SystemState.PerformanceHealth, StringFormat='{0:P0}'}"
-                                   TextColor="{StaticResource primarioS}"/>
-                        </Grid>
-
-                        <Grid HeightRequest="6">
-                            <Border BackgroundColor="{StaticResource secondaryS}"/>
-                            <Border BackgroundColor="{StaticResource primarioS}"
-                                    WidthRequest="{Binding SystemState.PerformanceHealth, Converter={StaticResource ProgressToWidthConverter}}"/>
-                        </Grid>
-                    </VerticalStackLayout>
-
-                    <!-- HABITS -->
-                    <VerticalStackLayout>
-                        <Grid ColumnDefinitions="*,Auto">
-                            <Label Text="Habits"/>
-                            <Label Text="{Binding SystemState.BehavioralStability, StringFormat='{0:P0}'}"
-                                   TextColor="{StaticResource saveButton}"/>
-                        </Grid>
-
-                        <Grid HeightRequest="6">
-                            <Border BackgroundColor="{StaticResource secondaryS}"/>
-                            <Border BackgroundColor="{StaticResource saveButton}"
-                                    WidthRequest="{Binding SystemState.BehavioralStability, Converter={StaticResource ProgressToWidthConverter}}"/>
-                        </Grid>
-                    </VerticalStackLayout>
-
-                    <!-- STRESS -->
-                    <VerticalStackLayout>
-                        <Grid ColumnDefinitions="*,Auto">
-                            <Label Text="Stress"/>
-                            <Label Text="{Binding SystemState.StressPressure, StringFormat='{0:P0}'}"
-                                   TextColor="{StaticResource CancelButton}"/>
-                        </Grid>
-
-                        <Grid HeightRequest="6">
-                            <Border BackgroundColor="{StaticResource secondaryS}"/>
-                            <Border BackgroundColor="{StaticResource CancelButton}"
-                                    WidthRequest="{Binding SystemState.StressPressure, Converter={StaticResource ProgressToWidthConverter}}"/>
-                        </Grid>
-                    </VerticalStackLayout>
-
-                </VerticalStackLayout>
-
-            </Border>
-            <!-- ===================== -->
-            <!-- SIGNALS -->
-            <!-- ===================== -->
-
-            <CollectionView ItemsSource="{Binding Signals}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Border Padding="12" BackgroundColor="{StaticResource DarkSecondaryBackground}">
-                            <VerticalStackLayout>
-
-                                <Grid ColumnDefinitions="*,Auto">
-                                    <Label Text="{Binding Name}" FontAttributes="Bold"/>
-                                    <Label Text="{Binding Score, StringFormat='{0:P0}'}"
-                                           TextColor="{StaticResource primarioS}"/>
-                                </Grid>
-
-                                <Grid HeightRequest="6">
-                                    <Border BackgroundColor="{StaticResource secondaryS}"/>
-                                    <Border BackgroundColor="{StaticResource primarioS}"
-                                            WidthRequest="{Binding Score, Converter={StaticResource ProgressToWidthConverter}}"/>
-                                </Grid>
-
+                <Border Style="{StaticResource DashboardHeroCardStyle}">
+                    <VerticalStackLayout Spacing="16">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="{Binding StateTone}"
+                                       Style="{StaticResource DashboardEyebrowStyle}" />
+                                <Label Text="{Binding Message}"
+                                       FontFamily="MontserratSemiBold"
+                                       FontSize="24"
+                                       LineBreakMode="WordWrap"
+                                       TextColor="White" />
                             </VerticalStackLayout>
+
+                            <Border Grid.Column="1"
+                                    BackgroundColor="#203A32"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 8"
+                                    Padding="10,7"
+                                    VerticalOptions="Start">
+                                <Label Text="{Binding HealthScoreText}"
+                                       FontFamily="MontserratSemiBold"
+                                       FontSize="14"
+                                       TextColor="#5DDB9A" />
+                            </Border>
+                        </Grid>
+
+                        <Label Text="{Binding Reason}"
+                               FontFamily="OpenSansRegular"
+                               FontSize="13"
+                               LineBreakMode="WordWrap"
+                               TextColor="#B6C2D2" />
+
+                        <Border BackgroundColor="#223148"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 8"
+                                Padding="12">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                                <Border WidthRequest="34"
+                                        HeightRequest="34"
+                                        StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 8"
+                                        BackgroundColor="{Binding StateColor}">
+                                    <Label Text="!"
+                                           FontFamily="MontserratSemiBold"
+                                           FontSize="18"
+                                           TextColor="White"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                    <Label Text="Siguiente acción"
+                                           FontFamily="MontserratSemiBold"
+                                           FontSize="11"
+                                           TextColor="#91A0B6" />
+                                    <Label Text="{Binding SuggestedAction}"
+                                           FontFamily="OpenSansRegular"
+                                           FontSize="13"
+                                           LineBreakMode="WordWrap"
+                                           TextColor="White" />
+                                </VerticalStackLayout>
+                            </Grid>
                         </Border>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
 
-            <!-- ===================== -->
-            <!-- INSIGHTS -->
-            <!-- ===================== -->
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                    <Border Style="{StaticResource DashboardMetricCardStyle}">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Estado" Style="{StaticResource DashboardMetricCaptionStyle}" />
+                            <Label Text="{Binding SystemLabel}" Style="{StaticResource DashboardMetricValueStyle}" />
+                            <Label Text="{Binding TrendSummary}" Style="{StaticResource DashboardMetricDetailStyle}" />
+                        </VerticalStackLayout>
+                    </Border>
 
-            <Border Padding="16" BackgroundColor="{StaticResource DarkSecondaryBackground}">
-
-                <VerticalStackLayout>
-
-                    <Label Text="Insights" Style="{StaticResource SubtitleLabel}" />
-
-                    <CollectionView ItemsSource="{Binding TaskInsights}">
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Label Text="{Binding .}" TextColor="{StaticResource primarioS}"/>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-
-                    <CollectionView ItemsSource="{Binding HabitInsights}">
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Label Text="{Binding .}" TextColor="{StaticResource saveButton}"/>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-
-                    <CollectionView ItemsSource="{Binding StressInsights}">
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Label Text="{Binding .}" TextColor="{StaticResource CancelButton}"/>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-
-                </VerticalStackLayout>
-
-            </Border>
-
-            <!-- ===================== -->
-            <!-- TREND -->
-            <!-- ===================== -->
-
-            <VerticalStackLayout BindingContext="{Binding CurrentTrend}">
-
-                <Grid ColumnDefinitions="*,*,*">
-
-                    <Label Text="{Binding StressTrend}"
-               TextColor="{StaticResource CancelButton}" />
-
-                    <Label Grid.Column="1"
-               Text="{Binding PerformanceTrend}"
-               TextColor="{StaticResource primarioS}" />
-
-                    <Label Grid.Column="2"
-               Text="{Binding BehaviorTrend}"
-               TextColor="{StaticResource saveButton}" />
-
+                    <Border Grid.Column="1" Style="{StaticResource DashboardMetricCardStyle}">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Stress" Style="{StaticResource DashboardMetricCaptionStyle}" />
+                            <Label Text="{Binding SystemState.StressPressure, StringFormat='{0:P0}'}"
+                                   Style="{StaticResource DashboardMetricValueStyle}"
+                                   TextColor="#EF5B5B" />
+                            <Label Text="presión actual" Style="{StaticResource DashboardMetricDetailStyle}" />
+                        </VerticalStackLayout>
+                    </Border>
                 </Grid>
 
+                <Border Style="{StaticResource DashboardCardStyle}">
+                    <VerticalStackLayout Spacing="12">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="Balance del sistema" Style="{StaticResource DashboardSectionTitleStyle}" />
+                                <Label Text="Cómo se reparten carga, hábitos y estado emocional"
+                                       Style="{StaticResource DashboardMutedTextStyle}" />
+                            </VerticalStackLayout>
+                            <Label Grid.Column="1"
+                                   Text="{Binding SystemState.OverallScore, StringFormat='{0:P0}'}"
+                                   FontFamily="MontserratSemiBold"
+                                   FontSize="18"
+                                   TextColor="#4F8CFF"
+                                   VerticalOptions="Center" />
+                        </Grid>
+
+                        <controls:DashboardBalanceChart Values="{Binding BalanceValues}"
+                                                        Labels="{Binding BalanceLabels}"
+                                                        HeightRequest="250" />
+
+                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="Tareas" Style="{StaticResource DashboardMetricCaptionStyle}" />
+                                <Label Text="{Binding SystemState.PerformanceHealth, StringFormat='{0:P0}'}"
+                                       FontFamily="MontserratSemiBold"
+                                       FontSize="16"
+                                       TextColor="#4F8CFF" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                <Label Text="Hábitos" Style="{StaticResource DashboardMetricCaptionStyle}" />
+                                <Label Text="{Binding SystemState.BehavioralStability, StringFormat='{0:P0}'}"
+                                       FontFamily="MontserratSemiBold"
+                                       FontSize="16"
+                                       TextColor="#34C77B" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="2" Spacing="2">
+                                <Label Text="Stress" Style="{StaticResource DashboardMetricCaptionStyle}" />
+                                <Label Text="{Binding SystemState.StressPressure, StringFormat='{0:P0}'}"
+                                       FontFamily="MontserratSemiBold"
+                                       FontSize="16"
+                                       TextColor="#EF5B5B" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource DashboardCardStyle}">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Señales que influyen en la decisión"
+                               Style="{StaticResource DashboardSectionTitleStyle}" />
+
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding SignalGroups}" Spacing="10">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#111827}"
+                                            Stroke="{AppThemeBinding Light=#E6EAF0, Dark=#263246}"
+                                            StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 8"
+                                            Padding="12">
+                                        <VerticalStackLayout Spacing="9">
+                                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                                <Border WidthRequest="8"
+                                                        HeightRequest="24"
+                                                        StrokeThickness="0"
+                                                        StrokeShape="RoundRectangle 4"
+                                                        BackgroundColor="{Binding AccentColor}" />
+                                                <Label Grid.Column="1"
+                                                       Text="{Binding Category}"
+                                                       FontFamily="MontserratSemiBold"
+                                                       FontSize="13"
+                                                       TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+                                            </Grid>
+
+                                            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Signals}" Spacing="7">
+                                                <BindableLayout.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                                                            <Label Text="{Binding Name}"
+                                                                   FontFamily="OpenSansRegular"
+                                                                   FontSize="12"
+                                                                   TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                                                            <Label Grid.Column="1"
+                                                                   Text="{Binding Score, StringFormat='{0:P0}'}"
+                                                                   FontFamily="MontserratSemiBold"
+                                                                   FontSize="12"
+                                                                   TextColor="#4F8CFF" />
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </BindableLayout.ItemTemplate>
+                                            </VerticalStackLayout>
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource DashboardCardStyle}">
+                    <VerticalStackLayout Spacing="12">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="Insights del engine" Style="{StaticResource DashboardSectionTitleStyle}" />
+                                <Label Text="Lecturas accionables generadas por reglas del sistema"
+                                       Style="{StaticResource DashboardMutedTextStyle}" />
+                            </VerticalStackLayout>
+                            <Label Grid.Column="1"
+                                   Text="{Binding CurrentTrend.GlobalTrend}"
+                                   FontFamily="MontserratSemiBold"
+                                   FontSize="11"
+                                   TextColor="#91A0B6"
+                                   VerticalOptions="Center" />
+                        </Grid>
+
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding InsightCards}" Spacing="8">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#111827}"
+                                            Stroke="{AppThemeBinding Light=#E6EAF0, Dark=#263246}"
+                                            StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 8"
+                                            Padding="12">
+                                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                                            <Border WidthRequest="34"
+                                                    HeightRequest="34"
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 8"
+                                                    BackgroundColor="{Binding AccentColor}">
+                                                <Label Text="{Binding Initial}"
+                                                       FontFamily="MontserratSemiBold"
+                                                       FontSize="14"
+                                                       TextColor="White"
+                                                       HorizontalOptions="Center"
+                                                       VerticalOptions="Center" />
+                                            </Border>
+                                            <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                                <Label Text="{Binding Source}"
+                                                       FontFamily="MontserratSemiBold"
+                                                       FontSize="11"
+                                                       TextColor="{Binding AccentColor}" />
+                                                <Label Text="{Binding Text}"
+                                                       FontFamily="OpenSansRegular"
+                                                       FontSize="13"
+                                                       LineBreakMode="WordWrap"
+                                                       TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+                                            </VerticalStackLayout>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8" BindingContext="{Binding CurrentTrend}">
+                    <Border Style="{StaticResource DashboardMiniTrendStyle}">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Stress" Style="{StaticResource DashboardMetricCaptionStyle}" />
+                            <Label Text="{Binding StressTrend}" Style="{StaticResource DashboardTrendValueStyle}" TextColor="#EF5B5B" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Column="1" Style="{StaticResource DashboardMiniTrendStyle}">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Tareas" Style="{StaticResource DashboardMetricCaptionStyle}" />
+                            <Label Text="{Binding PerformanceTrend}" Style="{StaticResource DashboardTrendValueStyle}" TextColor="#4F8CFF" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Column="2" Style="{StaticResource DashboardMiniTrendStyle}">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Hábitos" Style="{StaticResource DashboardMetricCaptionStyle}" />
+                            <Label Text="{Binding BehaviorTrend}" Style="{StaticResource DashboardTrendValueStyle}" TextColor="#34C77B" />
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
             </VerticalStackLayout>
-        </VerticalStackLayout>
-    </ScrollView>
+        </ScrollView>
+    </RefreshView>
+
+    <ContentPage.Resources>
+        <Style x:Key="DashboardHeroCardStyle" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#172231, Dark=#101923}" />
+            <Setter Property="StrokeThickness" Value="0" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 18" />
+            <Setter Property="Padding" Value="18" />
+        </Style>
+        <Style x:Key="DashboardCardStyle" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#FFFFFF, Dark={StaticResource DarkSecondaryBackground}}" />
+            <Setter Property="Stroke" Value="{AppThemeBinding Light=#E6EAF0, Dark=#263246}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 18" />
+            <Setter Property="Padding" Value="16" />
+        </Style>
+        <Style x:Key="DashboardMetricCardStyle" TargetType="Border" BasedOn="{StaticResource DashboardCardStyle}">
+            <Setter Property="Padding" Value="14" />
+        </Style>
+        <Style x:Key="DashboardMiniTrendStyle" TargetType="Border" BasedOn="{StaticResource DashboardCardStyle}">
+            <Setter Property="Padding" Value="12" />
+        </Style>
+        <Style x:Key="DashboardEyebrowStyle" TargetType="Label">
+            <Setter Property="FontFamily" Value="MontserratSemiBold" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="TextColor" Value="#91A0B6" />
+        </Style>
+        <Style x:Key="DashboardSectionTitleStyle" TargetType="Label">
+            <Setter Property="FontFamily" Value="MontserratSemiBold" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+        </Style>
+        <Style x:Key="DashboardMutedTextStyle" TargetType="Label">
+            <Setter Property="FontFamily" Value="OpenSansRegular" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+        </Style>
+        <Style x:Key="DashboardMetricCaptionStyle" TargetType="Label">
+            <Setter Property="FontFamily" Value="MontserratSemiBold" />
+            <Setter Property="FontSize" Value="10" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light=#6B7280, Dark=#91A0B6}" />
+        </Style>
+        <Style x:Key="DashboardMetricValueStyle" TargetType="Label">
+            <Setter Property="FontFamily" Value="MontserratSemiBold" />
+            <Setter Property="FontSize" Value="22" />
+            <Setter Property="LineBreakMode" Value="TailTruncation" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+        </Style>
+        <Style x:Key="DashboardMetricDetailStyle" TargetType="Label">
+            <Setter Property="FontFamily" Value="OpenSansRegular" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="LineBreakMode" Value="TailTruncation" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+        </Style>
+        <Style x:Key="DashboardTrendValueStyle" TargetType="Label">
+            <Setter Property="FontFamily" Value="MontserratSemiBold" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="LineBreakMode" Value="TailTruncation" />
+        </Style>
+    </ContentPage.Resources>
 </ContentPage>

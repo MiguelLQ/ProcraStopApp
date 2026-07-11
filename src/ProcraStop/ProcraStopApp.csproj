@@ -90,6 +90,9 @@
 	  <MauiXaml Update="Modules\Habits\Presentation\Views\HabitListPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Modules\Habits\Presentation\Views\HabitAnalyticsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Modules\Habits\Presentation\Views\TrackHabitPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -102,7 +105,7 @@
 	  <MauiXaml Update="Modules\Tasks\Presentation\Controls\TaskCalendarView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Modules\Tasks\Presentation\Views\CoursesView\CoursesPage.xaml">
+	  <MauiXaml Update="Modules\Academic\Presentation\Views\CoursesPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Modules\Tasks\Presentation\Views\CreateTask.xaml">

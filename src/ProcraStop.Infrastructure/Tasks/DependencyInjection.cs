@@ -18,8 +18,6 @@ namespace ProcraStop.Infrastructure.Tasks
             
             // Repositorio real con EF Core
             services.AddScoped<ITaskRepository, TaskRepository>();
-            // Repository para los cursos
-            services.AddScoped<ICourseRepository, CourseRepository>();
             // Repository de prueba en la memoria
             //services.AddSingleton<ITaskRepository, InMemoryTaskRepository>();
             // para leer tareas

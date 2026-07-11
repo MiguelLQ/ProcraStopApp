@@ -25,10 +25,10 @@ namespace ProcraStop.Application.Dashboard.Services
 
             // 4. NORMALIZATION + ENRICHMENT
             return signals
-                .GroupBy(s => NormalizeCategory(s.Category))
+                .GroupBy(s => NormalizeCategory(s.Category ?? string.Empty))
                 .SelectMany(g => g.Select(s => new SignalReadModel
                 {
-                    Name = s.Name,
+                    Name = s.Name ?? "Señal del sistema",
                     Category = g.Key,
                     Score = NormalizeScore(s.Score),
                     Type = s.Type
@@ -48,6 +48,10 @@ namespace ProcraStop.Application.Dashboard.Services
                 "Performance" => "Performance",
                 "Behavior" => "Behavior",
                 "Stress" => "Stress",
+                "Risk" => "Risk",
+                "Trajectory" => "Trajectory",
+                "Resilience" => "Recovery",
+                "Capacity" => "Capacity",
                 _ => "System"
             };
         }

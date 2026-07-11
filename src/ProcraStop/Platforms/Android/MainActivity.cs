@@ -1,6 +1,7 @@
-﻿using Android.App;
+using Android.App;
 using Android.Content.PM;
 using Android.OS;
+using ProcraStop.Platforms.Android.Services;
 
 namespace ProcraStop.Platforms.Android
 {
@@ -11,7 +12,14 @@ namespace ProcraStop.Platforms.Android
         {
             base.OnCreate(savedInstanceState);
 
+            AndroidStatusBarService.ApplyThemeStatusBar(this);
             CreateNotificationChannel();
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+            AndroidStatusBarService.ApplyThemeStatusBar(this);
         }
 
         private void CreateNotificationChannel()

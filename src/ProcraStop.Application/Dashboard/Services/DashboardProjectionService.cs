@@ -69,12 +69,18 @@ namespace ProcraStop.Application.Dashboard.Services
 
             public async Task<DashboardReadModel> BuildAsync( CancellationToken cancellationToken= default)
             {
-            // 1. DATA
-            var tasks = await _taskReadService.GetDashboardDataAsync(cancellationToken);
-            var habits = await _habitRepo.GetAllAsync();
-                var logs = await _habitLogRepo.GetAllAsync();
-
             var now = DateTime.UtcNow;
+            var historyWindowStart = now.Date.AddDays(-6);
+            // 1. DATA
+            var tasksTask = _taskReadService.GetDashboardDataAsync(cancellationToken);
+            var habitsTask = _habitRepo.GetActiveAsync(cancellationToken);
+            var logsTask = _habitLogRepo.GetRangeAsync(historyWindowStart, now.Date, cancellationToken);
+
+            await Task.WhenAll(tasksTask, habitsTask, logsTask);
+
+            var tasks = await tasksTask;
+            var habits = await habitsTask;
+            var logs = await logsTask;
             // 2. SIGNALS
             var taskSignals = _taskSignals.Build(tasks);
             var habitSignals = _habitMetrics.Calculate(habits, logs, now);
@@ -89,27 +95,25 @@ namespace ProcraStop.Application.Dashboard.Services
             //  guardar estado del sistema
             await _stressDetector.EvaluateAndRegisterAsync(taskSignals, habitSignals);
 
-            await _historyService.SaveAsync(new SystemSnapshot
+            var snapshot = new SystemSnapshot
             {
-                Timestamp = DateTime.UtcNow,
+                Timestamp = now,
                 Stress = context.Stress.CurrentLevel,
                 Performance = NormalizePerformance(context),
                 Behavior = context.Habits.ConsistencyScore
-            });
+            };
             // 5. historial (ultimos 7 dias)
             var history = await _historyService.GetLastDays(7);
+            if (ShouldSaveSnapshot(history.LastOrDefault(), snapshot))
+            {
+                await _historyService.SaveAsync(snapshot);
+                history.Add(snapshot);
+            }
             // 5. TENDENCIA
             var trend = _trendEngine.Build(history);
 
 
             var signals = _signalProjection.Build(context, decision);
-
-            // . PROJECTION (mapping limpio a READ MODEL)
-            Console.WriteLine($"Matched signals: {context.Signals.Count}");
-            Console.WriteLine($"Decision Type: {decision.Type}");
-            Console.WriteLine($"TaskInsights: {decision.TaskInsights?.Count}");
-            Console.WriteLine($"HabitInsights: {decision.HabitInsights?.Count}");
-            Console.WriteLine($"SecondaryInsights: {decision.SecondaryInsights?.Count}");
 
             return new DashboardReadModel
             {
@@ -136,6 +140,23 @@ namespace ProcraStop.Application.Dashboard.Services
             var effort = ctx.Tasks.TotalEffort;
 
             return Math.Min(1.0, effort / 300.0);
+        }
+
+        private static bool ShouldSaveSnapshot(SystemSnapshot? last, SystemSnapshot current)
+        {
+            if (last is null)
+                return true;
+
+            var minutes = (current.Timestamp - last.Timestamp).TotalMinutes;
+            if (minutes >= 30)
+                return true;
+
+            var delta =
+                Math.Abs(current.Stress - last.Stress) +
+                Math.Abs(current.Performance - last.Performance) +
+                Math.Abs(current.Behavior - last.Behavior);
+
+            return delta >= 0.25;
         }
     }
 }

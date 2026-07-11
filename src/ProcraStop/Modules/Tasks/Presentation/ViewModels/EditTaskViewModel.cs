@@ -2,9 +2,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ProcraStop.Application.Tasks.Commands.UpdateTask;
+using ProcraStop.Application.Academic.DTOs;
+using ProcraStop.Application.Academic.Queries.GetCourses;
 using ProcraStop.Application.Tasks.DTOs;
-using ProcraStop.Application.Tasks.Facade;
-using ProcraStop.Application.Tasks.Queries.GetCourses;
 using ProcraStop.Application.Tasks.Queries.GetTaskById;
 using ProcraStop.Domain.Tasks.Enums;
 using ProcraStop.Modules.Tasks.Presentation.Models;

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Plugin.LocalNotification;
 using ProcraStop.Core.Decisions;
 using ProcraStop.Infrastructure.DBContext;
+using ProcraStop.Modules.Academic;
 using ProcraStop.Modules.Dashboard;
 using ProcraStop.Modules.Habits;
 using ProcraStop.Modules.Stress;
@@ -79,6 +80,7 @@ namespace ProcraStop
             .AddPersistence(databasePath)
             .AddCoreDependencyInjection()
             .AddDashboardModule()
+            .AddAcademicModule()
             .AddTasksModule()
             .AddStressModule()
             .AddHabitsModule();

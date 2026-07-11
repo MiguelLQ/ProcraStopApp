@@ -2,18 +2,12 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ProcraStop.Modules.Tasks.Presentation.Views.CreateTaskPage"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              Title="Crear Tarea"
              Shell.TabBarIsVisible="False"
              Shell.TitleColor="White"
              Shell.ForegroundColor="White"
              Shell.BackgroundColor="{StaticResource primarioS}"
              x:Name="PageRoot">
-    <ContentPage.Behaviors>
-        <toolkit:StatusBarBehavior 
-            StatusBarColor="{StaticResource cabecera}"
-            StatusBarStyle="LightContent" />
-    </ContentPage.Behaviors>
     <!-- ROOT -->
     <Grid RowDefinitions="50,*" >
 

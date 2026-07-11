@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:ProcraStop.Modules.Tasks.Presentation.Controls"
+             x:Class="ProcraStop.Modules.Habits.Presentation.Views.HabitAnalyticsPage"
+             Title="Dashboard de hábitos"
+             Shell.BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource shellDark}}"
+             Shell.TitleColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}"
+             BackgroundColor="{AppThemeBinding Light=#F4F6F9, Dark=#0D131C}">
+
+    <RefreshView Command="{Binding LoadCommand}"
+                 IsRefreshing="{Binding IsBusy, Mode=OneWay}">
+        <ScrollView>
+            <VerticalStackLayout Spacing="18" Padding="0,0,0,28">
+                <Border BackgroundColor="{AppThemeBinding Light=#172231, Dark=#101923}"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 0,0,28,28"
+                        Padding="18,16,18,18">
+                    <VerticalStackLayout Spacing="14">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="Ritmo de constancia"
+                                       FontFamily="MontserratSemiBold"
+                                       FontSize="20"
+                                       TextColor="White" />
+                                <Label Text="Hábitos completados durante los últimos 7 días"
+                                       FontFamily="OpenSansRegular"
+                                       FontSize="12"
+                                       TextColor="#A8B4C5" />
+                            </VerticalStackLayout>
+
+                            <Border Grid.Column="1"
+                                    BackgroundColor="#203A32"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 8"
+                                    Padding="10,6"
+                                    VerticalOptions="Center">
+                                <Label Text="{Binding MomentumText}"
+                                       FontFamily="MontserratSemiBold"
+                                       FontSize="11"
+                                       TextColor="#5DDB9A" />
+                            </Border>
+                        </Grid>
+
+                        <controls:TaskAnalyticsChart ChartType="Line"
+                                                     Values="{Binding WeeklyValues}"
+                                                     Labels="{Binding WeeklyLabels}"
+                                                     HeightRequest="220" />
+
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                            <VerticalStackLayout Spacing="1">
+                                <Label Text="COMPLETADOS ESTA SEMANA"
+                                       FontSize="10"
+                                       FontFamily="MontserratSemiBold"
+                                       TextColor="#91A0B6" />
+                                <Label Text="{Binding CompletedThisWeek}"
+                                       FontSize="24"
+                                       FontFamily="MontserratSemiBold"
+                                       TextColor="White" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1" Spacing="1">
+                                <Label Text="PROGRAMADOS HOY"
+                                       FontSize="10"
+                                       FontFamily="MontserratSemiBold"
+                                       TextColor="#91A0B6" />
+                                <Label Text="{Binding ScheduledToday}"
+                                       FontSize="24"
+                                       FontFamily="MontserratSemiBold"
+                                       TextColor="#F4B740" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <VerticalStackLayout Padding="14,0" Spacing="18">
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto"
+                          ColumnSpacing="10" RowSpacing="10">
+                        <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource AnalyticsCardStyle}">
+                            <VerticalStackLayout Spacing="3">
+                                <Label Text="ACTIVOS" Style="{StaticResource AnalyticsCaptionStyle}" />
+                                <Label Text="{Binding ActiveHabits}" Style="{StaticResource AnalyticsValueStyle}" />
+                                <Label Text="hábitos en seguimiento" Style="{StaticResource AnalyticsDetailStyle}" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource AnalyticsCardStyle}">
+                            <VerticalStackLayout Spacing="3">
+                                <Label Text="CONSTANCIA" Style="{StaticResource AnalyticsCaptionStyle}" />
+                                <Label Text="{Binding ConsistencyText}" Style="{StaticResource AnalyticsValueStyle}" TextColor="#34C77B" />
+                                <Label Text="cumplimiento semanal" Style="{StaticResource AnalyticsDetailStyle}" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource AnalyticsCardStyle}">
+                            <VerticalStackLayout Spacing="3">
+                                <Label Text="EN RIESGO" Style="{StaticResource AnalyticsCaptionStyle}" />
+                                <Label Text="{Binding AtRiskHabits}" Style="{StaticResource AnalyticsValueStyle}" TextColor="#EF5B5B" />
+                                <Label Text="sin avance reciente" Style="{StaticResource AnalyticsDetailStyle}" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource AnalyticsCardStyle}">
+                            <VerticalStackLayout Spacing="3">
+                                <Label Text="MEJOR RACHA" Style="{StaticResource AnalyticsCaptionStyle}" />
+                                <Label Text="{Binding BestStreak}" Style="{StaticResource AnalyticsValueStyle}" TextColor="#4F8CFF" />
+                                <Label Text="días consecutivos" Style="{StaticResource AnalyticsDetailStyle}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+
+                    <Border Style="{StaticResource AnalyticsCardStyle}" Padding="16">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Estado de hoy" Style="{StaticResource AnalyticsSectionTitleStyle}" />
+                            <Label Text="Cumplidos frente a pendientes del día" Style="{StaticResource AnalyticsDetailStyle}" />
+                            <controls:TaskAnalyticsChart ChartType="Donut"
+                                                         Values="{Binding StatusValues}"
+                                                         Labels="{Binding StatusLabels}"
+                                                         HeightRequest="210" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Border Style="{StaticResource AnalyticsCardStyle}" Padding="16">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Tipo de hábitos" Style="{StaticResource AnalyticsSectionTitleStyle}" />
+                            <Label Text="Balance entre hábitos binarios y medibles" Style="{StaticResource AnalyticsDetailStyle}" />
+                            <controls:TaskAnalyticsChart ChartType="Bars"
+                                                         Values="{Binding TypeValues}"
+                                                         Labels="{Binding TypeLabels}"
+                                                         HeightRequest="150" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Border Style="{StaticResource AnalyticsCardStyle}" Padding="16">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Riesgo de abandono" Style="{StaticResource AnalyticsSectionTitleStyle}" />
+                            <Label Text="Hábitos que conviene rescatar primero" Style="{StaticResource AnalyticsDetailStyle}" />
+                            <controls:TaskAnalyticsChart ChartType="Bars"
+                                                         Values="{Binding RiskValues}"
+                                                         Labels="{Binding RiskLabels}"
+                                                         HeightRequest="150" />
+                        </VerticalStackLayout>
+                    </Border>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+
+    <ContentPage.Resources>
+        <Style x:Key="AnalyticsCardStyle" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#FFFFFF, Dark=#171F2B}" />
+            <Setter Property="Stroke" Value="{AppThemeBinding Light=#E6EAF0, Dark=#263246}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 8" />
+            <Setter Property="Padding" Value="14" />
+        </Style>
+        <Style x:Key="AnalyticsCaptionStyle" TargetType="Label">
+            <Setter Property="FontSize" Value="10" />
+            <Setter Property="FontFamily" Value="MontserratSemiBold" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light=#6B7280, Dark=#91A0B6}" />
+        </Style>
+        <Style x:Key="AnalyticsValueStyle" TargetType="Label">
+            <Setter Property="FontSize" Value="24" />
+            <Setter Property="FontFamily" Value="MontserratSemiBold" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light=#111827, Dark=#F4F7FB}" />
+        </Style>
+        <Style x:Key="AnalyticsDetailStyle" TargetType="Label">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontFamily" Value="OpenSansRegular" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light=#6B7280, Dark=#91A0B6}" />
+        </Style>
+        <Style x:Key="AnalyticsSectionTitleStyle" TargetType="Label">
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontFamily" Value="MontserratSemiBold" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light=#111827, Dark=#F4F7FB}" />
+        </Style>
+    </ContentPage.Resources>
+</ContentPage>

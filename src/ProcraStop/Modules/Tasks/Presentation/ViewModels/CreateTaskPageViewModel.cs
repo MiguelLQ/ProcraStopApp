@@ -1,8 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ProcraStop.Application.Tasks.Commands.CreateTask;
+using ProcraStop.Application.Academic.DTOs;
+using ProcraStop.Application.Academic.Queries.GetCourses;
 using ProcraStop.Application.Tasks.DTOs;
-using ProcraStop.Application.Tasks.Queries.GetCourses;
 using ProcraStop.Domain.Tasks.Enums;
 using ProcraStop.Shared.Services;
 using System.Collections.ObjectModel;

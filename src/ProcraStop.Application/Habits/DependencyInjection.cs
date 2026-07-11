@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.Extensions.DependencyInjection;
+using ProcraStop.Application.Habits.Analytics;
 using ProcraStop.Application.Habits.Commands.CreateHabit;
 using ProcraStop.Application.Habits.Commands.DeactivateHabit;
 using ProcraStop.Application.Habits.Commands.TrackHabit;
@@ -37,6 +38,7 @@ namespace ProcraStop.Application.Habits
             services.AddTransient<GetTodayHabitsHandler>(); // editbycodex: agenda diaria optimizada.
             //servicios
             services.AddTransient<IHabitMetricsService, HabitMetricsService>();
+            services.AddTransient<HabitAnalyticsService>();
 
             return services;
         }

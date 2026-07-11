@@ -4,7 +4,6 @@ using ProcraStop.Application.Tasks.Commands.CompleteTask;
 using ProcraStop.Application.Tasks.Commands.CreateTask;
 using ProcraStop.Application.Tasks.Commands.UpdateTask;
 using ProcraStop.Application.Tasks.DTOs;
-using ProcraStop.Application.Tasks.Queries.GetCourses;
 using ProcraStop.Application.Tasks.Queries.GetTaskById;
 using ProcraStop.Application.Tasks.Queries.GetTasks;
 
@@ -16,7 +15,6 @@ namespace ProcraStop.Application.Tasks.Facade
         private readonly CreateTaskCommandHandler _createTaskHandler;
         private readonly CompleteTaskCommandHandler _completeTaskHandler;
         private readonly ArchiveTaskCommandHandler _archiveTaskHandler;
-        private readonly GetCoursesQueryHandler _getCoursesHandler;
         private readonly GetTaskByIdQueryHandler _getTaskByIdHandler;
         private readonly UpdateTaskCommandHandler _updateTaskHandler;
         public TasksFacade(
@@ -24,7 +22,6 @@ namespace ProcraStop.Application.Tasks.Facade
             CreateTaskCommandHandler createTaskHandler,
             CompleteTaskCommandHandler completeTaskHandler,
             ArchiveTaskCommandHandler archiveTaskHandler,
-            GetCoursesQueryHandler getCoursesHandler,
             GetTaskByIdQueryHandler getTaskByIdHandler,
             UpdateTaskCommandHandler updateTaskHandler)
         {
@@ -32,7 +29,6 @@ namespace ProcraStop.Application.Tasks.Facade
             _createTaskHandler = createTaskHandler;
             _completeTaskHandler = completeTaskHandler;
             _archiveTaskHandler = archiveTaskHandler;
-            _getCoursesHandler = getCoursesHandler;
             _getTaskByIdHandler = getTaskByIdHandler;
             _updateTaskHandler = updateTaskHandler;
         }
@@ -43,17 +39,6 @@ namespace ProcraStop.Application.Tasks.Facade
         }
 
         public Task CompleteTaskAsync(Guid taskId, CancellationToken ct = default)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Guid> CreateTaskAsync(CreateCourseRequest request, CancellationToken ct = default)
-        {
-            throw new NotImplementedException();
-        }
-        
-
-        public Task<IReadOnlyList<CourseDto>> GetCoursesAsync(CancellationToken ct = default)
         {
             throw new NotImplementedException();
         }

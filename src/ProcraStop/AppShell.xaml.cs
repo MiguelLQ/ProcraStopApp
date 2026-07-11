@@ -1,9 +1,9 @@
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
+using ProcraStop.Modules.Academic.Presentation.Views;
 using ProcraStop.Modules.Dashboard.Presentation.Views;
 using ProcraStop.Modules.Habits.Presentation.Views;
 using ProcraStop.Modules.Tasks.Presentation.Views;
-using ProcraStop.Modules.Tasks.Presentation.Views.CoursesView;
 using Font = Microsoft.Maui.Font;
 
 namespace ProcraStop
@@ -25,9 +25,13 @@ namespace ProcraStop
             Routing.RegisterRoute(nameof(DashboardView), typeof(DashboardView));
             Routing.RegisterRoute(nameof(CreateHabitPage), typeof(CreateHabitPage));
             Routing.RegisterRoute(nameof(HabitListPage), typeof(HabitListPage));
+            Routing.RegisterRoute(nameof(HabitAnalyticsPage), typeof(HabitAnalyticsPage));
             Routing.RegisterRoute("habit-track", typeof(TrackHabitPage));
             var currentTheme = Microsoft.Maui.Controls.Application.Current!.RequestedTheme;
             ThemeSegmentedControl.SelectedIndex = currentTheme == AppTheme.Light ? 0 : 1;
+#if ANDROID
+            Navigated += OnShellNavigated;
+#endif
         }
         public static async Task DisplaySnackbarAsync(string message)
         {
@@ -63,6 +67,18 @@ namespace ProcraStop
         private void SfSegmentedControl_SelectionChanged(object? sender, Syncfusion.Maui.Toolkit.SegmentedControl.SelectionChangedEventArgs e)
         {
             Microsoft.Maui.Controls.Application.Current!.UserAppTheme = e.NewIndex == 0 ? AppTheme.Light : AppTheme.Dark;
+#if ANDROID
+            if (Microsoft.Maui.ApplicationModel.Platform.CurrentActivity is { } activity)
+                ProcraStop.Platforms.Android.Services.AndroidStatusBarService.ApplyThemeStatusBar(activity);
+#endif
         }
+
+#if ANDROID
+        private void OnShellNavigated(object? sender, ShellNavigatedEventArgs e)
+        {
+            if (Microsoft.Maui.ApplicationModel.Platform.CurrentActivity is { } activity)
+                ProcraStop.Platforms.Android.Services.AndroidStatusBarService.ApplyThemeStatusBar(activity);
+        }
+#endif
     }
 }

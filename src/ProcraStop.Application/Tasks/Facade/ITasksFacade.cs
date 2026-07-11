@@ -10,17 +10,12 @@ namespace ProcraStop.Application.Tasks.Facade
         Task<IReadOnlyList<TaskListItemDto>> GetTasksAsync(
             bool includeArchived = false,
             CancellationToken ct = default);
-        Task<Guid> CreateTaskAsync(
-            CreateCourseRequest request,
-            CancellationToken ct = default);
         Task CompleteTaskAsync(
             Guid taskId,
             CancellationToken ct = default);
         Task ArchiveTaskAsync(
            Guid taskId,
            CancellationToken ct = default);
-        Task<IReadOnlyList<CourseDto>> GetCoursesAsync(
-            CancellationToken ct = default);
         Task<TaskDetailDto?> GetTaskByIdAsync(
             Guid taskId,
             CancellationToken ct = default);

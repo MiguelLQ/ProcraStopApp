@@ -6,7 +6,7 @@
              x:Class="ProcraStop.Modules.Tasks.Presentation.Views.TasksPage"
              xmlns:base="clr-namespace:ProcraStop.Shared.UI.Layouts"
              Title="Lista de tareas"
-                 Shell.BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource EntryDark}}"
+                 Shell.BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}"
              Shell.TitleColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}"
              Shell.ForegroundColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}"
              BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
@@ -16,16 +16,16 @@
           RowSpacing="10">
         <!-- editbycodex: buscador nuevo simplificado; reemplaza el header anterior oculto para evitar capas que bloqueen foco. -->
         <Border Grid.Row="0"
-                BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource EntryDark}}"
+                BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}"
                 StrokeThickness="0"
-                Padding="16,10,16,12"
+                Padding="16,0,16,12"
                 StrokeShape="RoundRectangle 0,0,32,32">
 
             <VerticalStackLayout Spacing="6">
-                <Border BackgroundColor="{AppThemeBinding Light=#F3F4F6, Dark=#333847}"
-                        Stroke="#8A94A6"
-                        StrokeThickness="1"
-                        StrokeShape="RoundRectangle 18"
+                <Border BackgroundColor="{AppThemeBinding Light=#F3F4F6, Dark={StaticResource DarkBackground}}"
+                        
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 15"
                         HeightRequest="46"
                         Padding="0">
 

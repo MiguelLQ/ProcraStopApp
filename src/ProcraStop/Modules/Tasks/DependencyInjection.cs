@@ -1,8 +1,6 @@
 ﻿
 using ProcraStop.Modules.Tasks.Presentation.ViewModels;
-using ProcraStop.Modules.Tasks.Presentation.ViewModels.CoursesViewModels;
 using ProcraStop.Modules.Tasks.Presentation.Views;
-using ProcraStop.Modules.Tasks.Presentation.Views.CoursesView;
 
 namespace ProcraStop.Modules.Tasks
 {
@@ -14,7 +12,6 @@ namespace ProcraStop.Modules.Tasks
             // ViewModels
             services.AddTransient<TasksPageViewModel>();
             services.AddTransient<CreateTaskPageViewModel>();
-            services.AddTransient<CoursesPageViewModel>();
             services.AddTransient<TaskDetailViewModel>();
             services.AddTransient<EditTaskViewModel>();
             services.AddTransient<TaskAnalyticsViewModel>();
@@ -26,8 +23,6 @@ namespace ProcraStop.Modules.Tasks
             services.AddTransient<TaskAnalyticsPage>();
             services.AddTransient<DetailTask>();
             services.AddTransient<CreateTask>();
-            //curso views
-            services.AddTransient<CoursesPage>();
             return services;
         }
     }

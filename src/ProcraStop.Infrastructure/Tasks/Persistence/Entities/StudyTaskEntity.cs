@@ -1,4 +1,6 @@
-﻿namespace ProcraStop.Infrastructure.Tasks.Persistence.Entities
+using ProcraStop.Infrastructure.Academic.Persistence.Entities;
+
+namespace ProcraStop.Infrastructure.Tasks.Persistence.Entities
 {
     public sealed class StudyTaskEntity
     {
@@ -11,7 +13,6 @@
         public int Status { get; set; }
         public bool IsArchived { get; set; }
         public Guid? CourseId { get; set; }
-        // Navigation property
         public CourseEntity? Course { get; set; }
         public int? EstimatedMinutes { get; set; }
         public DateTime CreatedAtUtc { get; set; }
