@@ -9,6 +9,7 @@
     xmlns:academic="clr-namespace:ProcraStop.Modules.Academic.Presentation.Views"
     xmlns:stress="clr-namespace:ProcraStop.Modules.Stress.Presentation.Views"
     xmlns:habits="clr-namespace:ProcraStop.Modules.Habits.Presentation.Views"
+    xmlns:study="clr-namespace:ProcraStop.Modules.StudyTechniques.Presentation.Views"
     Shell.FlyoutBehavior="Flyout"
      FlyoutBackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource shellDark}}"
      Shell.TabBarBackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#131821}"
@@ -113,6 +114,28 @@
             Route="DashboardView"/>
         </Tab>
     </FlyoutItem>
+    <!-- MÓDULO TÉCNICAS DE ESTUDIO -->
+    <FlyoutItem Title="Técnicas de estudio"
+                Icon="{StaticResource IconProjects}">
+        <Tab Title="Estudio" Icon="{StaticResource IconProjects}">
+            <ShellContent
+                Title="Estudio"
+                ContentTemplate="{DataTemplate study:StudyTechniquesPage}"
+                Route="StudyTechniquesPage"/>
+        </Tab>
+        <Tab Title="Pomodoro" Icon="{StaticResource IconProjects}">
+            <ShellContent
+                Title="Pomodoro"
+                ContentTemplate="{DataTemplate study:PomodoroPage}"
+                Route="PomodoroPage"/>
+        </Tab>
+        <Tab Title="Biblioteca" Icon="{StaticResource IconProjects}">
+            <ShellContent
+                Title="Biblioteca"
+                ContentTemplate="{DataTemplate study:TechniqueLibraryPage}"
+                Route="TechniqueLibraryPage"/>
+        </Tab>
+    </FlyoutItem>
     <!-- MÓDULO habits -->
     <FlyoutItem Title="Hábitos"
      Icon="{StaticResource IconDashboard}">
@@ -127,6 +150,12 @@
                 Title="Dashboard"
                 ContentTemplate="{DataTemplate habits:HabitAnalyticsPage}"
                 Route="HabitAnalyticsPage"/>
+        </Tab>
+        <Tab Title="Ranking" Icon="{StaticResource IconDashboard}">
+            <ShellContent
+                Title="Ranking"
+                ContentTemplate="{DataTemplate habits:HabitDisciplineRankingPage}"
+                Route="HabitDisciplineRankingPage"/>
         </Tab>
         
     </FlyoutItem>

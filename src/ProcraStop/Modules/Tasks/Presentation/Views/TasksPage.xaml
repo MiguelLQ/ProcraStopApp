@@ -23,7 +23,7 @@
 
             <VerticalStackLayout Spacing="6">
                 <Border BackgroundColor="{AppThemeBinding Light=#F3F4F6, Dark={StaticResource DarkBackground}}"
-                        
+                        Margin="10,0,10,0"
                         StrokeThickness="0"
                         StrokeShape="RoundRectangle 15"
                         HeightRequest="46"
@@ -155,7 +155,7 @@ CommandParameter="{Binding Filter}" />
                     <DataTemplate>
 
                         <Border Padding="12"
-                        Margin="0,0,0,5"
+                        Margin="10,0,10,10"
                         BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}"
                         StrokeShape="RoundRectangle 20"
                         MinimumHeightRequest="100">

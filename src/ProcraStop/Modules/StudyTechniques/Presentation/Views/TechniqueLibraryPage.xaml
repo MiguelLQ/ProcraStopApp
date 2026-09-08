@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProcraStop.Modules.StudyTechniques.Presentation.Views.TechniqueLibraryPage"
+             Title="Biblioteca"
+             BackgroundColor="{AppThemeBinding Light=#F4F6F9, Dark=#0D131C}">
+    <ScrollView>
+        <VerticalStackLayout Padding="14,16,14,28" Spacing="14">
+            <Border BackgroundColor="{AppThemeBinding Light=#142033, Dark=#101923}" StrokeThickness="0" StrokeShape="RoundRectangle 18" Padding="18">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="Biblioteca de técnicas" FontFamily="MontserratSemiBold" FontSize="23" TextColor="White" />
+                    <Label Text="No necesitas saberlas antes. Esta sección explica para qué sirve cada una y cuándo usarla."
+                           FontFamily="OpenSansRegular" FontSize="12" TextColor="#A8B4C5" />
+                </VerticalStackLayout>
+            </Border>
+            <CollectionView ItemsSource="{Binding Techniques}" SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#171F2B}"
+                                Stroke="{AppThemeBinding Light=#E6EAF0, Dark=#263246}"
+                                StrokeShape="RoundRectangle 8"
+                                Padding="16"
+                                Margin="0,0,0,10">
+                            <VerticalStackLayout Spacing="7">
+                                <Label Text="{Binding Name}" FontFamily="MontserratSemiBold" FontSize="16" TextColor="{AppThemeBinding Light=#111827, Dark=#F4F7FB}" />
+                                <Label Text="{Binding Purpose}" FontFamily="OpenSansRegular" FontSize="12" TextColor="{AppThemeBinding Light=#4B5563, Dark=#B8C3D5}" />
+                                <Label Text="{Binding BestFor}" FontFamily="OpenSansRegular" FontSize="11" TextColor="{AppThemeBinding Light=#6B7280, Dark=#91A0B6}" />
+                                <Label Text="{Binding RecommendedMinutes, StringFormat='Duración sugerida: {0} min'}" FontFamily="MontserratSemiBold" FontSize="11" TextColor="{AppThemeBinding Light=#2563EB, Dark=#8DB3FF}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

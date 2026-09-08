@@ -11,6 +11,7 @@ using ProcraStop.Application.Habits.Queries.GetHabitById;
 using ProcraStop.Application.Habits.Queries.GetHabitLogByDate;
 using ProcraStop.Application.Habits.Queries.GetHabitSignals;
 using ProcraStop.Application.Habits.Queries.GetTodayHabits;
+using ProcraStop.Application.Habits.Ranking;
 using ProcraStop.Application.Habits.Services;
 using ProcraStop.Core.Decisions.Rules;
 
@@ -39,6 +40,7 @@ namespace ProcraStop.Application.Habits
             //servicios
             services.AddTransient<IHabitMetricsService, HabitMetricsService>();
             services.AddTransient<HabitAnalyticsService>();
+            services.AddTransient<HabitDisciplineRankingService>();
 
             return services;
         }

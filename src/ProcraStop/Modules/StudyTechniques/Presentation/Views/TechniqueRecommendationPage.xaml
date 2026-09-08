@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProcraStop.Modules.StudyTechniques.Presentation.Views.TechniqueRecommendationPage"
+             Title="Recomendar técnica"
+             BackgroundColor="{AppThemeBinding Light=#F4F6F9, Dark=#0D131C}">
+    <ScrollView>
+        <VerticalStackLayout Padding="14,16,14,28" Spacing="16">
+            <Border BackgroundColor="{AppThemeBinding Light=#142033, Dark=#101923}" StrokeThickness="0" StrokeShape="RoundRectangle 18" Padding="18">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="Engine de estudio" FontFamily="MontserratSemiBold" FontSize="23" TextColor="White" />
+                    <Label Text="Esta pantalla entrena la recomendación: le dices qué estudiarás y cómo estás; el engine sugiere técnica y detecta si conviene pedir ayuda."
+                           FontFamily="OpenSansRegular" FontSize="12" TextColor="#A8B4C5" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource RecCardStyle}">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="1. Qué vas a estudiar" Style="{StaticResource RecTitleStyle}" />
+                    <Label Text="El curso sale de tus cursos registrados. El tema ayuda a guardar historial por lección."
+                           Style="{StaticResource RecDetailStyle}" />
+                    <Picker ItemsSource="{Binding Courses}" SelectedItem="{Binding SelectedCourse}" ItemDisplayBinding="{Binding Name}" Title="Curso registrado" />
+                    <Border Style="{StaticResource RecInputStyle}">
+                        <Entry Text="{Binding Topic}" Placeholder="Tema o lección" BackgroundColor="Transparent" />
+                    </Border>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource RecCardStyle}">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="2. Estado del estudiante" Style="{StaticResource RecTitleStyle}" />
+                    <Label Text="No es una nota. Son señales rápidas para decidir si necesitas foco, práctica, explicación o ayuda académica."
+                           Style="{StaticResource RecDetailStyle}" />
+
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="12">
+                        <VerticalStackLayout>
+                            <Grid ColumnDefinitions="*,Auto"><Label Text="Foco" Style="{StaticResource RecLabelStyle}" /><Label Grid.Column="1" Text="{Binding FocusValueText}" Style="{StaticResource RecValueStyle}" /></Grid>
+                            <Slider Minimum="1" Maximum="5" Value="{Binding Focus}" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Grid ColumnDefinitions="*,Auto"><Label Text="Energía" Style="{StaticResource RecLabelStyle}" /><Label Grid.Column="1" Text="{Binding EnergyValueText}" Style="{StaticResource RecValueStyle}" /></Grid>
+                            <Slider Minimum="1" Maximum="5" Value="{Binding Energy}" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Row="1">
+                            <Grid ColumnDefinitions="*,Auto"><Label Text="Confianza" Style="{StaticResource RecLabelStyle}" /><Label Grid.Column="1" Text="{Binding ConfidenceValueText}" Style="{StaticResource RecValueStyle}" /></Grid>
+                            <Slider Minimum="1" Maximum="5" Value="{Binding Confidence}" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Row="1" Grid.Column="1">
+                            <Grid ColumnDefinitions="*,Auto"><Label Text="Confusión" Style="{StaticResource RecLabelStyle}" /><Label Grid.Column="1" Text="{Binding ConfusionValueText}" Style="{StaticResource RecValueStyle}" /></Grid>
+                            <Slider Minimum="1" Maximum="5" Value="{Binding Confusion}" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <Button Text="Obtener recomendación" Command="{Binding RecommendCommand}" Style="{StaticResource RecPrimaryButtonStyle}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource RecCardStyle}">
+                <VerticalStackLayout Spacing="8">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Resultado del engine" Style="{StaticResource RecTitleStyle}" />
+                        <Label Grid.Column="1" Text="{Binding HelpNeedText}" Style="{StaticResource RecValueStyle}" />
+                    </Grid>
+                    <Label Text="{Binding RecommendationTitle}" FontFamily="MontserratSemiBold" FontSize="16" TextColor="{AppThemeBinding Light=#111827, Dark=#F4F7FB}" />
+                    <Label Text="{Binding RecommendationAction}" Style="{StaticResource RecDetailStyle}" />
+                    <Label Text="{Binding HelpPrompt}" Style="{StaticResource RecDetailStyle}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource RecCardStyle}">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="3. Después de ejecutar" Style="{StaticResource RecTitleStyle}" />
+                    <Label Text="Guardar sesión significa registrar qué técnica usaste y qué resultado obtuviste. Ese historial mejora futuras recomendaciones."
+                           Style="{StaticResource RecDetailStyle}" />
+                    <Picker ItemsSource="{Binding Techniques}" SelectedItem="{Binding SelectedTechnique}" ItemDisplayBinding="{Binding Name}" Title="Técnica usada" />
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <VerticalStackLayout>
+                            <Grid ColumnDefinitions="*,Auto"><Label Text="Avance" Style="{StaticResource RecLabelStyle}" /><Label Grid.Column="1" Text="{Binding ProgressValueText}" Style="{StaticResource RecValueStyle}" /></Grid>
+                            <Slider Minimum="0" Maximum="100" Value="{Binding ProgressPercent}" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Grid ColumnDefinitions="*,Auto"><Label Text="Tiempo" Style="{StaticResource RecLabelStyle}" /><Label Grid.Column="1" Text="{Binding AvailableMinutesText}" Style="{StaticResource RecValueStyle}" /></Grid>
+                            <Slider Minimum="10" Maximum="60" Value="{Binding AvailableMinutes}" />
+                        </VerticalStackLayout>
+                    </Grid>
+                    <Border Style="{StaticResource RecInputStyle}">
+                        <Editor Text="{Binding Notes}" Placeholder="Qué entendiste, dónde te trabaste o qué sigue" AutoSize="TextChanges" MinimumHeightRequest="70" BackgroundColor="Transparent" />
+                    </Border>
+                    <Button Text="Guardar sesión" Command="{Binding SaveSessionCommand}" Style="{StaticResource RecPrimaryButtonStyle}" />
+                    <Label Text="{Binding SaveMessage}" Style="{StaticResource RecDetailStyle}" />
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+    <ContentPage.Resources>
+        <Style x:Key="RecCardStyle" TargetType="Border"><Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#FFFFFF, Dark=#171F2B}" /><Setter Property="Stroke" Value="{AppThemeBinding Light=#E6EAF0, Dark=#263246}" /><Setter Property="StrokeShape" Value="RoundRectangle 8" /><Setter Property="Padding" Value="16" /></Style>
+        <Style x:Key="RecInputStyle" TargetType="Border"><Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#F8FAFC, Dark=#202A38}" /><Setter Property="Stroke" Value="{AppThemeBinding Light=#E6EAF0, Dark=#2E3A4E}" /><Setter Property="StrokeShape" Value="RoundRectangle 8" /><Setter Property="Padding" Value="10,2" /></Style>
+        <Style x:Key="RecTitleStyle" TargetType="Label"><Setter Property="FontSize" Value="16" /><Setter Property="FontFamily" Value="MontserratSemiBold" /><Setter Property="TextColor" Value="{AppThemeBinding Light=#111827, Dark=#F4F7FB}" /></Style>
+        <Style x:Key="RecDetailStyle" TargetType="Label"><Setter Property="FontSize" Value="11" /><Setter Property="FontFamily" Value="OpenSansRegular" /><Setter Property="TextColor" Value="{AppThemeBinding Light=#6B7280, Dark=#91A0B6}" /></Style>
+        <Style x:Key="RecLabelStyle" TargetType="Label"><Setter Property="FontSize" Value="11" /><Setter Property="FontFamily" Value="MontserratSemiBold" /><Setter Property="TextColor" Value="{AppThemeBinding Light=#4B5563, Dark=#B8C3D5}" /></Style>
+        <Style x:Key="RecValueStyle" TargetType="Label"><Setter Property="FontSize" Value="11" /><Setter Property="FontFamily" Value="MontserratSemiBold" /><Setter Property="TextColor" Value="{AppThemeBinding Light=#2563EB, Dark=#8DB3FF}" /></Style>
+        <Style x:Key="RecPrimaryButtonStyle" TargetType="Button"><Setter Property="CornerRadius" Value="8" /><Setter Property="HeightRequest" Value="46" /><Setter Property="FontFamily" Value="MontserratSemiBold" /><Setter Property="BackgroundColor" Value="#34C77B" /><Setter Property="TextColor" Value="White" /></Style>
+    </ContentPage.Resources>
+</ContentPage>

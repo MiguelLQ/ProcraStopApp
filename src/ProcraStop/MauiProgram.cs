@@ -7,6 +7,7 @@ using ProcraStop.Modules.Academic;
 using ProcraStop.Modules.Dashboard;
 using ProcraStop.Modules.Habits;
 using ProcraStop.Modules.Stress;
+using ProcraStop.Modules.StudyTechniques;
 using ProcraStop.Modules.Tasks;
 using ProcraStop.Shared.Services;
 using SkiaSharp.Views.Maui.Controls.Hosting;
@@ -83,6 +84,7 @@ namespace ProcraStop
             .AddAcademicModule()
             .AddTasksModule()
             .AddStressModule()
+            .AddStudyTechniquesModule()
             .AddHabitsModule();
             // =========================
             // Registro del servicio de Snackbar

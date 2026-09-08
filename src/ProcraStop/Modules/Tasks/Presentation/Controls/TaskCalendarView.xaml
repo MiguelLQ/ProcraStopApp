@@ -14,7 +14,7 @@
         </Style>
     </ContentView.Resources>
 
-    <Border Padding="15,5"
+    <Border Padding="15,0"
             BackgroundColor="Transparent"
             StrokeThickness="0"
             StrokeShape="RoundRectangle 24">
@@ -33,10 +33,9 @@
                            FontSize="20"
                            TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
 
-                    <Label Text="Selecciona una fecha para organizar tus tareas"
-                           FontFamily="ManropeRegular"
+                    <!--<Label Text="Selecciona una fecha"
                            FontSize="12"
-                           TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                           TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />-->
 
                     <VerticalStackLayout.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding ToggleCalendarCommand, Source={x:Reference Root}}" />

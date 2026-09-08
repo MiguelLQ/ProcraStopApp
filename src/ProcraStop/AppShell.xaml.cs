@@ -3,6 +3,7 @@ using CommunityToolkit.Maui.Core;
 using ProcraStop.Modules.Academic.Presentation.Views;
 using ProcraStop.Modules.Dashboard.Presentation.Views;
 using ProcraStop.Modules.Habits.Presentation.Views;
+using ProcraStop.Modules.StudyTechniques.Presentation.Views;
 using ProcraStop.Modules.Tasks.Presentation.Views;
 using Font = Microsoft.Maui.Font;
 
@@ -22,9 +23,15 @@ namespace ProcraStop
             Routing.RegisterRoute(nameof(TaskAnalyticsPage), typeof(TaskAnalyticsPage));
             Routing.RegisterRoute(nameof(DashboardView), typeof(DashboardView));
             Routing.RegisterRoute(nameof(SchedulePage), typeof(SchedulePage));
+            Routing.RegisterRoute(nameof(StudyTechniquesPage), typeof(StudyTechniquesPage));
+            Routing.RegisterRoute(nameof(PomodoroPage), typeof(PomodoroPage));
+            Routing.RegisterRoute(nameof(TechniqueRecommendationPage), typeof(TechniqueRecommendationPage));
+            Routing.RegisterRoute(nameof(TechniqueLibraryPage), typeof(TechniqueLibraryPage));
+            Routing.RegisterRoute(nameof(StudySessionHistoryPage), typeof(StudySessionHistoryPage));
             Routing.RegisterRoute(nameof(CreateHabitPage), typeof(CreateHabitPage));
             Routing.RegisterRoute(nameof(HabitListPage), typeof(HabitListPage));
             Routing.RegisterRoute(nameof(HabitAnalyticsPage), typeof(HabitAnalyticsPage));
+            Routing.RegisterRoute(nameof(HabitDisciplineRankingPage), typeof(HabitDisciplineRankingPage));
             Routing.RegisterRoute("habit-track", typeof(TrackHabitPage));
             var currentTheme = Microsoft.Maui.Controls.Application.Current!.RequestedTheme;
             ThemeSegmentedControl.SelectedIndex = currentTheme == AppTheme.Light ? 0 : 1;

@@ -42,6 +42,30 @@ namespace ProcraStop.Infrastructure.DBContext
                 CREATE INDEX IF NOT EXISTS IX_ClassSchedules_CourseId_DayOfWeek_StartTicks
                 ON ClassSchedules (CourseId, DayOfWeek, StartTicks);
                 """);
+            db.Database.ExecuteSqlRaw("""
+                CREATE TABLE IF NOT EXISTS StudyTechniqueSessions (
+                    Id TEXT NOT NULL CONSTRAINT PK_StudyTechniqueSessions PRIMARY KEY,
+                    CourseName TEXT NOT NULL,
+                    Topic TEXT NOT NULL,
+                    Technique INTEGER NOT NULL,
+                    PlannedMinutes INTEGER NOT NULL,
+                    CompletedMinutes INTEGER NOT NULL,
+                    FocusBefore INTEGER NOT NULL,
+                    EnergyBefore INTEGER NOT NULL,
+                    ConfidenceBefore INTEGER NOT NULL,
+                    ConfusionAfter INTEGER NOT NULL,
+                    ProgressPercent INTEGER NOT NULL,
+                    PomodoroCycles INTEGER NOT NULL,
+                    HelpStatus INTEGER NOT NULL,
+                    StartedAtUtc TEXT NOT NULL,
+                    CompletedAtUtc TEXT NULL,
+                    Notes TEXT NULL
+                );
+                """);
+            db.Database.ExecuteSqlRaw("""
+                CREATE INDEX IF NOT EXISTS IX_StudyTechniqueSessions_StartedAtUtc
+                ON StudyTechniqueSessions (StartedAtUtc);
+                """);
         }
     }
 }

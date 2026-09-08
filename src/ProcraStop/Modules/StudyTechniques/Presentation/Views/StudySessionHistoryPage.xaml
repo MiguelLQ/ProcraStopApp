@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProcraStop.Modules.StudyTechniques.Presentation.Views.StudySessionHistoryPage"
+             Title="Historial"
+             BackgroundColor="{AppThemeBinding Light=#F4F6F9, Dark=#0D131C}">
+    <RefreshView Command="{Binding LoadCommand}" IsRefreshing="{Binding IsBusy, Mode=OneWay}">
+        <CollectionView ItemsSource="{Binding Sessions}" SelectionMode="None" Margin="14,16,14,20"
+                        EmptyView="Aún no hay sesiones guardadas. Registra una desde Recomendar técnica.">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#171F2B}"
+                            Stroke="{AppThemeBinding Light=#E6EAF0, Dark=#263246}"
+                            StrokeShape="RoundRectangle 8"
+                            Padding="14"
+                            Margin="0,0,0,10">
+                        <VerticalStackLayout Spacing="5">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="{Binding CourseName}" FontFamily="MontserratSemiBold" FontSize="15" TextColor="{AppThemeBinding Light=#111827, Dark=#F4F7FB}" />
+                                <Label Grid.Column="1" Text="{Binding DateText}" FontFamily="OpenSansRegular" FontSize="10" TextColor="{AppThemeBinding Light=#6B7280, Dark=#91A0B6}" />
+                            </Grid>
+                            <Label Text="{Binding Topic}" FontFamily="MontserratSemiBold" FontSize="12" TextColor="{AppThemeBinding Light=#2563EB, Dark=#8DB3FF}" />
+                            <Label Text="{Binding TechniqueName}" FontFamily="OpenSansRegular" FontSize="11" TextColor="{AppThemeBinding Light=#4B5563, Dark=#B8C3D5}" />
+                            <Label Text="{Binding DetailText}" FontFamily="OpenSansRegular" FontSize="11" TextColor="{AppThemeBinding Light=#6B7280, Dark=#91A0B6}" />
+                            <Label Text="{Binding Notes}" FontFamily="OpenSansRegular" FontSize="11" TextColor="{AppThemeBinding Light=#6B7280, Dark=#91A0B6}" />
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </RefreshView>
+</ContentPage>

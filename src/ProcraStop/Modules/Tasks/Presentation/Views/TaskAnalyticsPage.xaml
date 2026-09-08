@@ -6,30 +6,28 @@
              Title="Análisis de tareas"
              Shell.BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource shellDark}}"
              Shell.TitleColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}"
-             BackgroundColor="{AppThemeBinding Light=#F4F6F9, Dark=#0D131C}">
+             Shell.ForegroundColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}"
+             BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
 
     <!-- editbycodex: dashboard funcional inspirado en Stress, con series de tareas optimizadas. -->
     <RefreshView Command="{Binding LoadCommand}"
                  IsRefreshing="{Binding IsBusy, Mode=OneWay}">
         <ScrollView>
-            <VerticalStackLayout Spacing="18" Padding="0,0,0,28">
+            <VerticalStackLayout Spacing="10" Padding="0,0,0,20">
 
                 <!-- HEADER ANALÍTICO -->
-                <Border BackgroundColor="{AppThemeBinding Light=#172231, Dark=#101923}"
+                <Border BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource shellDark}}"
                         StrokeThickness="0"
-                        StrokeShape="RoundRectangle 0,0,28,28"
-                        Padding="18,16,18,18">
+                        StrokeShape="RoundRectangle 0,0,45,45"
+                        Padding="15,0,15,15">
                     <VerticalStackLayout Spacing="14">
                         <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
                             <VerticalStackLayout Spacing="2">
-                                <Label Text="Ritmo de finalización"
-                                       FontFamily="MontserratSemiBold"
-                                       FontSize="20"
-                                       TextColor="White" />
+
                                 <Label Text="Tareas completadas durante los últimos 7 días"
                                        FontFamily="OpenSansRegular"
-                                       FontSize="12"
-                                       TextColor="#A8B4C5" />
+                                       FontSize="14"
+                                       TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
                             </VerticalStackLayout>
 
                             <Border Grid.Column="1"
@@ -48,10 +46,10 @@
                         <controls:TaskAnalyticsChart ChartType="Line"
                                                      Values="{Binding WeeklyValues}"
                                                      Labels="{Binding WeeklyLabels}"
-                                                     HeightRequest="220" />
+                                                     HeightRequest="210" />
 
                         <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
-                            <VerticalStackLayout Spacing="1">
+                            <VerticalStackLayout Spacing="1" HorizontalOptions="Center">
                                 <Label Text="COMPLETADAS ESTA SEMANA"
                                        FontSize="10"
                                        FontFamily="MontserratSemiBold"
@@ -59,9 +57,10 @@
                                 <Label Text="{Binding CompletedThisWeek}"
                                        FontSize="24"
                                        FontFamily="MontserratSemiBold"
-                                       TextColor="White" />
+                                       HorizontalOptions="Center"
+                                        TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
                             </VerticalStackLayout>
-                            <VerticalStackLayout Grid.Column="1" Spacing="1">
+                            <VerticalStackLayout Grid.Column="1" Spacing="1" HorizontalOptions="Center">
                                 <Label Text="PRÓXIMOS 7 DÍAS"
                                        FontSize="10"
                                        FontFamily="MontserratSemiBold"
@@ -69,63 +68,87 @@
                                 <Label Text="{Binding DueNextSevenDays}"
                                        FontSize="24"
                                        FontFamily="MontserratSemiBold"
+                                       HorizontalOptions="Center"
                                        TextColor="#F4B740" />
                             </VerticalStackLayout>
                         </Grid>
                     </VerticalStackLayout>
                 </Border>
-
+                <!--pastel-->
+                <Border Padding="15,0,15,-20" >
+                    <VerticalStackLayout Spacing="1">
+                        <Label Text="Distribución por estado" 
+                               FontFamily="MontserratSemiBold"
+                               FontSize="18"/>
+                        <Label Text="Vista general de tu flujo actual" 
+                               FontSize="14"
+                               FontFamily="OpenSansRegular"
+                               TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}"/>
+                        <controls:TaskAnalyticsChart ChartType="Donut"
+                                     Values="{Binding StatusValues}"
+                                     Labels="{Binding StatusLabels}"
+                                     HeightRequest="230" />
+                    </VerticalStackLayout>
+                </Border>
+                <!--cards-->
                 <VerticalStackLayout Padding="14,0" Spacing="18">
                     <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto"
                           ColumnSpacing="10" RowSpacing="10">
-                        <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource AnalyticsCardStyle}">
+                        <Border Grid.Row="0" Grid.Column="0" BackgroundColor="{AppThemeBinding Light={StaticResource EntryClar}, Dark={StaticResource EntryDark}}" >
                             <VerticalStackLayout Spacing="3">
-                                <Label Text="TOTAL" Style="{StaticResource AnalyticsCaptionStyle}" />
-                                <Label Text="{Binding Total}" Style="{StaticResource AnalyticsValueStyle}" />
-                                <Label Text="tareas activas y completadas" Style="{StaticResource AnalyticsDetailStyle}" />
+                                <Label Text="Total"
+                                       FontFamily="MontserratSemiBold"
+                                       FontSize="17"/>
+                                <Label Text="{Binding Total}"/>
+                                <Label Text="tareas activas y completadas" FontFamily="OpenSansRegular"
+                                        FontSize="14"
+                                        TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
                             </VerticalStackLayout>
                         </Border>
 
-                        <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource AnalyticsCardStyle}">
+                        <Border Grid.Row="0" Grid.Column="1" BackgroundColor="{AppThemeBinding Light={StaticResource EntryClar}, Dark={StaticResource EntryDark}}">
                             <VerticalStackLayout Spacing="3">
-                                <Label Text="CUMPLIMIENTO" Style="{StaticResource AnalyticsCaptionStyle}" />
-                                <Label Text="{Binding CompletionRateText}" Style="{StaticResource AnalyticsValueStyle}" TextColor="#34C77B" />
-                                <Label Text="progreso general" Style="{StaticResource AnalyticsDetailStyle}" />
+                                <Label Text="Cumplimiento"
+                                       FontFamily="MontserratSemiBold"
+                                        FontSize="17"/>
+                                <Label Text="{Binding CompletionRateText}"  TextColor="#34C77B" />
+                                <Label Text="progreso general" FontFamily="OpenSansRegular"
+                                        FontSize="14"
+                                        TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
                             </VerticalStackLayout>
                         </Border>
 
-                        <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource AnalyticsCardStyle}">
+                        <Border Grid.Row="1" Grid.Column="0" BackgroundColor="{AppThemeBinding Light={StaticResource EntryClar}, Dark={StaticResource EntryDark}}">
                             <VerticalStackLayout Spacing="3">
-                                <Label Text="VENCIDAS" Style="{StaticResource AnalyticsCaptionStyle}" />
-                                <Label Text="{Binding Overdue}" Style="{StaticResource AnalyticsValueStyle}" TextColor="#EF5B5B" />
-                                <Label Text="requieren atención" Style="{StaticResource AnalyticsDetailStyle}" />
+                                <Label Text="Vencidas"
+                                       FontFamily="MontserratSemiBold"
+                                        FontSize="17"/>
+                                <Label Text="{Binding Overdue}"  TextColor="#EF5B5B" />
+                                <Label Text="requieren atención" FontFamily="OpenSansRegular"
+                                        FontSize="14"
+                                        TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
                             </VerticalStackLayout>
                         </Border>
 
-                        <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource AnalyticsCardStyle}">
+                        <Border Grid.Row="1" Grid.Column="1" BackgroundColor="{AppThemeBinding Light={StaticResource EntryClar}, Dark={StaticResource EntryDark}}" >
                             <VerticalStackLayout Spacing="3">
-                                <Label Text="ESFUERZO PROM." Style="{StaticResource AnalyticsCaptionStyle}" />
-                                <Label Text="{Binding AverageEffortText}" Style="{StaticResource AnalyticsValueStyle}" TextColor="#4F8CFF" />
-                                <Label Text="estimación por tarea" Style="{StaticResource AnalyticsDetailStyle}" />
+                                <Label Text="Esfuerzo Prom." FontFamily="MontserratSemiBold"
+                                       FontSize="17"/>
+                                <Label Text="{Binding AverageEffortText}"  TextColor="#4F8CFF" />
+                                <Label Text="estimación por tarea" FontFamily="OpenSansRegular"
+                                        FontSize="14"
+                                        TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
                             </VerticalStackLayout>
                         </Border>
                     </Grid>
-
-                    <Border Style="{StaticResource AnalyticsCardStyle}" Padding="16">
+                    <!--indicadores-->
+                    <Border  Padding="15,0,15,0">
                         <VerticalStackLayout Spacing="8">
-                            <Label Text="Distribución por estado" Style="{StaticResource AnalyticsSectionTitleStyle}" />
-                            <Label Text="Vista general de tu flujo actual" Style="{StaticResource AnalyticsDetailStyle}" />
-                            <controls:TaskAnalyticsChart ChartType="Donut"
-                                                         Values="{Binding StatusValues}"
-                                                         Labels="{Binding StatusLabels}"
-                                                         HeightRequest="210" />
-                        </VerticalStackLayout>
-                    </Border>
-
-                    <Border Style="{StaticResource AnalyticsCardStyle}" Padding="16">
-                        <VerticalStackLayout Spacing="8">
-                            <Label Text="Carga por prioridad" Style="{StaticResource AnalyticsSectionTitleStyle}" />
-                            <Label Text="Dónde conviene enfocar tu siguiente bloque" Style="{StaticResource AnalyticsDetailStyle}" />
+                            <Label Text="Carga por prioridad" FontFamily="MontserratSemiBold"
+                                       FontSize="17"/>
+                            <Label Text="Dónde conviene enfocar tu siguiente bloque" FontFamily="OpenSansRegular"
+                                    FontSize="14"
+                                    TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
                             <controls:TaskAnalyticsChart ChartType="Bars"
                                                          Values="{Binding PriorityValues}"
                                                          Labels="{Binding PriorityLabels}"
@@ -133,49 +156,21 @@
                         </VerticalStackLayout>
                     </Border>
 
-                    <Border Style="{StaticResource AnalyticsCardStyle}" Padding="16">
+                    <Border Padding="15,0,15,0">
                         <VerticalStackLayout Spacing="8">
-                            <Label Text="Tareas por curso" Style="{StaticResource AnalyticsSectionTitleStyle}" />
-                            <Label Text="Los cinco grupos con mayor carga" Style="{StaticResource AnalyticsDetailStyle}" />
+                            <Label Text="Tareas por curso"  FontFamily="MontserratSemiBold"
+                                       FontSize="17"/>
+                            <Label Text="Los cinco grupos con mayor carga" FontFamily="OpenSansRegular"
+                                    FontSize="14"
+                                    TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
                             <controls:TaskAnalyticsChart ChartType="Bars"
                                                          Values="{Binding CourseValues}"
                                                          Labels="{Binding CourseLabels}"
-                                                         HeightRequest="260" />
+                                                         HeightRequest="250" />
                         </VerticalStackLayout>
                     </Border>
                 </VerticalStackLayout>
             </VerticalStackLayout>
         </ScrollView>
     </RefreshView>
-
-    <ContentPage.Resources>
-        <!-- editbycodex: estilos locales para no alterar otras páginas del proyecto. -->
-        <Style x:Key="AnalyticsCardStyle" TargetType="Border">
-            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#FFFFFF, Dark=#171F2B}" />
-            <Setter Property="Stroke" Value="{AppThemeBinding Light=#E6EAF0, Dark=#263246}" />
-            <Setter Property="StrokeThickness" Value="1" />
-            <Setter Property="StrokeShape" Value="RoundRectangle 8" />
-            <Setter Property="Padding" Value="14" />
-        </Style>
-        <Style x:Key="AnalyticsCaptionStyle" TargetType="Label">
-            <Setter Property="FontSize" Value="10" />
-            <Setter Property="FontFamily" Value="MontserratSemiBold" />
-            <Setter Property="TextColor" Value="{AppThemeBinding Light=#6B7280, Dark=#91A0B6}" />
-        </Style>
-        <Style x:Key="AnalyticsValueStyle" TargetType="Label">
-            <Setter Property="FontSize" Value="24" />
-            <Setter Property="FontFamily" Value="MontserratSemiBold" />
-            <Setter Property="TextColor" Value="{AppThemeBinding Light=#111827, Dark=#F4F7FB}" />
-        </Style>
-        <Style x:Key="AnalyticsDetailStyle" TargetType="Label">
-            <Setter Property="FontSize" Value="11" />
-            <Setter Property="FontFamily" Value="OpenSansRegular" />
-            <Setter Property="TextColor" Value="{AppThemeBinding Light=#6B7280, Dark=#91A0B6}" />
-        </Style>
-        <Style x:Key="AnalyticsSectionTitleStyle" TargetType="Label">
-            <Setter Property="FontSize" Value="15" />
-            <Setter Property="FontFamily" Value="MontserratSemiBold" />
-            <Setter Property="TextColor" Value="{AppThemeBinding Light=#111827, Dark=#F4F7FB}" />
-        </Style>
-    </ContentPage.Resources>
 </ContentPage>

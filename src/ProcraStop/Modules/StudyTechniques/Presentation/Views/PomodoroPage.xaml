@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProcraStop.Modules.StudyTechniques.Presentation.Views.PomodoroPage"
+             Title="Pomodoro"
+             Shell.BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource shellDark}}"
+             Shell.TitleColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}"
+             BackgroundColor="{AppThemeBinding Light=#F4F6F9, Dark=#0D131C}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="18,18,18,28" Spacing="18">
+            <Border BackgroundColor="{AppThemeBinding Light=#142033, Dark=#101923}"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 24"
+                    Padding="20">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="Pomodoro"
+                           FontFamily="MontserratSemiBold"
+                           FontSize="24"
+                           TextColor="White" />
+                    <Label Text="Un cronómetro limpio para entrar en foco sin pelear con la pantalla."
+                           FontFamily="OpenSansRegular"
+                           FontSize="12"
+                           TextColor="#A8B4C5" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border x:Name="TimerSurface"
+                    BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#171F2B}"
+                    Stroke="{AppThemeBinding Light=#E6EAF0, Dark=#263246}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 8"
+                    Padding="22">
+                <VerticalStackLayout Spacing="18" HorizontalOptions="Center">
+                    <Picker ItemsSource="{Binding Modes}"
+                            SelectedItem="{Binding SelectedMode}"
+                            ItemDisplayBinding="{Binding Name}"
+                            FontFamily="MontserratSemiBold"
+                            HorizontalOptions="Fill" />
+
+                    <Border WidthRequest="230"
+                            HeightRequest="230"
+                            BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#202A38}"
+                            Stroke="#34C77B"
+                            StrokeThickness="4"
+                            StrokeShape="RoundRectangle 115"
+                            Padding="18">
+                        <VerticalStackLayout Spacing="8"
+                                             HorizontalOptions="Center"
+                                             VerticalOptions="Center">
+                            <Label Text="{Binding TimerText}"
+                                   FontFamily="MontserratSemiBold"
+                                   FontSize="52"
+                                   TextColor="{AppThemeBinding Light=#111827, Dark=#F4F7FB}"
+                                   HorizontalTextAlignment="Center" />
+                            <Label Text="{Binding StateText}"
+                                   FontFamily="OpenSansRegular"
+                                   FontSize="13"
+                                   TextColor="{AppThemeBinding Light=#6B7280, Dark=#91A0B6}"
+                                   HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <ProgressBar Progress="{Binding Progress}"
+                                 WidthRequest="230"
+                                 HeightRequest="6"
+                                 ProgressColor="#34C77B"
+                                 BackgroundColor="{AppThemeBinding Light=#E6EAF0, Dark=#263246}" />
+
+                    <Label Text="{Binding ModeDescription}"
+                           FontFamily="OpenSansRegular"
+                           FontSize="12"
+                           TextColor="{AppThemeBinding Light=#6B7280, Dark=#91A0B6}"
+                           HorizontalTextAlignment="Center" />
+
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <Button Text="Iniciar / pausar"
+                                Command="{Binding ToggleCommand}"
+                                FontFamily="MontserratSemiBold"
+                                CornerRadius="8"
+                                HeightRequest="48"
+                                BackgroundColor="#34C77B"
+                                TextColor="White" />
+                        <Button Grid.Column="1"
+                                Text="Reiniciar"
+                                Command="{Binding ResetCommand}"
+                                FontFamily="MontserratSemiBold"
+                                CornerRadius="8"
+                                HeightRequest="48"
+                                BackgroundColor="{AppThemeBinding Light=#E5E7EB, Dark=#263246}"
+                                TextColor="{AppThemeBinding Light=#111827, Dark=#F4F7FB}" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#171F2B}"
+                    Stroke="{AppThemeBinding Light=#E6EAF0, Dark=#263246}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 8"
+                    Padding="16">
+                <Grid ColumnDefinitions="*,Auto">
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="Ciclos completados"
+                               FontFamily="MontserratSemiBold"
+                               FontSize="14"
+                               TextColor="{AppThemeBinding Light=#111827, Dark=#F4F7FB}" />
+                        <Label Text="Al terminar, registra la sesión desde Técnicas de estudio."
+                               FontFamily="OpenSansRegular"
+                               FontSize="11"
+                               TextColor="{AppThemeBinding Light=#6B7280, Dark=#91A0B6}" />
+                    </VerticalStackLayout>
+                    <Label Grid.Column="1"
+                           Text="{Binding CompletedCycles}"
+                           FontFamily="MontserratSemiBold"
+                           FontSize="28"
+                           TextColor="#34C77B"
+                           VerticalOptions="Center" />
+                </Grid>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

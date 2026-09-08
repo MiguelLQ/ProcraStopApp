@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Name="RootPage"
+             x:Class="ProcraStop.Modules.StudyTechniques.Presentation.Views.StudyTechniquesPage"
+             Title="Técnicas de estudio"
+             BackgroundColor="{AppThemeBinding Light=#F4F6F9, Dark=#0D131C}">
+    <ScrollView>
+        <VerticalStackLayout Spacing="18" Padding="14,16,14,28">
+            <Border BackgroundColor="{AppThemeBinding Light=#142033, Dark=#101923}" StrokeThickness="0" StrokeShape="RoundRectangle 18" Padding="18">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="Estudia con método" FontFamily="MontserratSemiBold" FontSize="24" TextColor="White" />
+                    <Label Text="Aprende técnicas, deja que el engine recomiende una, ejecútala y guarda el resultado para mejorar próximas sugerencias."
+                           FontFamily="OpenSansRegular" FontSize="12" TextColor="#A8B4C5" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="10">
+                <Border Style="{StaticResource HomeCardStyle}">
+                    <VerticalStackLayout Spacing="3">
+                        <Label Text="SESIONES" Style="{StaticResource HomeCaptionStyle}" />
+                        <Label Text="{Binding SessionsThisWeekText}" Style="{StaticResource HomeValueStyle}" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Column="1" Style="{StaticResource HomeCardStyle}">
+                    <VerticalStackLayout Spacing="3">
+                        <Label Text="MINUTOS" Style="{StaticResource HomeCaptionStyle}" />
+                        <Label Text="{Binding MinutesThisWeekText}" Style="{StaticResource HomeValueStyle}" TextColor="#F4B740" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Row="1" Style="{StaticResource HomeCardStyle}">
+                    <VerticalStackLayout Spacing="3">
+                        <Label Text="AVANCE" Style="{StaticResource HomeCaptionStyle}" />
+                        <Label Text="{Binding AverageProgressText}" Style="{StaticResource HomeValueStyle}" TextColor="#34C77B" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource HomeCardStyle}">
+                    <VerticalStackLayout Spacing="3">
+                        <Label Text="AYUDA" Style="{StaticResource HomeCaptionStyle}" />
+                        <Label Text="{Binding HelpIndicatorText}" Style="{StaticResource HomeValueSmallStyle}" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <Border Style="{StaticResource ActionCardStyle}">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Recomendar técnica" Style="{StaticResource SectionTitleStyle}" />
+                        <Label Text="El engine usa tu curso, tema y estado actual para sugerir qué técnica conviene usar ahora."
+                               Style="{StaticResource DetailStyle}" />
+                    </VerticalStackLayout>
+                    <Button Text="Preparar estudio" Command="{Binding GoToRecommendCommand}" Style="{StaticResource PrimaryActionStyle}" />
+                </Grid>
+            </Border>
+
+            <Border Style="{StaticResource ActionCardStyle}">
+                <VerticalStackLayout Spacing="12">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Tareas que conviene estudiar con técnica" Style="{StaticResource SectionTitleStyle}" />
+                        <Label Text="ProcraStop detecta tareas atrasadas, de alta prioridad o largas. Desde aquí puedes preparar una sesión de estudio con el tema ya cargado."
+                               Style="{StaticResource DetailStyle}" />
+                    </VerticalStackLayout>
+                    <CollectionView ItemsSource="{Binding RescueTasks}"
+                                    SelectionMode="None"
+                                    EmptyView="No hay tareas atrasadas o complejas por rescatar.">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#202A38}"
+                                        Stroke="{AppThemeBinding Light=#E6EAF0, Dark=#2E3A4E}"
+                                        StrokeShape="RoundRectangle 8"
+                                        Padding="12"
+                                        Margin="0,0,0,8">
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                        <VerticalStackLayout Spacing="3">
+                                            <Label Text="{Binding Title}"
+                                                   FontFamily="MontserratSemiBold"
+                                                   FontSize="13"
+                                                   TextColor="{AppThemeBinding Light=#111827, Dark=#F4F7FB}" />
+                                            <Label Text="{Binding CourseName}" Style="{StaticResource DetailStyle}" />
+                                            <Label Text="{Binding Detail}" Style="{StaticResource DetailStyle}" />
+                                        </VerticalStackLayout>
+                                        <VerticalStackLayout Grid.Column="1" Spacing="6" HorizontalOptions="End">
+                                            <Label Text="{Binding Reason}"
+                                                   FontFamily="MontserratSemiBold"
+                                                   FontSize="10"
+                                                   HorizontalTextAlignment="End"
+                                                   TextColor="{AppThemeBinding Light=#EF4444, Dark=#FF8A8A}" />
+                                            <Button Text="Usar técnica"
+                                                    Command="{Binding BindingContext.GoToTaskRecommendationCommand, Source={x:Reference RootPage}}"
+                                                    CommandParameter="{Binding .}"
+                                                    FontFamily="MontserratSemiBold"
+                                                    FontSize="11"
+                                                    CornerRadius="8"
+                                                    Padding="10,6"
+                                                    BackgroundColor="{AppThemeBinding Light=#EEF4FF, Dark=#1E2D46}"
+                                                    TextColor="{AppThemeBinding Light=#2563EB, Dark=#8DB3FF}" />
+                                        </VerticalStackLayout>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource ActionCardStyle}">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Biblioteca de técnicas" Style="{StaticResource SectionTitleStyle}" />
+                        <Label Text="Aprende qué es cada técnica, cuándo usarla y para qué tipo de bloqueo sirve."
+                               Style="{StaticResource DetailStyle}" />
+                    </VerticalStackLayout>
+                    <Button Text="Aprender técnicas" Command="{Binding GoToLibraryCommand}" Style="{StaticResource SecondaryActionStyle}" />
+                </Grid>
+            </Border>
+
+            <Border Style="{StaticResource ActionCardStyle}">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Pomodoro" Style="{StaticResource SectionTitleStyle}" />
+                        <Label Text="Cronómetro de foco separado para ejecutar sesiones cortas, clásicas o profundas."
+                               Style="{StaticResource DetailStyle}" />
+                    </VerticalStackLayout>
+                    <Button Text="Abrir cronómetro" Command="{Binding GoToPomodoroCommand}" Style="{StaticResource SecondaryActionStyle}" />
+                </Grid>
+            </Border>
+
+            <Border Style="{StaticResource ActionCardStyle}">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Historial" Style="{StaticResource SectionTitleStyle}" />
+                        <Label Text="Revisa qué estudiaste, qué técnica usaste y qué tanto avanzaste."
+                               Style="{StaticResource DetailStyle}" />
+                    </VerticalStackLayout>
+                    <Button Text="Ver sesiones" Command="{Binding GoToHistoryCommand}" Style="{StaticResource SecondaryActionStyle}" />
+                </Grid>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+
+    <ContentPage.Resources>
+        <Style x:Key="HomeCardStyle" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#FFFFFF, Dark=#171F2B}" />
+            <Setter Property="Stroke" Value="{AppThemeBinding Light=#E6EAF0, Dark=#263246}" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 8" />
+            <Setter Property="Padding" Value="14" />
+        </Style>
+        <Style x:Key="ActionCardStyle" TargetType="Border" BasedOn="{StaticResource HomeCardStyle}" />
+        <Style x:Key="HomeCaptionStyle" TargetType="Label"><Setter Property="FontSize" Value="10" /><Setter Property="FontFamily" Value="MontserratSemiBold" /><Setter Property="TextColor" Value="{AppThemeBinding Light=#6B7280, Dark=#91A0B6}" /></Style>
+        <Style x:Key="HomeValueStyle" TargetType="Label"><Setter Property="FontSize" Value="24" /><Setter Property="FontFamily" Value="MontserratSemiBold" /><Setter Property="TextColor" Value="{AppThemeBinding Light=#111827, Dark=#F4F7FB}" /></Style>
+        <Style x:Key="HomeValueSmallStyle" TargetType="Label" BasedOn="{StaticResource HomeValueStyle}"><Setter Property="FontSize" Value="16" /></Style>
+        <Style x:Key="SectionTitleStyle" TargetType="Label"><Setter Property="FontSize" Value="16" /><Setter Property="FontFamily" Value="MontserratSemiBold" /><Setter Property="TextColor" Value="{AppThemeBinding Light=#111827, Dark=#F4F7FB}" /></Style>
+        <Style x:Key="DetailStyle" TargetType="Label"><Setter Property="FontSize" Value="11" /><Setter Property="FontFamily" Value="OpenSansRegular" /><Setter Property="TextColor" Value="{AppThemeBinding Light=#6B7280, Dark=#91A0B6}" /></Style>
+        <Style x:Key="PrimaryActionStyle" TargetType="Button"><Setter Property="CornerRadius" Value="8" /><Setter Property="FontFamily" Value="MontserratSemiBold" /><Setter Property="BackgroundColor" Value="#34C77B" /><Setter Property="TextColor" Value="White" /></Style>
+        <Style x:Key="SecondaryActionStyle" TargetType="Button" BasedOn="{StaticResource PrimaryActionStyle}"><Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#EEF4FF, Dark=#1E2D46}" /><Setter Property="TextColor" Value="{AppThemeBinding Light=#2563EB, Dark=#8DB3FF}" /></Style>
+    </ContentPage.Resources>
+</ContentPage>

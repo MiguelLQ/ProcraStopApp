@@ -15,6 +15,8 @@ namespace ProcraStop.Modules.Habits
             services.AddTransient<HabitListPage>();
             services.AddTransient<HabitAnalyticsViewModel>();
             services.AddTransient<HabitAnalyticsPage>();
+            services.AddTransient<HabitDisciplineRankingViewModel>();
+            services.AddTransient<HabitDisciplineRankingPage>();
             services.AddTransient<TrackHabitViewModel>();
             services.AddTransient<TrackHabitPage>();
             return services;

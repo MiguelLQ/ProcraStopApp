@@ -7,15 +7,16 @@
                Title="Hábitos"
                Shell.BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource shellDark}}"
                Shell.TitleColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}"
-               BackgroundColor="{AppThemeBinding Light=#F4F6F9, Dark={StaticResource DarkBackground}}">
+               Shell.ForegroundColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}"
+               BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
 
     <!-- editbycodex: experiencia Hoy, diseñada para registrar sin abandonar la lista. -->
-    <Grid RowDefinitions="Auto,Auto,*" RowSpacing="12">
+    <Grid RowDefinitions="Auto,Auto,*" RowSpacing="8">
         <Border Grid.Row="0"
                 BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource shellDark}}"
                 StrokeThickness="0"
-                StrokeShape="RoundRectangle 0,0,28,28"
-                Padding="16,0,16,16">
+                StrokeShape="RoundRectangle 0,0,40,40"
+                Padding="15,0,15,15">
             <VerticalStackLayout Spacing="12">
                 <Grid ColumnDefinitions="*,Auto">
                     <VerticalStackLayout Spacing="2">
@@ -99,12 +100,12 @@
 
         <Label Grid.Row="1"
                Text="Rutina del día"
-               Margin="16,0"
+               Margin="15,0"
                FontFamily="MontserratSemiBold"
                FontSize="15"
-               TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+               TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
 
-        <Grid Grid.Row="2" Margin="12,0,12,0">
+        <Grid Grid.Row="2" Margin="20,0,20,0">
             <RefreshView Command="{Binding LoadCommand}" IsRefreshing="{Binding IsBusy, Mode=OneWay}">
                 <CollectionView ItemsSource="{Binding Habits}"
                                 SelectionMode="None"
@@ -125,16 +126,16 @@
                     </CollectionView.EmptyView>
 
                     <CollectionView.ItemsLayout>
-                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="8" />
+                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="10"/>
                     </CollectionView.ItemsLayout>
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:HabitItemViewModel">
-                            <Border Padding="14"
+                            <Border Padding="15"
                                     StrokeThickness="0"
                                     StrokeShape="RoundRectangle 20"
                                     BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark={StaticResource shellDark}}">
-                                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="8">
+                                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="5">
                                     <VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="2">
                                         <VerticalStackLayout.GestureRecognizers>
                                             <TapGestureRecognizer

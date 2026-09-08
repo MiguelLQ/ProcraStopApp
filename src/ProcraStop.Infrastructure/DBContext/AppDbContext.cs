@@ -6,6 +6,7 @@ using ProcraStop.Infrastructure.Dashboard.Persistence.Entities;
 using ProcraStop.Infrastructure.Habits.Persistence.Entities;
 using ProcraStop.Infrastructure.Stress.Persistence.Configs;
 using ProcraStop.Infrastructure.Stress.Persistence.Entities;
+using ProcraStop.Infrastructure.StudyTechniques.Persistence.Entities;
 using ProcraStop.Infrastructure.Tasks.Persistence.Entities;
 
 namespace ProcraStop.Infrastructure.DBContext
@@ -29,6 +30,7 @@ namespace ProcraStop.Infrastructure.DBContext
         public DbSet<HabitLogEntity> HabitLogs => Set<HabitLogEntity>();
         // streess
         public DbSet<StressRecordEntity> StressRecords => Set<StressRecordEntity>();
+        public DbSet<StudyTechniqueSessionEntity> StudyTechniqueSessions => Set<StudyTechniqueSessionEntity>();
         // memoria del sistema
         public DbSet<SystemSnapshotEntity> SystemSnapshots => Set<SystemSnapshotEntity>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -190,6 +192,28 @@ namespace ProcraStop.Infrastructure.DBContext
                 entity.Property(x => x.Stress).IsRequired();
                 entity.Property(x => x.Performance).IsRequired();
                 entity.Property(x => x.Behavior).IsRequired();
+            });
+
+            modelBuilder.Entity<StudyTechniqueSessionEntity>(entity =>
+            {
+                entity.ToTable("StudyTechniqueSessions");
+
+                entity.HasKey(x => x.Id);
+                entity.Property(x => x.CourseName).IsRequired().HasMaxLength(150);
+                entity.Property(x => x.Topic).IsRequired().HasMaxLength(200);
+                entity.Property(x => x.Technique).IsRequired();
+                entity.Property(x => x.PlannedMinutes).IsRequired();
+                entity.Property(x => x.CompletedMinutes).IsRequired();
+                entity.Property(x => x.FocusBefore).IsRequired();
+                entity.Property(x => x.EnergyBefore).IsRequired();
+                entity.Property(x => x.ConfidenceBefore).IsRequired();
+                entity.Property(x => x.ConfusionAfter).IsRequired();
+                entity.Property(x => x.ProgressPercent).IsRequired();
+                entity.Property(x => x.PomodoroCycles).IsRequired();
+                entity.Property(x => x.HelpStatus).IsRequired();
+                entity.Property(x => x.StartedAtUtc).IsRequired();
+                entity.Property(x => x.Notes).HasMaxLength(1000);
+                entity.HasIndex(x => x.StartedAtUtc);
             });
 
             modelBuilder.Entity<StudyTaskEntity>()
