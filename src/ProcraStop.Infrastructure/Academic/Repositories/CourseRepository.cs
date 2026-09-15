@@ -8,16 +8,17 @@ namespace ProcraStop.Infrastructure.Academic.Repositories
 {
     public sealed class CourseRepository : ICourseRepository
     {
-        private readonly AppDbContext _dbContext;
+        private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
 
-        public CourseRepository(AppDbContext dbContext)
+        public CourseRepository(IDbContextFactory<AppDbContext> dbContextFactory)
         {
-            _dbContext = dbContext;
+            _dbContextFactory = dbContextFactory;
         }
 
         public async Task<IReadOnlyList<Course>> GetAllAsync(CancellationToken ct)
         {
-            var entities = await _dbContext.Courses
+            await using var dbContext = await _dbContextFactory.CreateDbContextAsync(ct);
+            var entities = await dbContext.Courses
                 .AsNoTracking()
                 .OrderBy(c => c.Name)
                 .ToListAsync(ct);
@@ -27,7 +28,8 @@ namespace ProcraStop.Infrastructure.Academic.Repositories
 
         public async Task<Course?> GetByIdAsync(Guid id, CancellationToken ct)
         {
-            var entity = await _dbContext.Courses
+            await using var dbContext = await _dbContextFactory.CreateDbContextAsync(ct);
+            var entity = await dbContext.Courses
                 .AsNoTracking()
                 .FirstOrDefaultAsync(c => c.Id == id, ct);
 
@@ -36,30 +38,33 @@ namespace ProcraStop.Infrastructure.Academic.Repositories
 
         public async Task AddAsync(Course course, CancellationToken ct)
         {
+            await using var dbContext = await _dbContextFactory.CreateDbContextAsync(ct);
             var entity = course.ToEntity();
 
-            await _dbContext.Courses.AddAsync(entity, ct);
-            await _dbContext.SaveChangesAsync(ct);
+            await dbContext.Courses.AddAsync(entity, ct);
+            await dbContext.SaveChangesAsync(ct);
         }
 
         public async Task UpdateAsync(Course course, CancellationToken ct)
         {
+            await using var dbContext = await _dbContextFactory.CreateDbContextAsync(ct);
             var entity = course.ToEntity();
 
-            _dbContext.Courses.Update(entity);
-            await _dbContext.SaveChangesAsync(ct);
+            dbContext.Courses.Update(entity);
+            await dbContext.SaveChangesAsync(ct);
         }
 
         public async Task DeleteAsync(Guid id, CancellationToken ct)
         {
-            var entity = await _dbContext.Courses
+            await using var dbContext = await _dbContextFactory.CreateDbContextAsync(ct);
+            var entity = await dbContext.Courses
                 .FirstOrDefaultAsync(c => c.Id == id, ct);
 
             if (entity is null)
                 return;
 
-            _dbContext.Courses.Remove(entity);
-            await _dbContext.SaveChangesAsync(ct);
+            dbContext.Courses.Remove(entity);
+            await dbContext.SaveChangesAsync(ct);
         }
     }
 }

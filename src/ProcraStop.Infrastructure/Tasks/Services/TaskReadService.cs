@@ -10,15 +10,16 @@ namespace ProcraStop.Infraestructure.Tasks.Services
 {
     public sealed class TaskReadService : ITaskReadService
     {
-        private readonly AppDbContext _db;
+        private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
 
-        public TaskReadService(AppDbContext db)
+        public TaskReadService(IDbContextFactory<AppDbContext> dbContextFactory)
         {
-            _db = db;
+            _dbContextFactory = dbContextFactory;
         }
         public async Task<TaskDetailDto?> GetByIdAsync(Guid id, CancellationToken ct)
         {
-            return await _db.Tasks
+            await using var db = await _dbContextFactory.CreateDbContextAsync(ct);
+            return await db.Tasks
                 .AsNoTracking()
                 .Where(t => t.Id == id)
                 .Select(t => new TaskDetailDto
@@ -63,7 +64,8 @@ namespace ProcraStop.Infraestructure.Tasks.Services
 
         public async Task<IReadOnlyList<TaskListItemDto>> GetListAsync(bool includeArchived, CancellationToken ct)
         {
-            var query = _db.Tasks
+            await using var db = await _dbContextFactory.CreateDbContextAsync(ct);
+            var query = db.Tasks
         .AsNoTracking();
 
             if (!includeArchived)
@@ -120,9 +122,10 @@ namespace ProcraStop.Infraestructure.Tasks.Services
             int maxResults,
             CancellationToken ct)
         {
+            await using var db = await _dbContextFactory.CreateDbContextAsync(ct);
             var normalized = searchText.Trim();
 
-            var query = _db.Tasks
+            var query = db.Tasks
                 .AsNoTracking();
 
             if (!includeArchived)
@@ -198,12 +201,13 @@ namespace ProcraStop.Infraestructure.Tasks.Services
             DateTime endDate,
             CancellationToken ct)
         {
+            await using var db = await _dbContextFactory.CreateDbContextAsync(ct);
             var rangeStart = startDate.Date;
             var rangeEndExclusive = endDate.Date.AddDays(1);
             var now = DateTime.Now;
 
             // editbycodex: una consulta minima por rango; el agrupado local evita incompatibilidades Date de SQLite.
-            var rows = await _db.Tasks
+            var rows = await db.Tasks
                 .AsNoTracking()
                 .Where(x =>
                     !x.IsArchived &&
@@ -234,7 +238,8 @@ namespace ProcraStop.Infraestructure.Tasks.Services
         public async Task<IReadOnlyList<TaskDashboardDto>> GetDashboardDataAsync(
     CancellationToken ct)
         {
-            return await _db.Tasks
+            await using var db = await _dbContextFactory.CreateDbContextAsync(ct);
+            return await db.Tasks
                 .AsNoTracking()
                 .Select(t => new TaskDashboardDto
                 {
@@ -254,8 +259,9 @@ namespace ProcraStop.Infraestructure.Tasks.Services
         public async Task<IReadOnlyList<TaskAnalyticsSourceItemDto>> GetAnalyticsDataAsync(
             CancellationToken ct)
         {
+            await using var db = await _dbContextFactory.CreateDbContextAsync(ct);
             // editbycodex: una sola consulta sin tracking, textos grandes ni navegaciones completas.
-            return await _db.Tasks
+            return await db.Tasks
                 .AsNoTracking()
                 .Where(x => !x.IsArchived)
                 .Select(x => new TaskAnalyticsSourceItemDto

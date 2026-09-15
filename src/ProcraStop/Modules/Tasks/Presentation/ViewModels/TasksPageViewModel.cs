@@ -21,7 +21,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
         private readonly ISnackbarService _snackbarService;
         private CancellationTokenSource? _searchDebounceCts;
         private CancellationTokenSource? _calendarSummaryCts; // editbycodex: cancela rangos antiguos al navegar rapido.
-        private readonly SemaphoreSlim _queryGate = new(1, 1); // editbycodex: serializa operaciones del mismo DbContext.
+        private readonly SemaphoreSlim _queryGate = new(1, 1); // Evita recargas solapadas dentro de esta vista.
         private readonly HashSet<Guid> _completingTaskIds = new(); // editbycodex: evita doble completado por taps repetidos.
 
         private List<TaskItemModel> _allTasks = new();
@@ -138,7 +138,9 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
                         ct),
                     CancellationToken.None);
 
-                await LoadAsync(); // editbycodex: actualiza card, filtros y badges inmediatamente tras guardar.
+                var wasOverdue = item.IsActuallyOverdue;
+                item.Status = TaskItemStatus.Completed;
+                ApplyCompletedTaskIncrementally(item, wasOverdue);
                 await _snackbarService.ShowAsync(
                     "¡La Tarea fue completada! Sigue Así 😉",
                     SnackbarType.Success);
@@ -155,6 +157,32 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             {
                 _completingTaskIds.Remove(taskId);
             }
+        }
+
+        private void ApplyCompletedTaskIncrementally(TaskItemModel item, bool wasOverdue)
+        {
+            if (SelectedFilter is TaskFilterOption.Pending or TaskFilterOption.Overdue)
+                Tasks.Remove(item);
+
+            if (item.DueDate.HasValue &&
+                _daySummaries.TryGetValue(item.DueDate.Value.Date, out var summary))
+            {
+                var updated = new TaskDaySummaryDto
+                {
+                    Date = summary.Date,
+                    TaskCount = summary.TaskCount,
+                    OverdueCount = wasOverdue
+                        ? Math.Max(0, summary.OverdueCount - 1)
+                        : summary.OverdueCount
+                };
+
+                var summaries = _daySummaries.ToDictionary(x => x.Key, x => x.Value);
+                summaries[item.DueDate.Value.Date] = updated;
+                _daySummaries = summaries;
+                BuildCalendar();
+            }
+
+            UpdateSearchSummary(Tasks.Count, SearchText);
         }
 
         private void ApplyFilter()
@@ -246,7 +274,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             {
                 TaskFilterOption.Pending => mapped.Where(x => x.Status != TaskItemStatus.Completed),
                 TaskFilterOption.Completed => mapped.Where(x => x.Status == TaskItemStatus.Completed),
-                TaskFilterOption.Overdue => mapped.Where(x => x.IsOverdue),
+                TaskFilterOption.Overdue => mapped.Where(x => x.IsActuallyOverdue),
                 _ => mapped // editbycodex: Todas y Sin fecha no limitan una busqueda global.
             };
 

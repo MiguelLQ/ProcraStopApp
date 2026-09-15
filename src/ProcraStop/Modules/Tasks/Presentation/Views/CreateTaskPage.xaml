@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:ProcraStop.Modules.Tasks.Presentation.ViewModels"
              x:Class="ProcraStop.Modules.Tasks.Presentation.Views.CreateTaskPage"
+             x:DataType="viewModels:CreateTaskPageViewModel"
              Title="Crear Tarea"
              Shell.TabBarIsVisible="False"
              Shell.TitleColor="White"
@@ -219,7 +221,7 @@
                             <!-- LISTA -->
                             <CollectionView ItemsSource="{Binding Subtasks}">
                                 <CollectionView.ItemTemplate>
-                                    <DataTemplate>
+                                    <DataTemplate x:DataType="x:String">
 
                                         <Border Padding="4"
                                                 Margin="0,5"

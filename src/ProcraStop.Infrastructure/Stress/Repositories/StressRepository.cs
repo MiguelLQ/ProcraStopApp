@@ -6,30 +6,39 @@ using ProcraStop.Domain.Stress.Enums;
 using ProcraStop.Infrastructure.DBContext;
 using ProcraStop.Infrastructure.Stress.Persistence.Entities;
 using ProcraStop.Infrastructure.Stress.Persistence.Mappings;
+using ProcraStop.Application.Dashboard.Interfaces;
 namespace ProcraStop.Infrastructure.Stress.Repositories
 {
     public class StressRepository : IStressRepository
     {
-        private readonly AppDbContext _context;
+        private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
+        private readonly IDashboardCacheInvalidator _dashboardCache;
 
-        public StressRepository(AppDbContext context)
+        public StressRepository(
+            IDbContextFactory<AppDbContext> dbContextFactory,
+            IDashboardCacheInvalidator dashboardCache)
         {
-            _context = context;
+            _dbContextFactory = dbContextFactory;
+            _dashboardCache = dashboardCache;
         }
 
         public async Task AddAsync(StressRecord record)
         {
+            await using var context = await _dbContextFactory.CreateDbContextAsync();
             var entity = StressMapper.ToEntity(record);
 
-            _context.StressRecords.Add(entity);
-            await _context.SaveChangesAsync();
+            context.StressRecords.Add(entity);
+            await context.SaveChangesAsync();
+            _dashboardCache.Invalidate();
         }
 
         public async Task<List<StressRecord>> GetRecentAsync(int days)
         {
+            await using var context = await _dbContextFactory.CreateDbContextAsync();
             var cutoff = DateTime.UtcNow.AddDays(-days);
 
-            var entities = await _context.StressRecords
+            var entities = await context.StressRecords
+                .AsNoTracking()
                 .Where(x => x.Timestamp >= cutoff)
                 .OrderByDescending(x => x.Timestamp)
                 .ToListAsync();
@@ -41,7 +50,9 @@ namespace ProcraStop.Infrastructure.Stress.Repositories
 
         public async Task<StressRecord?> GetLatestAsync()
         {
-            var entity = await _context.StressRecords
+            await using var context = await _dbContextFactory.CreateDbContextAsync();
+            var entity = await context.StressRecords
+                .AsNoTracking()
                 .OrderByDescending(x => x.Timestamp)
                 .FirstOrDefaultAsync();
 
@@ -52,18 +63,20 @@ namespace ProcraStop.Infrastructure.Stress.Repositories
         }
         public async Task<bool> ExistsTodayAsync(StressSource source)
         {
+            await using var context = await _dbContextFactory.CreateDbContextAsync();
             var today = DateTime.Now.Date;
 
-            return await _context.StressRecords
+            return await context.StressRecords
                 .AnyAsync(x =>
                     x.Source == source &&
                     x.Timestamp.Date == today);
         }
         public async Task UpdateTodayAsync(double level, StressSource source)
         {
+            await using var context = await _dbContextFactory.CreateDbContextAsync();
             var today = DateTime.Now.Date;
 
-            var entity = await _context.StressRecords
+            var entity = await context.StressRecords
                 .Where(x =>
                     x.Source == source && // o directo enum si haces conversión
                     x.Timestamp.Date == today)
@@ -81,7 +94,7 @@ namespace ProcraStop.Infrastructure.Stress.Repositories
                     Timestamp = DateTime.UtcNow
                 };
 
-                _context.StressRecords.Add(newEntity);
+                context.StressRecords.Add(newEntity);
             }
             else
             {
@@ -90,13 +103,15 @@ namespace ProcraStop.Infrastructure.Stress.Repositories
                 entity.Timestamp = DateTime.UtcNow; // importante: refresh
             }
 
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
+            _dashboardCache.Invalidate();
         }
         public async Task<bool> ExistsInLastHoursAsync(StressSource source, int hours)
         {
+            await using var context = await _dbContextFactory.CreateDbContextAsync();
             var cutoff = DateTime.UtcNow.AddHours(-hours);
 
-            return await _context.StressRecords
+            return await context.StressRecords
                 .AnyAsync(x =>
                     x.Source == source &&
                     x.Timestamp >= cutoff);

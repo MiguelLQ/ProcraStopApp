@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:ProcraStop.Modules.Habits.Presentation.ViewModels"
              x:Class="ProcraStop.Modules.Habits.Presentation.Views.TrackHabitPage"
+             x:DataType="viewModels:TrackHabitViewModel"
              Title="Detalle del hábito"
              Shell.BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource shellDark}}"
              BackgroundColor="{AppThemeBinding Light=#F4F6F9, Dark=#0D131C}">

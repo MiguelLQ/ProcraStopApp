@@ -1,10 +1,11 @@
 ﻿
+using CommunityToolkit.Mvvm.ComponentModel;
 using ProcraStop.Application.Tasks.DTOs;
 using ProcraStop.Domain.Tasks.Enums;
 
 namespace ProcraStop.Modules.Tasks.Presentation.Models
 {
-    public sealed class TaskItemModel
+    public sealed partial class TaskItemModel : ObservableObject
     {
         public Guid Id { get; init; }
         public string Title { get; init; } = string.Empty;
@@ -12,7 +13,17 @@ namespace ProcraStop.Modules.Tasks.Presentation.Models
         public DateTime? DueDate { get; init; }
         public int? EstimatedMinutes { get; init; }
         public TaskPriority Priority { get; init; }
-        public TaskItemStatus Status { get; init; }
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(StatusText))]
+        [NotifyPropertyChangedFor(nameof(StatusColorHex))]
+        [NotifyPropertyChangedFor(nameof(CanComplete))]
+        [NotifyPropertyChangedFor(nameof(IsCompleted))]
+        [NotifyPropertyChangedFor(nameof(CanQuickComplete))]
+        [NotifyPropertyChangedFor(nameof(IsActuallyOverdue))]
+        [NotifyPropertyChangedFor(nameof(ShowOverdue))]
+        [NotifyPropertyChangedFor(nameof(OverdueText))]
+        [NotifyPropertyChangedFor(nameof(DueDateRelativeColorHex))]
+        private TaskItemStatus status;
         public bool IsOverdue { get; init; }
         public bool HasSubtasks { get; init; } // editbycodex: decide si el card admite check directo.
         public string? CourseName { get; set; }

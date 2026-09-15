@@ -1,6 +1,10 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:dto="clr-namespace:ProcraStop.Application.Academic.DTOs;assembly=ProcraStop.Application"
+             xmlns:models="clr-namespace:ProcraStop.Modules.Tasks.Presentation.Models"
+             xmlns:viewModels="clr-namespace:ProcraStop.Modules.Academic.Presentation.ViewModels"
              x:Class="ProcraStop.Modules.Academic.Presentation.Views.CoursesPage"
+             x:DataType="viewModels:CoursesPageViewModel"
              x:Name="PageRoot"
              BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
 
@@ -108,7 +112,7 @@
                         SelectionMode="None">
 
                     <CollectionView.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate x:DataType="models:ColorOption">
                             <Grid Padding="4">
 
                                 <BoxView WidthRequest="32"
@@ -124,7 +128,7 @@
 
                                 <Grid.GestureRecognizers>
                                     <TapGestureRecognizer 
-                                Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.SelectColorCommand}"
+                                Command="{Binding SelectColorCommand, Source={RelativeSource AncestorType={x:Type viewModels:CoursesPageViewModel}}}"
                                 CommandParameter="{Binding}" />
                                 </Grid.GestureRecognizers>
 
@@ -164,7 +168,7 @@
                         SelectedItem="{Binding SelectedCourse}">
 
             <CollectionView.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate x:DataType="dto:CourseDto">
 
                     <Border Margin="0,3"
                             Padding="7"
@@ -227,8 +231,8 @@
                                 <Button Text="Editar"
                                     FontSize="12"
                                     HeightRequest="2"
-                                    Command="{Binding BindingContext.EditCommand, 
-                                              Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                    Command="{Binding EditCommand,
+                                              Source={RelativeSource AncestorType={x:Type viewModels:CoursesPageViewModel}}}"
                                     CommandParameter="{Binding}" />
 
                                 <Button Text="Eliminar"
@@ -236,8 +240,8 @@
                                     HeightRequest="2"
                                     BackgroundColor="#EF4444"
                                     TextColor="White"
-                                    Command="{Binding BindingContext.DeleteCommand, 
-                                              Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                    Command="{Binding DeleteCommand,
+                                              Source={RelativeSource AncestorType={x:Type viewModels:CoursesPageViewModel}}}"
                                     CommandParameter="{Binding}" />
 
                             </HorizontalStackLayout>

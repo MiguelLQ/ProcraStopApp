@@ -3,30 +3,38 @@ using ProcraStop.Application.Habits.Abstractions;
 using ProcraStop.Domain.Habits.Entities;
 using ProcraStop.Infrastructure.DBContext;
 using ProcraStop.Infrastructure.Habits.Persistence.Mappings;
+using ProcraStop.Application.Dashboard.Interfaces;
 
 namespace ProcraStop.Infrastructure.Habits.Repositories
 {
     public class HabitRepository : IHabitRepository
     {
-        private readonly AppDbContext _context;
+        private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
+        private readonly IDashboardCacheInvalidator _dashboardCache;
 
-        public HabitRepository(AppDbContext context)
+        public HabitRepository(
+            IDbContextFactory<AppDbContext> dbContextFactory,
+            IDashboardCacheInvalidator dashboardCache)
         {
-            _context = context;
+            _dbContextFactory = dbContextFactory;
+            _dashboardCache = dashboardCache;
         }
 
         public async Task AddAsync(Habit habit)
         {
+            await using var context = await _dbContextFactory.CreateDbContextAsync();
             var entity = HabitMapper.ToEntity(habit);
 
-            _context.Habits.Add(entity);
+            context.Habits.Add(entity);
 
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
+            _dashboardCache.Invalidate();
         }
 
         public async Task<List<Habit>> GetAllAsync()
         {
-            var entities = await _context.Habits
+            await using var context = await _dbContextFactory.CreateDbContextAsync();
+            var entities = await context.Habits
                 .AsNoTracking()
                 .ToListAsync();
 
@@ -37,7 +45,8 @@ namespace ProcraStop.Infrastructure.Habits.Repositories
 
         public async Task<IReadOnlyList<Habit>> GetActiveAsync(CancellationToken ct)
         {
-            var entities = await _context.Habits
+            await using var context = await _dbContextFactory.CreateDbContextAsync(ct);
+            var entities = await context.Habits
                 .AsNoTracking()
                 .Where(x => x.IsActive)
                 .OrderBy(x => x.Name)
@@ -48,7 +57,8 @@ namespace ProcraStop.Infrastructure.Habits.Repositories
 
         public async Task<Habit?> GetByIdAsync(Guid id, CancellationToken ct)
         {
-            var entity = await _context.Habits
+            await using var context = await _dbContextFactory.CreateDbContextAsync(ct);
+            var entity = await context.Habits
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == id, ct);
 
@@ -57,7 +67,8 @@ namespace ProcraStop.Infrastructure.Habits.Repositories
 
         public async Task UpdateAsync(Habit habit, CancellationToken ct)
         {
-            var existing = await _context.Habits.FirstOrDefaultAsync(x => x.Id == habit.Id, ct);
+            await using var context = await _dbContextFactory.CreateDbContextAsync(ct);
+            var existing = await context.Habits.FirstOrDefaultAsync(x => x.Id == habit.Id, ct);
             if (existing is null)
                 throw new InvalidOperationException("Hábito no encontrado.");
 
@@ -70,7 +81,8 @@ namespace ProcraStop.Infrastructure.Habits.Repositories
             existing.Weight = updated.Weight;
             existing.TrackingType = updated.TrackingType;
             existing.IsActive = updated.IsActive;
-            await _context.SaveChangesAsync(ct);
+            await context.SaveChangesAsync(ct);
+            _dashboardCache.Invalidate();
         }
     }
 }

@@ -8,23 +8,26 @@ namespace ProcraStop.Infrastructure.StudyTechniques.Repositories;
 
 public sealed class StudyTechniqueSessionRepository : IStudyTechniqueSessionRepository
 {
-    private readonly AppDbContext _context;
+    private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
 
-    public StudyTechniqueSessionRepository(AppDbContext context)
+    public StudyTechniqueSessionRepository(IDbContextFactory<AppDbContext> dbContextFactory)
     {
-        _context = context;
+        _dbContextFactory = dbContextFactory;
     }
 
     public async Task AddAsync(StudyTechniqueSession session, CancellationToken ct)
     {
-        _context.StudyTechniqueSessions.Add(StudyTechniqueSessionMapper.ToEntity(session));
-        await _context.SaveChangesAsync(ct);
+        await using var context = await _dbContextFactory.CreateDbContextAsync(ct);
+        context.StudyTechniqueSessions.Add(StudyTechniqueSessionMapper.ToEntity(session));
+        await context.SaveChangesAsync(ct);
     }
 
     public async Task<IReadOnlyList<StudyTechniqueSession>> GetRecentAsync(int days, CancellationToken ct)
     {
+        await using var context = await _dbContextFactory.CreateDbContextAsync(ct);
         var cutoff = DateTime.UtcNow.AddDays(-Math.Max(1, days));
-        var entities = await _context.StudyTechniqueSessions
+        var entities = await context.StudyTechniqueSessions
+            .AsNoTracking()
             .Where(x => x.StartedAtUtc >= cutoff)
             .OrderByDescending(x => x.StartedAtUtc)
             .ToListAsync(ct);

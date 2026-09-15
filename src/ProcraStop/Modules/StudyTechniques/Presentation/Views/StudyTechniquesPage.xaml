@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:ProcraStop.Modules.StudyTechniques.Presentation.Models"
+             xmlns:viewModels="clr-namespace:ProcraStop.Modules.StudyTechniques.Presentation.ViewModels"
              x:Name="RootPage"
              x:Class="ProcraStop.Modules.StudyTechniques.Presentation.Views.StudyTechniquesPage"
+             x:DataType="viewModels:StudyTechniquesHomeViewModel"
              Title="Técnicas de estudio"
              BackgroundColor="{AppThemeBinding Light=#F4F6F9, Dark=#0D131C}">
     <ScrollView>
@@ -64,7 +67,7 @@
                                     SelectionMode="None"
                                     EmptyView="No hay tareas atrasadas o complejas por rescatar.">
                         <CollectionView.ItemTemplate>
-                            <DataTemplate>
+                            <DataTemplate x:DataType="models:StudyRescueTaskItem">
                                 <Border BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#202A38}"
                                         Stroke="{AppThemeBinding Light=#E6EAF0, Dark=#2E3A4E}"
                                         StrokeShape="RoundRectangle 8"

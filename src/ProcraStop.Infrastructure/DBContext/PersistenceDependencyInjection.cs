@@ -10,17 +10,19 @@ namespace ProcraStop.Infrastructure.DBContext
         this IServiceCollection services,
         string databasePath)
         {
-            services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlite($"Data Source={databasePath}"));
+            services.AddSingleton<DatabasePerformanceInterceptor>();
+            services.AddDbContextFactory<AppDbContext>((provider, options) =>
+                options
+                    .UseSqlite($"Data Source={databasePath}")
+                    .AddInterceptors(provider.GetRequiredService<DatabasePerformanceInterceptor>()));
 
             return services;
         }
 
         public static void InitializeDatabase(IServiceProvider services)
         {
-            using var scope = services.CreateScope();
-
-            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var factory = services.GetRequiredService<IDbContextFactory<AppDbContext>>();
+            using var db = factory.CreateDbContext();
 
             db.Database.EnsureCreated();
             db.Database.ExecuteSqlRaw("""

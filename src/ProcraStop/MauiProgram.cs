@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Plugin.LocalNotification;
 using ProcraStop.Core.Decisions;
 using ProcraStop.Infrastructure.DBContext;
+using ProcraStop.Diagnostics;
 using ProcraStop.Modules.Academic;
 using ProcraStop.Modules.Dashboard;
 using ProcraStop.Modules.Habits;
@@ -18,6 +19,7 @@ namespace ProcraStop
     {
         public static MauiApp CreateMauiApp()
         {
+            var startupStartedAt = System.Diagnostics.Stopwatch.GetTimestamp();
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
@@ -90,10 +92,17 @@ namespace ProcraStop
             // Registro del servicio de Snackbar
             // =========================
             builder.Services.AddSingleton<ISnackbarService, SnackbarService>();
+            builder.Services.AddSingleton<PerformanceTracer>();
 
             var app = builder.Build();
             // Inicializar la base de datos al iniciar la aplicación
-            PersistenceDependencyInjection.InitializeDatabase(app.Services);
+            var performance = app.Services.GetRequiredService<PerformanceTracer>();
+            using (performance.Measure("Startup", "Database initialization"))
+            {
+                PersistenceDependencyInjection.InitializeDatabase(app.Services);
+            }
+
+            performance.LogElapsed("Startup", "MauiProgram.CreateMauiApp", startupStartedAt);
             // 
             return app;
         }

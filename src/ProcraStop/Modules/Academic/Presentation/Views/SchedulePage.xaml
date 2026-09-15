@@ -3,7 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:models="clr-namespace:ProcraStop.Modules.Academic.Presentation.Models"
              xmlns:dto="clr-namespace:ProcraStop.Application.Academic.DTOs;assembly=ProcraStop.Application"
+             xmlns:viewModels="clr-namespace:ProcraStop.Modules.Academic.Presentation.ViewModels"
              x:Class="ProcraStop.Modules.Academic.Presentation.Views.SchedulePage"
+             x:DataType="viewModels:SchedulePageViewModel"
              Title="Horario"
              Shell.BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource shellDark}}"
              Shell.TitleColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}"
@@ -55,7 +57,7 @@
                                             BackgroundColor="#223148">
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectDayCommand}"
+                                                Command="{Binding SelectDayCommand, Source={RelativeSource AncestorType={x:Type viewModels:SchedulePageViewModel}}}"
                                                 CommandParameter="{Binding .}" />
                                         </Border.GestureRecognizers>
                                         <Border.Triggers>
@@ -150,7 +152,7 @@
                                                         Padding="10,0"
                                                         BackgroundColor="{AppThemeBinding Light=#EEF2FF, Dark=#20334F}"
                                                         TextColor="#4075FF"
-                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditCommand}"
+                                                        Command="{Binding EditCommand, Source={RelativeSource AncestorType={x:Type viewModels:SchedulePageViewModel}}}"
                                                         CommandParameter="{Binding .}" />
                                                 <Button Text="Eliminar"
                                                         FontSize="11"
@@ -158,7 +160,7 @@
                                                         Padding="10,0"
                                                         BackgroundColor="#EF4444"
                                                         TextColor="White"
-                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteCommand}"
+                                                        Command="{Binding DeleteCommand, Source={RelativeSource AncestorType={x:Type viewModels:SchedulePageViewModel}}}"
                                                         CommandParameter="{Binding .}" />
                                             </HorizontalStackLayout>
                                         </Grid>

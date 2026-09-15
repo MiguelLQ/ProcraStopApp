@@ -12,7 +12,6 @@ public partial class HabitItemViewModel : ObservableObject
     public HabitUnit Unit { get; init; }
     public HabitTrackingType TrackingType { get; init; }
     public int Target { get; init; }
-    public int CurrentStreak { get; init; }
     public string ScheduleText { get; init; } = string.Empty;
     public bool IsBinary => TrackingType == HabitTrackingType.Binary;
     public bool IsQuantitative => !IsBinary;
@@ -20,6 +19,7 @@ public partial class HabitItemViewModel : ObservableObject
     [ObservableProperty] private int currentValue;
     [ObservableProperty] private double progress;
     [ObservableProperty] private bool isCompleted;
+    [ObservableProperty] private int currentStreak;
     [ObservableProperty] private bool isSaving;
 
     public string UnitText => Unit switch
@@ -40,6 +40,15 @@ public partial class HabitItemViewModel : ObservableObject
 
     partial void OnCurrentValueChanged(int value) => OnPropertyChanged(nameof(ProgressText));
     partial void OnIsCompletedChanged(bool value) => OnPropertyChanged(nameof(ProgressText));
+    partial void OnCurrentStreakChanged(int value) => OnPropertyChanged(nameof(StreakText));
+
+    public void Apply(HabitTodayItemDto dto)
+    {
+        CurrentValue = dto.CurrentValue;
+        Progress = dto.Progress;
+        IsCompleted = dto.IsCompleted;
+        CurrentStreak = dto.CurrentStreak;
+    }
 
     public static HabitItemViewModel FromDto(HabitTodayItemDto dto)
     {

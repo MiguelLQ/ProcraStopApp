@@ -17,6 +17,12 @@ namespace ProcraStop.Application.Dashboard
             services.AddScoped<DecisionContextBuilder>();
             // servicios
             services.AddScoped<IDashboardProjectionService, DashboardProjectionService>();
+            services.AddSingleton<DashboardProjectionCache>();
+            services.AddSingleton<IDashboardProjectionCache>(provider =>
+                provider.GetRequiredService<DashboardProjectionCache>());
+            services.AddSingleton<IDashboardCacheInvalidator>(provider =>
+                provider.GetRequiredService<DashboardProjectionCache>());
+            services.AddScoped<IDashboardMaintenanceService, DashboardMaintenanceService>();
             //CQRS
             services.AddTransient<GetDashboardDecisionHandler>();
             // CORE BUILDERS

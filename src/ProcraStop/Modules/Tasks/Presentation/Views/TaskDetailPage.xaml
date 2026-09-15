@@ -4,6 +4,9 @@
              x:Class="ProcraStop.Modules.Tasks.Presentation.Views.TaskDetailPage"
              xmlns:components="clr-namespace:ProcraStop.Shared.UI.Components"
              xmlns:base="clr-namespace:ProcraStop.Shared.UI.Layouts"
+             xmlns:models="clr-namespace:ProcraStop.Modules.Tasks.Presentation.Models"
+             xmlns:viewModels="clr-namespace:ProcraStop.Modules.Tasks.Presentation.ViewModels"
+             x:DataType="viewModels:TaskDetailViewModel"
              Shell.BackgroundColor="{StaticResource cabecera}"
              BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}"
              Shell.TabBarIsVisible="False"
@@ -182,7 +185,7 @@
                                 SelectionMode="None">
 
                     <CollectionView.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate x:DataType="models:SubtaskModel">
                             <Border Padding="8"
                                     Margin="15,0,15,8"
                                     BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
@@ -192,7 +195,7 @@
                                       VerticalOptions="Center">
 
                                     <CheckBox IsChecked="{Binding IsCompleted}"
-                                          Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ToggleSubtaskCommand}"
+                                          Command="{Binding ToggleSubtaskCommand, Source={RelativeSource AncestorType={x:Type viewModels:TaskDetailViewModel}}}"
                                           CommandParameter="{Binding .}" />
 
                                     <Label Grid.Column="1"

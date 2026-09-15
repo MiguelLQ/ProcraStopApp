@@ -76,6 +76,11 @@ namespace ProcraStop.Infrastructure.DBContext
 
                 entity.Property(x => x.EstimatedMinutes);
                 entity.Property(x => x.CompletedAtUtc);
+
+                entity.HasIndex(x => new { x.IsArchived, x.DueDate })
+                    .HasDatabaseName("IX_Tasks_IsArchived_DueDate");
+                entity.HasIndex(x => new { x.IsArchived, x.CreatedAtUtc })
+                    .HasDatabaseName("IX_Tasks_IsArchived_CreatedAtUtc");
             });
             // Configuración de la entidad CourseEntity
             modelBuilder.Entity<CourseEntity>(entity =>
@@ -113,6 +118,8 @@ namespace ProcraStop.Infrastructure.DBContext
                 entity.Property(x => x.CreatedAtUtc).IsRequired();
 
                 entity.HasIndex(x => new { x.CourseId, x.DayOfWeek, x.StartTicks });
+                entity.HasIndex(x => new { x.IsActive, x.DayOfWeek, x.StartTicks })
+                    .HasDatabaseName("IX_ClassSchedules_IsActive_DayOfWeek_StartTicks");
                 entity.HasOne(x => x.Course)
                     .WithMany()
                     .HasForeignKey(x => x.CourseId)
@@ -159,6 +166,9 @@ namespace ProcraStop.Infrastructure.DBContext
                 entity.Property(x => x.IsActive).IsRequired();
                 entity.Property(x => x.Weight).IsRequired();
                 entity.Property(x => x.TrackingType).IsRequired();
+
+                entity.HasIndex(x => new { x.IsActive, x.Name })
+                    .HasDatabaseName("IX_Habits_IsActive_Name");
             });
 
             modelBuilder.Entity<HabitLogEntity>(entity =>
@@ -173,6 +183,8 @@ namespace ProcraStop.Infrastructure.DBContext
 
                 entity.HasIndex(x => new { x.HabitId, x.Date })
                     .IsUnique(); // editbycodex: garantiza un registro diario por hábito en bases nuevas.
+                entity.HasIndex(x => x.Date)
+                    .HasDatabaseName("IX_HabitLogs_Date");
 
                 entity.HasOne<HabitEntity>()
                     .WithMany()
@@ -192,6 +204,9 @@ namespace ProcraStop.Infrastructure.DBContext
                 entity.Property(x => x.Stress).IsRequired();
                 entity.Property(x => x.Performance).IsRequired();
                 entity.Property(x => x.Behavior).IsRequired();
+
+                entity.HasIndex(x => x.Timestamp)
+                    .HasDatabaseName("IX_SystemSnapshots_Timestamp");
             });
 
             modelBuilder.Entity<StudyTechniqueSessionEntity>(entity =>

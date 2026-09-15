@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:ProcraStop.Modules.StudyTechniques.Presentation.Models"
+             xmlns:viewModels="clr-namespace:ProcraStop.Modules.StudyTechniques.Presentation.ViewModels"
              x:Class="ProcraStop.Modules.StudyTechniques.Presentation.Views.StudySessionHistoryPage"
+             x:DataType="viewModels:StudySessionHistoryViewModel"
              Title="Historial"
              BackgroundColor="{AppThemeBinding Light=#F4F6F9, Dark=#0D131C}">
     <RefreshView Command="{Binding LoadCommand}" IsRefreshing="{Binding IsBusy, Mode=OneWay}">
         <CollectionView ItemsSource="{Binding Sessions}" SelectionMode="None" Margin="14,16,14,20"
                         EmptyView="Aún no hay sesiones guardadas. Registra una desde Recomendar técnica.">
             <CollectionView.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate x:DataType="models:StudySessionHistoryItem">
                     <Border BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#171F2B}"
                             Stroke="{AppThemeBinding Light=#E6EAF0, Dark=#263246}"
                             StrokeShape="RoundRectangle 8"

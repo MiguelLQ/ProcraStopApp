@@ -8,15 +8,21 @@ namespace ProcraStop.Application.Dashboard.Queries
     public class GetDashboardDecisionHandler
     {
         private readonly IDashboardProjectionService _service;
+        private readonly IDashboardProjectionCache _cache;
 
-        public GetDashboardDecisionHandler(IDashboardProjectionService service)
+        public GetDashboardDecisionHandler(
+            IDashboardProjectionService service,
+            IDashboardProjectionCache cache)
         {
             _service = service;
+            _cache = cache;
         }
 
-        public Task<DashboardReadModel> Handle(GetDashboardDecisionQuery query)
+        public Task<DashboardReadModel> Handle(
+            GetDashboardDecisionQuery query,
+            CancellationToken cancellationToken = default)
         {
-            return _service.BuildAsync(CancellationToken.None);
+            return _cache.GetOrCreateAsync(_service.BuildAsync, cancellationToken);
         }
     }
 }

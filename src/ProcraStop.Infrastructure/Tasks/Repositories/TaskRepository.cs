@@ -4,22 +4,28 @@ using ProcraStop.Infrastructure.Tasks.Persistence.Entities;
 using ProcraStop.Infrastructure.Tasks.Persistence.Mappings;
 using ProcraStop.Application.Tasks.Abstractions;
 using ProcraStop.Domain.Tasks.Entities;
+using ProcraStop.Application.Dashboard.Interfaces;
 
 namespace ProcraStop.Infrastructure.Tasks.Repositories
 {
     internal class TaskRepository : ITaskRepository
     {
-        private readonly AppDbContext _dbContext;
+        private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
+        private readonly IDashboardCacheInvalidator _dashboardCache;
 
-        public TaskRepository(AppDbContext dbContext)
+        public TaskRepository(
+            IDbContextFactory<AppDbContext> dbContextFactory,
+            IDashboardCacheInvalidator dashboardCache)
         {
-            _dbContext = dbContext;
+            _dbContextFactory = dbContextFactory;
+            _dashboardCache = dashboardCache;
         }
         public async Task<StudyTask?> GetByIdAsync(
     Guid id,
     CancellationToken cancellationToken = default)
         {
-            var entity = await _dbContext.Tasks
+            await using var dbContext = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
+            var entity = await dbContext.Tasks
                 .Include(x => x.Subtasks)
                 .FirstOrDefaultAsync(
                     x => x.Id == id,
@@ -32,18 +38,21 @@ namespace ProcraStop.Infrastructure.Tasks.Repositories
         }
         public async Task AddAsync(StudyTask task, CancellationToken cancellationToken = default)
         {
+            await using var dbContext = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
             var entity = task.ToEntity();
 
-            await _dbContext.Tasks.AddAsync(entity, cancellationToken);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await dbContext.Tasks.AddAsync(entity, cancellationToken);
+            await dbContext.SaveChangesAsync(cancellationToken);
+            _dashboardCache.Invalidate();
         }
         public async Task UpdateAsync(StudyTask task, CancellationToken cancellationToken = default)
         {
             try
             {
+                await using var dbContext = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
                 Console.WriteLine("========== REPOSITORY UPDATE ==========");
 
-                var existing = await _dbContext.Tasks
+                var existing = await dbContext.Tasks
                     .Include(x => x.Subtasks)
                     .FirstOrDefaultAsync(x => x.Id == task.Id, cancellationToken);
 
@@ -83,7 +92,7 @@ namespace ProcraStop.Infrastructure.Tasks.Repositories
                 foreach (var rem in toRemove)
                 {
                     Console.WriteLine($"REMOVE -> {rem.Id} | {rem.Title}");
-                    _dbContext.Subtasks.Remove(rem);
+                    dbContext.Subtasks.Remove(rem);
                 }
 
                 // 2) Actualizar las existentes y añadir las nuevas (usando Add para nuevas)
@@ -107,7 +116,7 @@ namespace ProcraStop.Infrastructure.Tasks.Repositories
                         };
 
                         // Añadir directamente al DbSet para que EF marque como Added
-                        await _dbContext.Subtasks.AddAsync(ent, cancellationToken);
+                        await dbContext.Subtasks.AddAsync(ent, cancellationToken);
                     }
                     else
                     {
@@ -124,12 +133,13 @@ namespace ProcraStop.Infrastructure.Tasks.Repositories
 
                 Console.WriteLine("SAVING CHANGES...");
 
-                foreach (var entry in _dbContext.ChangeTracker.Entries<SubtaskEntity>())
+                foreach (var entry in dbContext.ChangeTracker.Entries<SubtaskEntity>())
                 {
                     Console.WriteLine($"TRACKING -> {entry.Entity.Id} | State: {entry.State}");
                 }
 
-                await _dbContext.SaveChangesAsync(cancellationToken);
+                await dbContext.SaveChangesAsync(cancellationToken);
+                _dashboardCache.Invalidate();
 
                 Console.WriteLine("SAVE OK");
             }

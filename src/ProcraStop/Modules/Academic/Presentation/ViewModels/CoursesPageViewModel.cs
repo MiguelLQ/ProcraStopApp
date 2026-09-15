@@ -102,7 +102,13 @@ namespace ProcraStop.Modules.Academic.Presentation.ViewModels
                 };
 
                 await _coursesFacade.UpdateCourseAsync(request);
-                await LoadAsync(); //recargar lista
+                UpsertCourse(new CourseDto
+                {
+                    Id = request.Id,
+                    Name = request.Name,
+                    Description = request.Description,
+                    Color = request.Color
+                });
             }
             else
             {
@@ -114,10 +120,16 @@ namespace ProcraStop.Modules.Academic.Presentation.ViewModels
                     Color = SelectedColor
                 };
 
-                await _coursesFacade.CreateCourseAsync(request);
+                var id = await _coursesFacade.CreateCourseAsync(request);
+                UpsertCourse(new CourseDto
+                {
+                    Id = id,
+                    Name = request.Name,
+                    Description = request.Description,
+                    Color = request.Color
+                });
             }
 
-            await LoadAsync();
             ResetForm();
         }
 
@@ -148,8 +160,7 @@ namespace ProcraStop.Modules.Academic.Presentation.ViewModels
                 return;
 
             await _coursesFacade.DeleteCourseAsync(course.Id);
-
-            await LoadAsync();
+            Courses.Remove(course);
         }
 
         // =========================
@@ -173,6 +184,25 @@ namespace ProcraStop.Modules.Academic.Presentation.ViewModels
             SelectedColor = null;
             SelectedCourse = null;
             IsEditing = false;
+        }
+
+        private void UpsertCourse(CourseDto course)
+        {
+            var existing = Courses.FirstOrDefault(x => x.Id == course.Id);
+            if (existing is not null)
+                Courses.Remove(existing);
+
+            var insertAt = 0;
+            while (insertAt < Courses.Count &&
+                   string.Compare(
+                       Courses[insertAt].Name,
+                       course.Name,
+                       StringComparison.CurrentCultureIgnoreCase) <= 0)
+            {
+                insertAt++;
+            }
+
+            Courses.Insert(insertAt, course);
         }
         [RelayCommand]
         private void SelectColor(ColorOption color)

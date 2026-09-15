@@ -1,6 +1,7 @@
 ﻿
 
 using ProcraStop.Application.Dashboard.Models.Historial;
+using ProcraStop.Core.Decisions.Signals;
 
 namespace ProcraStop.Application.Dashboard.Models
 {
@@ -14,5 +15,9 @@ namespace ProcraStop.Application.Dashboard.Models
         public List<string>? TaskInsights { get; set; }
         public List<string>? HabitInsights { get; set; }
         public List<string>? StressInsights { get; set; }
+
+        internal TaskSignals? TaskSignals { get; set; }
+        internal HabitSignals? HabitSignals { get; set; }
+        internal SystemSnapshot? CurrentSnapshot { get; set; }
     }
 }

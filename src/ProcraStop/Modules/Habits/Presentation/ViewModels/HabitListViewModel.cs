@@ -137,7 +137,17 @@ public partial class HabitListViewModel : ObservableObject
                 Value = value
             });
 
-            await Load(); // editbycodex: vuelve a calcular progreso, orden y racha desde la fuente real.
+            var refreshed = await _todayHandler.HandleOne(
+                habit.Id,
+                _selectedDate,
+                CancellationToken.None);
+            if (refreshed is not null)
+            {
+                habit.Apply(refreshed);
+                RepositionHabit(habit);
+                UpdateSummary();
+            }
+
             await _snackbar.ShowAsync(
                 value >= habit.Target || (habit.IsBinary && value > 0)
                     ? "Hábito completado. Un paso más de constancia."
@@ -152,6 +162,22 @@ public partial class HabitListViewModel : ObservableObject
         {
             habit.IsSaving = false;
         }
+    }
+
+    private void RepositionHabit(HabitItemViewModel habit)
+    {
+        var currentIndex = Habits.IndexOf(habit);
+        if (currentIndex < 0)
+            return;
+
+        var ordered = Habits
+            .OrderBy(x => x.IsCompleted)
+            .ThenByDescending(x => x.CurrentStreak)
+            .ThenBy(x => x.Name)
+            .ToList();
+        var targetIndex = ordered.IndexOf(habit);
+        if (targetIndex >= 0 && targetIndex != currentIndex)
+            Habits.Move(currentIndex, targetIndex);
     }
 
     private void UpdateSummary()

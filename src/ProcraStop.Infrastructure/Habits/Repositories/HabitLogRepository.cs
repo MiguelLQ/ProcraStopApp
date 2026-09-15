@@ -5,30 +5,38 @@ using ProcraStop.Application.Habits.Abstractions;
 using ProcraStop.Domain.Habits.Entities;
 using ProcraStop.Infrastructure.DBContext;
 using ProcraStop.Infrastructure.Habits.Persistence.Mappings;
+using ProcraStop.Application.Dashboard.Interfaces;
 
 namespace ProcraStop.Modules.Habits.Infraestructure.Repositories
 {
     public class HabitLogRepository : IHabitLogRepository
     {
-        private readonly AppDbContext _context;
+        private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
+        private readonly IDashboardCacheInvalidator _dashboardCache;
 
-        public HabitLogRepository(AppDbContext context)
+        public HabitLogRepository(
+            IDbContextFactory<AppDbContext> dbContextFactory,
+            IDashboardCacheInvalidator dashboardCache)
         {
-            _context = context;
+            _dbContextFactory = dbContextFactory;
+            _dashboardCache = dashboardCache;
         }
 
         public async Task AddAsync(HabitLog log)
         {
+            await using var context = await _dbContextFactory.CreateDbContextAsync();
             var entity = HabitLogMapper.ToEntity(log);
 
-            _context.HabitLogs.Add(entity);
+            context.HabitLogs.Add(entity);
 
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
+            _dashboardCache.Invalidate();
         }
 
         public async Task<List<HabitLog>> GetAllAsync()
         {
-            var entities = await _context.HabitLogs
+            await using var context = await _dbContextFactory.CreateDbContextAsync();
+            var entities = await context.HabitLogs
                 .AsNoTracking()
                 .ToListAsync();
 
@@ -38,7 +46,8 @@ namespace ProcraStop.Modules.Habits.Infraestructure.Repositories
         }
         public async Task<HabitLog?> GetByHabitAndDateAsync(Guid habitId, DateTime date)
         {
-            var entity = await _context.HabitLogs
+            await using var context = await _dbContextFactory.CreateDbContextAsync();
+            var entity = await context.HabitLogs
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x =>
                     x.HabitId == habitId &&
@@ -48,7 +57,8 @@ namespace ProcraStop.Modules.Habits.Infraestructure.Repositories
         }
         public async Task UpsertAsync(HabitLog log)
         {
-            var existing = await _context.HabitLogs
+            await using var context = await _dbContextFactory.CreateDbContextAsync();
+            var existing = await context.HabitLogs
                 .FirstOrDefaultAsync(x =>
                     x.HabitId == log.HabitId &&
                     x.Date == log.Date);
@@ -56,7 +66,7 @@ namespace ProcraStop.Modules.Habits.Infraestructure.Repositories
             if (existing == null)
             {
                 var entity = HabitLogMapper.ToEntity(log);
-                _context.HabitLogs.Add(entity);
+                context.HabitLogs.Add(entity);
             }
             else
             {
@@ -64,7 +74,8 @@ namespace ProcraStop.Modules.Habits.Infraestructure.Repositories
                 existing.Notes = log.Notes;
             }
 
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
+            _dashboardCache.Invalidate();
         }
 
         public async Task<IReadOnlyList<HabitLog>> GetRangeAsync(
@@ -72,14 +83,35 @@ namespace ProcraStop.Modules.Habits.Infraestructure.Repositories
             DateTime endDate,
             CancellationToken ct)
         {
+            await using var context = await _dbContextFactory.CreateDbContextAsync(ct);
             var start = startDate.Date;
             var endExclusive = endDate.Date.AddDays(1);
-            var entities = await _context.HabitLogs
+            var entities = await context.HabitLogs
                 .AsNoTracking()
                 .Where(x => x.Date >= start && x.Date < endExclusive)
                 .ToListAsync(ct);
 
             return entities.Select(HabitLogMapper.ToDomain).ToList(); // editbycodex: solo historial necesario para rachas.
+        }
+
+        public async Task<IReadOnlyList<HabitLog>> GetRangeForHabitAsync(
+            Guid habitId,
+            DateTime startDate,
+            DateTime endDate,
+            CancellationToken ct)
+        {
+            await using var context = await _dbContextFactory.CreateDbContextAsync(ct);
+            var start = startDate.Date;
+            var endExclusive = endDate.Date.AddDays(1);
+            var entities = await context.HabitLogs
+                .AsNoTracking()
+                .Where(x =>
+                    x.HabitId == habitId &&
+                    x.Date >= start &&
+                    x.Date < endExclusive)
+                .ToListAsync(ct);
+
+            return entities.Select(HabitLogMapper.ToDomain).ToList();
         }
     }
 }

@@ -35,28 +35,55 @@ public sealed class GetTodayHabitsHandler
             {
                 logsByHabit.TryGetValue(habit.Id, out var habitLogs);
                 habitLogs ??= Array.Empty<HabitLog>();
-                var currentValue = habitLogs
-                    .Where(log => log.Date.Date == date)
-                    .Sum(log => log.Value);
-
-                return new HabitTodayItemDto
-                {
-                    Id = habit.Id,
-                    Name = habit.Name,
-                    Unit = habit.Unit,
-                    TrackingType = habit.TrackingType,
-                    TargetValue = habit.Target.Value,
-                    CurrentValue = currentValue,
-                    Progress = habit.CalculateProgress(habitLogs, date),
-                    IsCompleted = habit.IsCompleted(habitLogs, date),
-                    CurrentStreak = CalculateStreak(habit, habitLogs, date),
-                    ScheduleText = BuildScheduleText(habit)
-                };
+                return BuildItem(habit, habitLogs, date);
             })
             .OrderBy(x => x.IsCompleted)
             .ThenByDescending(x => x.CurrentStreak)
             .ThenBy(x => x.Name)
             .ToList();
+    }
+
+    public async Task<HabitTodayItemDto?> HandleOne(
+        Guid habitId,
+        DateTime date,
+        CancellationToken ct = default)
+    {
+        date = date.Date;
+        var habit = await _habitRepository.GetByIdAsync(habitId, ct);
+        if (habit is null || !habit.IsActive || !habit.IsScheduledFor(date))
+            return null;
+
+        var logs = await _logRepository.GetRangeForHabitAsync(
+            habitId,
+            date.AddDays(-90),
+            date,
+            ct);
+
+        return BuildItem(habit, logs, date);
+    }
+
+    private static HabitTodayItemDto BuildItem(
+        Habit habit,
+        IReadOnlyList<HabitLog> logs,
+        DateTime date)
+    {
+        var currentValue = logs
+            .Where(log => log.Date.Date == date.Date)
+            .Sum(log => log.Value);
+
+        return new HabitTodayItemDto
+        {
+            Id = habit.Id,
+            Name = habit.Name,
+            Unit = habit.Unit,
+            TrackingType = habit.TrackingType,
+            TargetValue = habit.Target.Value,
+            CurrentValue = currentValue,
+            Progress = habit.CalculateProgress(logs, date),
+            IsCompleted = habit.IsCompleted(logs, date),
+            CurrentStreak = CalculateStreak(habit, logs, date),
+            ScheduleText = BuildScheduleText(habit)
+        };
     }
 
     private static int CalculateStreak(Habit habit, IReadOnlyList<HabitLog> logs, DateTime date)

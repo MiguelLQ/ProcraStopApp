@@ -17,5 +17,11 @@ namespace ProcraStop.Application.Habits.Abstractions
             DateTime endDate,
             CancellationToken ct);
 
+        Task<IReadOnlyList<HabitLog>> GetRangeForHabitAsync(
+            Guid habitId,
+            DateTime startDate,
+            DateTime endDate,
+            CancellationToken ct);
+
     }
 }

@@ -3,7 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:models="clr-namespace:ProcraStop.Modules.Tasks.Presentation.Models"
              xmlns:controls="clr-namespace:ProcraStop.Modules.Tasks.Presentation.Controls"
+             xmlns:viewModels="clr-namespace:ProcraStop.Modules.Tasks.Presentation.ViewModels"
              x:Class="ProcraStop.Modules.Tasks.Presentation.Views.TasksPage"
+             x:DataType="viewModels:TasksPageViewModel"
              xmlns:base="clr-namespace:ProcraStop.Shared.UI.Layouts"
              Title="Lista de tareas"
                  Shell.BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}"
@@ -86,7 +88,7 @@
 
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer
-Command="{Binding Source={RelativeSource AncestorType={x:Type base:BasePage}}, Path=BindingContext.ChangeFilterCommand}"
+Command="{Binding ChangeFilterCommand, Source={RelativeSource AncestorType={x:Type viewModels:TasksPageViewModel}}}"
 CommandParameter="{Binding Filter}" />
                             </Border.GestureRecognizers>
 
@@ -152,7 +154,7 @@ CommandParameter="{Binding Filter}" />
                 </CollectionView.ItemsLayout>
 
                 <CollectionView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="models:TaskItemModel">
 
                         <Border Padding="12"
                         Margin="10,0,10,10"
@@ -192,7 +194,7 @@ CommandParameter="{Binding Filter}" />
                                           HeightRequest="34">
                                         <Grid.GestureRecognizers>
                                             <TapGestureRecognizer
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.CompleteFromListCommand}"
+                                                Command="{Binding CompleteFromListCommand, Source={RelativeSource AncestorType={x:Type viewModels:TasksPageViewModel}}}"
                                                 CommandParameter="{Binding Id}" />
                                         </Grid.GestureRecognizers>
 
@@ -214,7 +216,7 @@ CommandParameter="{Binding Filter}" />
                                     <Grid.GestureRecognizers>
                                         <!-- editbycodex: abrir detalle queda separado del area del check. -->
                                         <TapGestureRecognizer
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.OpenDetailCommand}"
+                                            Command="{Binding OpenDetailCommand, Source={RelativeSource AncestorType={x:Type viewModels:TasksPageViewModel}}}"
                                             CommandParameter="{Binding Id}" />
                                     </Grid.GestureRecognizers>
 

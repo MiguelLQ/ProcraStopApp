@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:ProcraStop.Modules.StudyTechniques.Presentation.Models"
+             xmlns:viewModels="clr-namespace:ProcraStop.Modules.StudyTechniques.Presentation.ViewModels"
              x:Class="ProcraStop.Modules.StudyTechniques.Presentation.Views.TechniqueLibraryPage"
+             x:DataType="viewModels:TechniqueLibraryViewModel"
              Title="Biblioteca"
              BackgroundColor="{AppThemeBinding Light=#F4F6F9, Dark=#0D131C}">
     <ScrollView>
@@ -15,7 +18,7 @@
             </Border>
             <CollectionView ItemsSource="{Binding Techniques}" SelectionMode="None">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="models:StudyTechniqueOption">
                         <Border BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#171F2B}"
                                 Stroke="{AppThemeBinding Light=#E6EAF0, Dark=#263246}"
                                 StrokeShape="RoundRectangle 8"

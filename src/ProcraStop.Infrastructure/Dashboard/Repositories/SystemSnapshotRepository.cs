@@ -8,18 +8,20 @@ namespace ProcraStop.Infrastructure.Dashboard.Repositories
 {
     public class SystemSnapshotRepository : ISystemSnapshotRepository
     {
-        private readonly AppDbContext _context;
+        private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
 
-        public SystemSnapshotRepository(AppDbContext context)
+        public SystemSnapshotRepository(IDbContextFactory<AppDbContext> dbContextFactory)
         {
-            _context = context;
+            _dbContextFactory = dbContextFactory;
         }
 
         public async Task<List<SystemSnapshot>> GetLastDays(int days)
         {
+            await using var context = await _dbContextFactory.CreateDbContextAsync();
             var from = DateTime.UtcNow.AddDays(-days);
 
-            var entities = await _context.SystemSnapshots
+            var entities = await context.SystemSnapshots
+                .AsNoTracking()
                 .Where(x => x.Timestamp >= from)
                 .OrderBy(x => x.Timestamp)
                 .ToListAsync();
@@ -31,11 +33,12 @@ namespace ProcraStop.Infrastructure.Dashboard.Repositories
 
         public async Task SaveAsync(SystemSnapshot snapshot)
         {
+            await using var context = await _dbContextFactory.CreateDbContextAsync();
             var entity = SystemSnapshotMapper.ToEntity(snapshot);
 
-            _context.SystemSnapshots.Add(entity);
+            context.SystemSnapshots.Add(entity);
 
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
     }
 }

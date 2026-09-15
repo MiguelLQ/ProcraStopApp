@@ -7,12 +7,18 @@ using ProcraStop.Modules.StudyTechniques.Presentation.Views;
 using ProcraStop.Modules.Tasks.Presentation.Views;
 using Font = Microsoft.Maui.Font;
 
+using ProcraStop.Diagnostics;
+
 namespace ProcraStop
 {
     public partial class AppShell : Shell
     {
-        public AppShell()
+        private readonly PerformanceTracer _performance;
+        private long _navigationStartedAt;
+
+        public AppShell(PerformanceTracer performance)
         {
+            _performance = performance;
             InitializeComponent();
             // registrar ruta 
             Routing.RegisterRoute("task-detail", typeof(TaskDetailPage));
@@ -35,9 +41,13 @@ namespace ProcraStop
             Routing.RegisterRoute("habit-track", typeof(TrackHabitPage));
             var currentTheme = Microsoft.Maui.Controls.Application.Current!.RequestedTheme;
             ThemeSegmentedControl.SelectedIndex = currentTheme == AppTheme.Light ? 0 : 1;
-#if ANDROID
+            Navigating += OnShellNavigating;
             Navigated += OnShellNavigated;
-#endif
+        }
+
+        private void OnShellNavigating(object? sender, ShellNavigatingEventArgs e)
+        {
+            _navigationStartedAt = _performance.GetTimestamp();
         }
         public static async Task DisplaySnackbarAsync(string message)
         {
@@ -79,12 +89,43 @@ namespace ProcraStop
 #endif
         }
 
-#if ANDROID
         private void OnShellNavigated(object? sender, ShellNavigatedEventArgs e)
         {
+#if ANDROID
             if (Microsoft.Maui.ApplicationModel.Platform.CurrentActivity is { } activity)
                 ProcraStop.Platforms.Android.Services.AndroidStatusBarService.ApplyThemeStatusBar(activity);
-        }
 #endif
+
+            if (_navigationStartedAt == 0)
+                return;
+
+            var route = e.Current?.Location?.OriginalString ?? "unknown";
+            var startedAt = _navigationStartedAt;
+            _performance.LogElapsed("Navigation", route, startedAt);
+            LogFirstRender(CurrentPage, route, startedAt);
+        }
+
+        private void LogFirstRender(Page? page, string route, long startedAt)
+        {
+            if (page is null)
+                return;
+
+            void LogOnNextUiTurn() => Dispatcher.Dispatch(() =>
+                _performance.LogElapsed("Render", route, startedAt));
+
+            if (page.IsLoaded)
+            {
+                LogOnNextUiTurn();
+                return;
+            }
+
+            EventHandler? loaded = null;
+            loaded = (_, _) =>
+            {
+                page.Loaded -= loaded;
+                LogOnNextUiTurn();
+            };
+            page.Loaded += loaded;
+        }
     }
 }

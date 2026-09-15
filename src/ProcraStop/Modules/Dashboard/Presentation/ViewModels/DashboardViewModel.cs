@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using ProcraStop.Application.Dashboard.Models;
 using ProcraStop.Application.Dashboard.Models.Historial;
 using ProcraStop.Application.Dashboard.Queries;
+using ProcraStop.Application.Dashboard.Interfaces;
 using ProcraStop.Modules.Dashboard.Presentation.Models;
 using ProcraStop.Modules.Stress.Presentation.Messages;
 using ProcraStop.Core.Decisions.DTOs;
@@ -14,10 +15,14 @@ namespace ProcraStop.Modules.Dashboard.Presentation.ViewModels
     public partial class DashboardViewModel : ObservableObject
     {
         private readonly GetDashboardDecisionHandler _handler;
+        private readonly IDashboardMaintenanceService _maintenance;
 
-        public DashboardViewModel(GetDashboardDecisionHandler handler)
+        public DashboardViewModel(
+            GetDashboardDecisionHandler handler,
+            IDashboardMaintenanceService maintenance)
         {
             _handler = handler;
+            _maintenance = maintenance;
             WeakReferenceMessenger.Default.Register<StressCheckInSubmittedMessage>(
                 this,
                 async (_, _) => await LoadAsync());
@@ -125,6 +130,20 @@ namespace ProcraStop.Modules.Dashboard.Presentation.ViewModels
             // TREND ✅ FIX REAL
             CurrentTrend = data.Trend;
             TrendSummary = ResolveTrendSummary(data.Trend);
+
+            _ = RecordDashboardStateSafelyAsync(data);
+        }
+
+        private async Task RecordDashboardStateSafelyAsync(DashboardReadModel data)
+        {
+            try
+            {
+                await _maintenance.RecordLatestStateAsync(data);
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine($"[DashboardMaintenance] {exception}");
+            }
         }
 
         // =========================

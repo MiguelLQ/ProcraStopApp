@@ -19,6 +19,10 @@ namespace ProcraStop.Infrastructure.Stress.Persistence.Configs
                 .HasConversion<int>()   //  EF guarda como int pero usas enum
                 .IsRequired();
             builder.Property(x => x.Timestamp).IsRequired();
+            builder.HasIndex(x => x.Timestamp)
+                .HasDatabaseName("IX_StressRecords_Timestamp");
+            builder.HasIndex(x => new { x.Source, x.Timestamp })
+                .HasDatabaseName("IX_StressRecords_Source_Timestamp");
         }
     }
 }

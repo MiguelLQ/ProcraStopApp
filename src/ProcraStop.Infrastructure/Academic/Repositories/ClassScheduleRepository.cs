@@ -8,16 +8,17 @@ namespace ProcraStop.Infrastructure.Academic.Repositories;
 
 public sealed class ClassScheduleRepository : IClassScheduleRepository
 {
-    private readonly AppDbContext _dbContext;
+    private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
 
-    public ClassScheduleRepository(AppDbContext dbContext)
+    public ClassScheduleRepository(IDbContextFactory<AppDbContext> dbContextFactory)
     {
-        _dbContext = dbContext;
+        _dbContextFactory = dbContextFactory;
     }
 
     public async Task<IReadOnlyList<ClassSchedule>> GetAllActiveAsync(CancellationToken ct)
     {
-        var entities = await _dbContext.ClassSchedules
+        await using var dbContext = await _dbContextFactory.CreateDbContextAsync(ct);
+        var entities = await dbContext.ClassSchedules
             .AsNoTracking()
             .Where(x => x.IsActive)
             .ToListAsync(ct);
@@ -27,8 +28,9 @@ public sealed class ClassScheduleRepository : IClassScheduleRepository
 
     public async Task<IReadOnlyList<ClassSchedule>> GetByDayAsync(DayOfWeek dayOfWeek, CancellationToken ct)
     {
+        await using var dbContext = await _dbContextFactory.CreateDbContextAsync(ct);
         var day = (int)dayOfWeek;
-        var entities = await _dbContext.ClassSchedules
+        var entities = await dbContext.ClassSchedules
             .AsNoTracking()
             .Where(x => x.IsActive && x.DayOfWeek == day)
             .OrderBy(x => x.StartTicks)
@@ -39,7 +41,8 @@ public sealed class ClassScheduleRepository : IClassScheduleRepository
 
     public async Task<ClassSchedule?> GetByIdAsync(Guid id, CancellationToken ct)
     {
-        var entity = await _dbContext.ClassSchedules
+        await using var dbContext = await _dbContextFactory.CreateDbContextAsync(ct);
+        var entity = await dbContext.ClassSchedules
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id, ct);
 
@@ -48,23 +51,26 @@ public sealed class ClassScheduleRepository : IClassScheduleRepository
 
     public async Task AddAsync(ClassSchedule schedule, CancellationToken ct)
     {
-        await _dbContext.ClassSchedules.AddAsync(schedule.ToEntity(), ct);
-        await _dbContext.SaveChangesAsync(ct);
+        await using var dbContext = await _dbContextFactory.CreateDbContextAsync(ct);
+        await dbContext.ClassSchedules.AddAsync(schedule.ToEntity(), ct);
+        await dbContext.SaveChangesAsync(ct);
     }
 
     public async Task UpdateAsync(ClassSchedule schedule, CancellationToken ct)
     {
-        _dbContext.ClassSchedules.Update(schedule.ToEntity());
-        await _dbContext.SaveChangesAsync(ct);
+        await using var dbContext = await _dbContextFactory.CreateDbContextAsync(ct);
+        dbContext.ClassSchedules.Update(schedule.ToEntity());
+        await dbContext.SaveChangesAsync(ct);
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken ct)
     {
-        var entity = await _dbContext.ClassSchedules.FirstOrDefaultAsync(x => x.Id == id, ct);
+        await using var dbContext = await _dbContextFactory.CreateDbContextAsync(ct);
+        var entity = await dbContext.ClassSchedules.FirstOrDefaultAsync(x => x.Id == id, ct);
         if (entity is null)
             return;
 
-        _dbContext.ClassSchedules.Remove(entity);
-        await _dbContext.SaveChangesAsync(ct);
+        dbContext.ClassSchedules.Remove(entity);
+        await dbContext.SaveChangesAsync(ct);
     }
 }

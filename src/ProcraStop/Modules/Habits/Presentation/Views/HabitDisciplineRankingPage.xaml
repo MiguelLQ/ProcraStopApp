@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:ProcraStop.Modules.Habits.Presentation.Models"
+             xmlns:viewModels="clr-namespace:ProcraStop.Modules.Habits.Presentation.ViewModels"
              x:Class="ProcraStop.Modules.Habits.Presentation.Views.HabitDisciplineRankingPage"
+             x:DataType="viewModels:HabitDisciplineRankingViewModel"
              Title="Ranking de disciplina"
                 Shell.BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}"
                 Shell.TitleColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}"
@@ -150,7 +153,7 @@
                                 SelectionMode="None"
                                 EmptyView="Aún no hay hábitos activos para rankear.">
                                 <CollectionView.ItemTemplate>
-                                    <DataTemplate>
+                                    <DataTemplate x:DataType="models:HabitDisciplineRankItem">
                                         <Border BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}"
          
                                             Padding="0,10,0,0"

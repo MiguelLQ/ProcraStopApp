@@ -3,7 +3,9 @@
                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                xmlns:base="clr-namespace:ProcraStop.Shared.UI.Layouts"
                xmlns:models="clr-namespace:ProcraStop.Modules.Habits.Presentation.Models"
+               xmlns:viewModels="clr-namespace:ProcraStop.Modules.Habits.Presentation.ViewModels"
                x:Class="ProcraStop.Modules.Habits.Presentation.Views.HabitListPage"
+               x:DataType="viewModels:HabitListViewModel"
                Title="Hábitos"
                Shell.BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource shellDark}}"
                Shell.TitleColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}"
@@ -67,7 +69,7 @@
                                         BackgroundColor="Transparent">
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type base:BasePage}}, Path=BindingContext.SelectDateCommand}"
+                                            Command="{Binding SelectDateCommand, Source={RelativeSource AncestorType={x:Type viewModels:HabitListViewModel}}}"
                                             CommandParameter="{Binding .}" />
                                     </Border.GestureRecognizers>
                                     <Border.Triggers>
@@ -139,7 +141,7 @@
                                     <VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="2">
                                         <VerticalStackLayout.GestureRecognizers>
                                             <TapGestureRecognizer
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type base:BasePage}}, Path=BindingContext.OpenHabitCommand}"
+                                                Command="{Binding OpenHabitCommand, Source={RelativeSource AncestorType={x:Type viewModels:HabitListViewModel}}}"
                                                 CommandParameter="{Binding Id}" />
                                         </VerticalStackLayout.GestureRecognizers>
                                         <Label Text="{Binding Name}"
@@ -155,7 +157,7 @@
                                     <!-- editbycodex: check grande y accionable para hábito binario. -->
                                     <Border Grid.RowSpan="2" Grid.Column="1"
                                             IsVisible="{Binding IsBinary}"
-                                            IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type base:BasePage}}, Path=BindingContext.CanEditSelectedDate}"
+                                            IsEnabled="{Binding CanEditSelectedDate, Source={RelativeSource AncestorType={x:Type viewModels:HabitListViewModel}}}"
                                             WidthRequest="34" HeightRequest="34"
                                             Padding="0"
                                             Stroke="#4075FF"
@@ -165,7 +167,7 @@
                                             VerticalOptions="Center">
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type base:BasePage}}, Path=BindingContext.ToggleHabitCommand}"
+                                                Command="{Binding ToggleHabitCommand, Source={RelativeSource AncestorType={x:Type viewModels:HabitListViewModel}}}"
                                                 CommandParameter="{Binding .}" />
                                         </Border.GestureRecognizers>
                                         <Border.Triggers>
@@ -184,10 +186,10 @@
                                     <!-- editbycodex: control cuantitativo estable, evita abrir otra página. -->
                                     <HorizontalStackLayout Grid.RowSpan="2" Grid.Column="1"
                                                            IsVisible="{Binding IsQuantitative}"
-                                                           IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type base:BasePage}}, Path=BindingContext.CanEditSelectedDate}"
+                                                       IsEnabled="{Binding CanEditSelectedDate, Source={RelativeSource AncestorType={x:Type viewModels:HabitListViewModel}}}"
                                                            Spacing="6" VerticalOptions="Center">
                                         <Button Text="−"
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type base:BasePage}}, Path=BindingContext.DecreaseHabitCommand}"
+                                                Command="{Binding DecreaseHabitCommand, Source={RelativeSource AncestorType={x:Type viewModels:HabitListViewModel}}}"
                                                 CommandParameter="{Binding .}"
                                                 WidthRequest="26" HeightRequest="26" Padding="0"
                                                 CornerRadius="15"
@@ -202,7 +204,7 @@
                                                FontSize="15"
                                                TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
                                         <Button Text="+"
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type base:BasePage}}, Path=BindingContext.IncreaseHabitCommand}"
+                                                Command="{Binding IncreaseHabitCommand, Source={RelativeSource AncestorType={x:Type viewModels:HabitListViewModel}}}"
                                                 CommandParameter="{Binding .}"
                                                 WidthRequest="26" HeightRequest="26" Padding="0"
                                                 CornerRadius="15"
