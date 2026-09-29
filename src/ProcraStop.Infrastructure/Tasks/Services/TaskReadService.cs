@@ -39,6 +39,12 @@ namespace ProcraStop.Infraestructure.Tasks.Services
                     Status = t.Status,
 
                     EstimatedMinutes = t.EstimatedMinutes,
+                    ActivityType = (AcademicActivityType)t.ActivityType,
+                    PlannedStartDate = t.PlannedStartDate,
+                    StartedAtUtc = t.StartedAtUtc,
+                    FirstStep = t.FirstStep,
+                    PlannedReviewDate = t.PlannedReviewDate,
+                    ReviewedAtUtc = t.ReviewedAtUtc,
 
                     CourseId = t.CourseId,
 
@@ -55,7 +61,8 @@ namespace ProcraStop.Infraestructure.Tasks.Services
                         {
                             Id = s.Id,
                             Title = s.Title,
-                            IsCompleted = s.IsCompleted
+                            IsCompleted = s.IsCompleted,
+                            PlannedDate = s.PlannedDate
                         })
                         .ToList()
                 })
@@ -92,6 +99,9 @@ namespace ProcraStop.Infraestructure.Tasks.Services
 
                     EstimatedMinutes = t.EstimatedMinutes,
                     HasSubtasks = t.Subtasks.Any(), // editbycodex: no materializa subtareas.
+                    ActivityType = (AcademicActivityType)t.ActivityType,
+                    PlannedStartDate = t.PlannedStartDate,
+                    StartedAtUtc = t.StartedAtUtc,
 
                     IsOverdue =
                         t.DueDate.HasValue &&
@@ -176,6 +186,9 @@ namespace ProcraStop.Infraestructure.Tasks.Services
 
                     EstimatedMinutes = t.EstimatedMinutes,
                     HasSubtasks = t.Subtasks.Any(), // editbycodex: EXISTS en SQL, sin cargar la coleccion.
+                    ActivityType = (AcademicActivityType)t.ActivityType,
+                    PlannedStartDate = t.PlannedStartDate,
+                    StartedAtUtc = t.StartedAtUtc,
 
                     IsOverdue =
                         t.DueDate.HasValue &&

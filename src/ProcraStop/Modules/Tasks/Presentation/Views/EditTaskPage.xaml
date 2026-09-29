@@ -49,12 +49,36 @@
                                 AutoSize="TextChanges"
                                 Text="{Binding Description}" />
 
+                        <Label Text="Tipo de actividad" FontAttributes="Bold" />
+                        <Picker ItemsSource="{Binding ActivityTypes}"
+                                ItemDisplayBinding="{Binding Name}"
+                                SelectedItem="{Binding SelectedActivityOption}" />
+                        <Entry Placeholder="Primer paso concreto" Text="{Binding FirstStep}" />
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Planificar inicio" VerticalOptions="Center" />
+                            <Switch Grid.Column="1" IsToggled="{Binding HasPlannedStart}" />
+                        </Grid>
+                        <DatePicker Date="{Binding SelectedPlannedStartDate}"
+                                    IsVisible="{Binding HasPlannedStart}" />
+                        <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding IsDeliverable}">
+                            <Label Text="Planificar revisión" VerticalOptions="Center" />
+                            <Switch Grid.Column="1" IsToggled="{Binding HasPlannedReview}" />
+                        </Grid>
+                        <DatePicker Date="{Binding SelectedPlannedReviewDate}"
+                                    IsVisible="{Binding HasPlannedReview}" />
+
                         <!-- FECHA -->
                         <Grid ColumnDefinitions="*,Auto">
                             <Label Text="Fecha límite" />
                             <Switch Grid.Column="1"
                                     IsToggled="{Binding HasDueDate}" />
                         </Grid>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Poner fecha al nuevo hito" VerticalOptions="Center" />
+                            <Switch Grid.Column="1" IsToggled="{Binding NewSubtaskHasDate}" />
+                        </Grid>
+                        <DatePicker Date="{Binding NewSubtaskDate}"
+                                    IsVisible="{Binding NewSubtaskHasDate}" />
 
                         <VerticalStackLayout IsVisible="{Binding HasDueDate}">
 
@@ -108,7 +132,7 @@
                                             Margin="0,5"
                                             StrokeShape="RoundRectangle 12">
 
-                                        <Grid ColumnDefinitions="Auto,*,Auto">
+                                        <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto">
 
                                             <!-- CHECK -->
                                             <CheckBox IsChecked="{Binding IsCompleted}" />
@@ -129,6 +153,14 @@
                                                     Command="{Binding BindingContext.RemoveSubtaskCommand, Source={x:Reference PageRoot}}"
                                                     CommandParameter="{Binding .}" />
 
+                                            <Grid Grid.Row="1" Grid.ColumnSpan="3" ColumnDefinitions="*,Auto">
+                                                <Label Text="Fecha del hito" VerticalOptions="Center" />
+                                                <Switch Grid.Column="1" IsToggled="{Binding HasPlannedDate}" />
+                                            </Grid>
+                                            <DatePicker Grid.Row="2" Grid.ColumnSpan="3"
+                                                        Date="{Binding SelectedPlannedDate}"
+                                                        IsVisible="{Binding HasPlannedDate}" />
+
                                         </Grid>
 
                                     </Border>
@@ -138,11 +170,12 @@
                         </CollectionView>
 
                         <!-- SAVE -->
-                        <Button Text="Actualizar tarea"
+                        <Button Text="Actualizar actividad"
                                 Command="{Binding SaveCommand}"
                                 HeightRequest="50"
                                 BackgroundColor="{StaticResource primarioO}"
                                 TextColor="White" />
+                        <Label Text="{Binding ValidationMessage}" TextColor="#DC2626" />
 
                     </VerticalStackLayout>
                 </Border>

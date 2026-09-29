@@ -31,6 +31,7 @@ namespace ProcraStop.Infrastructure.DBContext
         // streess
         public DbSet<StressRecordEntity> StressRecords => Set<StressRecordEntity>();
         public DbSet<StudyTechniqueSessionEntity> StudyTechniqueSessions => Set<StudyTechniqueSessionEntity>();
+        public DbSet<AcademicHelpRequestEntity> AcademicHelpRequests => Set<AcademicHelpRequestEntity>();
         // memoria del sistema
         public DbSet<SystemSnapshotEntity> SystemSnapshots => Set<SystemSnapshotEntity>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -76,6 +77,12 @@ namespace ProcraStop.Infrastructure.DBContext
 
                 entity.Property(x => x.EstimatedMinutes);
                 entity.Property(x => x.CompletedAtUtc);
+                entity.Property(x => x.ActivityType).IsRequired();
+                entity.Property(x => x.PlannedStartDate);
+                entity.Property(x => x.StartedAtUtc);
+                entity.Property(x => x.FirstStep).HasMaxLength(300);
+                entity.Property(x => x.PlannedReviewDate);
+                entity.Property(x => x.ReviewedAtUtc);
 
                 entity.HasIndex(x => new { x.IsArchived, x.DueDate })
                     .HasDatabaseName("IX_Tasks_IsArchived_DueDate");
@@ -138,6 +145,7 @@ namespace ProcraStop.Infrastructure.DBContext
 
                 entity.Property(x => x.IsCompleted)
                     .IsRequired();
+                entity.Property(x => x.PlannedDate);
 
                 entity.HasOne(x => x.Task)
                     .WithMany(t => t.Subtasks)
@@ -229,6 +237,19 @@ namespace ProcraStop.Infrastructure.DBContext
                 entity.Property(x => x.StartedAtUtc).IsRequired();
                 entity.Property(x => x.Notes).HasMaxLength(1000);
                 entity.HasIndex(x => x.StartedAtUtc);
+            });
+            modelBuilder.Entity<AcademicHelpRequestEntity>(entity =>
+            {
+                entity.ToTable("AcademicHelpRequests");
+                entity.HasKey(x => x.Id);
+                entity.Property(x => x.Topic).IsRequired().HasMaxLength(200);
+                entity.Property(x => x.Question).IsRequired().HasMaxLength(2000);
+                entity.Property(x => x.ContactName).HasMaxLength(150);
+                entity.Property(x => x.Channel).IsRequired();
+                entity.Property(x => x.Status).IsRequired();
+                entity.Property(x => x.CreatedAtUtc).IsRequired();
+                entity.HasIndex(x => new { x.Status, x.CreatedAtUtc });
+                entity.HasIndex(x => x.TaskId);
             });
 
             modelBuilder.Entity<StudyTaskEntity>()

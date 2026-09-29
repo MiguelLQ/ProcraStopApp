@@ -77,7 +77,7 @@ namespace ProcraStop
             // Configuración de la ruta de la base de datos
             var databasePath = Path.Combine(
                 FileSystem.AppDataDirectory,
-                "procra.db");
+                "procra-v3.db"); // esquema de desarrollo con ayuda academica
             // registro mejorado por modulos
             builder.Services
             .AddPersistence(databasePath)

@@ -3,11 +3,14 @@ using CommunityToolkit.Mvvm.Input;
 using ProcraStop.Application.Tasks.Commands.ArchiveTask;
 using ProcraStop.Application.Tasks.Commands.CompleteTask;
 using ProcraStop.Application.Tasks.Commands.ToggleSubtask;
+using ProcraStop.Application.Tasks.Commands.StartTask;
+using ProcraStop.Application.Tasks.Commands.ReviewTask;
 using ProcraStop.Application.Tasks.Queries.GetTaskById;
 using ProcraStop.Domain.Tasks.Enums;
 using ProcraStop.Modules.Tasks.Presentation.Models;
 using ProcraStop.Shared.Services;
 using ProcraStop.Shared.UI.Components;
+using ProcraStop.Modules.StudyTechniques.Presentation.Views;
 using System.Collections.ObjectModel;
 
 namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
@@ -20,6 +23,16 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
         private readonly CompleteTaskCommandHandler _completeTaskCommandHandler;
         private readonly ArchiveTaskCommandHandler _archiveTaskCommandHandler;
         private readonly ISnackbarService _snackbarService;
+        private readonly StartTaskCommandHandler _startTask;
+        private readonly ReviewTaskCommandHandler _reviewTask;
+
+        [ObservableProperty]
+        private bool reviewContentChecked;
+        [ObservableProperty]
+        private bool reviewFormatChecked;
+        public bool CanConfirmReview => ReviewContentChecked && ReviewFormatChecked;
+        partial void OnReviewContentCheckedChanged(bool value) => OnPropertyChanged(nameof(CanConfirmReview));
+        partial void OnReviewFormatCheckedChanged(bool value) => OnPropertyChanged(nameof(CanConfirmReview));
         public Guid CurrentTaskId => CurrentTask?.Id ?? Guid.Empty;
         public bool CanEdit => CurrentTask?.Status != TaskItemStatus.Completed;
         public TaskDetailViewModel(
@@ -27,13 +40,17 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             GetTaskByIdQueryHandler getTaskByIdQuery,
             CompleteTaskCommandHandler completeTaskCommandHandler,
             ArchiveTaskCommandHandler archiveTaskCommandHandler,
-            ISnackbarService snackbarService)
+            ISnackbarService snackbarService,
+            StartTaskCommandHandler startTask,
+            ReviewTaskCommandHandler reviewTask)
         {
             _toggleSubtaskCommandHandler = toggleSubtaskCommandHandler;
             _getTaskByIdQuery = getTaskByIdQuery;
             _completeTaskCommandHandler = completeTaskCommandHandler;
             _archiveTaskCommandHandler = archiveTaskCommandHandler;
             _snackbarService = snackbarService;
+            _startTask = startTask;
+            _reviewTask = reviewTask;
         }
         [RelayCommand]
         private async Task ToggleSubtask(SubtaskModel subtask)
@@ -65,12 +82,16 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             // esto es lo que te falta
             OnPropertyChanged(nameof(CurrentTask));
 
-            var isNowCompleted = CurrentTask.Progress >= 1;
+            var isNowCompleted = CurrentTask.Status == TaskItemStatus.Completed;
             Console.WriteLine($"[TaskDetailViewModel] isNowCompleted={isNowCompleted}, progress={CurrentTask.Progress}");
 
             if (!wasCompleted && isNowCompleted)
             {
                 await _snackbarService.ShowAsync("¡La Tarea fue completada con éxito! Sigue Así 😉", SnackbarType.Success);
+            }
+            else if (!wasCompleted && CurrentTask.IsDeliverable && CurrentTask.Progress >= 1)
+            {
+                await _snackbarService.ShowAsync("Hitos terminados. Revisa antes de entregar.", SnackbarType.Info);
             }
         }
     
@@ -112,6 +133,13 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
 
                 DueDate = dto.DueDate,
                 ReminderDate = dto.ReminderDate,
+                ActivityType = dto.ActivityType,
+                CourseId = dto.CourseId,
+                PlannedStartDate = dto.PlannedStartDate,
+                StartedAtUtc = dto.StartedAtUtc,
+                FirstStep = dto.FirstStep,
+                PlannedReviewDate = dto.PlannedReviewDate,
+                ReviewedAtUtc = dto.ReviewedAtUtc,
 
                 Priority = (TaskPriority)dto.Priority,
                 Status = (TaskItemStatus)dto.Status,
@@ -120,14 +148,59 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
                 CourseColor = dto.CourseColor ?? "#6B7280",
 
                 Subtasks = new ObservableCollection<SubtaskModel>(
-                    dto.Subtasks.Select(x => new SubtaskModel
+                    dto.Subtasks.OrderBy(x => x.PlannedDate).Select(x => new SubtaskModel
                     {
                         Id = x.Id,
                         Title = x.Title,
-                        IsCompleted = x.IsCompleted
+                        IsCompleted = x.IsCompleted,
+                        HasPlannedDate = x.PlannedDate.HasValue,
+                        SelectedPlannedDate = x.PlannedDate ?? DateTime.Today
                     }))
             };
             OnPropertyChanged(nameof(CanEdit));
+        }
+        [RelayCommand]
+        private async Task StartTask()
+        {
+            if (CurrentTask is null || !CurrentTask.CanStart) return;
+            await _startTask.HandleAsync(CurrentTask.Id);
+            await LoadAsync(CurrentTask.Id);
+        }
+
+        [RelayCommand]
+        private async Task ReviewTask()
+        {
+            if (CurrentTask is null || !CurrentTask.CanReview || !CanConfirmReview) return;
+            await _reviewTask.HandleAsync(CurrentTask.Id);
+            await LoadAsync(CurrentTask.Id);
+            ReviewContentChecked = false;
+            ReviewFormatChecked = false;
+        }
+
+        [RelayCommand]
+        private Task PracticeExam()
+        {
+            if (CurrentTask is null || !CurrentTask.IsExam)
+                return Task.CompletedTask;
+
+            var parameters = new Dictionary<string, object> { ["topic"] = CurrentTask.Title };
+            if (CurrentTask.CourseId.HasValue)
+                parameters["courseId"] = CurrentTask.CourseId.Value.ToString();
+            return Shell.Current.GoToAsync(nameof(TechniqueRecommendationPage), parameters);
+        }
+
+        [RelayCommand]
+        private Task GoToHelp()
+        {
+            if (CurrentTask is null) return Task.CompletedTask;
+            var parameters = new Dictionary<string, object>
+            {
+                ["topic"] = CurrentTask.Title,
+                ["taskId"] = CurrentTask.Id.ToString()
+            };
+            if (CurrentTask.CourseId.HasValue)
+                parameters["courseId"] = CurrentTask.CourseId.Value.ToString();
+            return Shell.Current.GoToAsync(nameof(AcademicHelpPage), parameters);
         }
         // tareas sin subtareas
         [RelayCommand]
@@ -136,8 +209,10 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             if (CurrentTask is null)
                 return;
 
-            if (CurrentTask.Subtasks.Count > 0)
+            if (!CurrentTask.CanComplete)
                 return; // protección extra
+
+            var wasDeliverable = CurrentTask.IsDeliverable;
 
             await _completeTaskCommandHandler.HandleAsync(
                 new CompleteTaskCommand { TaskId = CurrentTask.Id },
@@ -145,7 +220,9 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
 
             await LoadAsync(CurrentTask.Id);
 
-            await _snackbarService.ShowAsync("¡La Tarea fue completada! Sigue Así 😉", SnackbarType.Success);
+            await _snackbarService.ShowAsync(
+                wasDeliverable ? "Entrega registrada." : "¡La tarea fue completada! Sigue así 😉",
+                SnackbarType.Success);
 
         }
         [RelayCommand]

@@ -17,6 +17,12 @@ namespace ProcraStop.Domain.Tasks.Entities
         public int? EstimatedMinutes { get; private set; }
         public DateTime CreatedAtUtc { get; private set; }
         public DateTime? CompletedAtUtc { get; private set; }
+        public AcademicActivityType ActivityType { get; private set; }
+        public DateTime? PlannedStartDate { get; private set; }
+        public DateTime? StartedAtUtc { get; private set; }
+        public string? FirstStep { get; private set; }
+        public DateTime? PlannedReviewDate { get; private set; }
+        public DateTime? ReviewedAtUtc { get; private set; }
         // 
 
         //NUEVO: Subtasks
@@ -57,25 +63,27 @@ namespace ProcraStop.Domain.Tasks.Entities
         // SUBTASKS
         // =========================
         // create
-        public void AddSubtask(Guid id, string title, bool isCompleted = false)
+        public void AddSubtask(Guid id, string title, bool isCompleted = false, DateTime? plannedDate = null)
         {
             if (id == Guid.Empty)
                 throw new ArgumentException("Id inválido");
 
             if (string.IsNullOrWhiteSpace(title))
                 throw new ArgumentException("La subtarea necesita título");
+            ValidateMilestoneDate(plannedDate);
 
-            _subtasks.Add(new Subtask(id, title, isCompleted));
+            _subtasks.Add(new Subtask(id, title, isCompleted, plannedDate));
 
             UpdateStatusBasedOnSubtasks();
         }
         // edit - genera id en la capa de dominio
-        public void AddSubtask(string title, bool isCompleted = false)
+        public void AddSubtask(string title, bool isCompleted = false, DateTime? plannedDate = null)
         {
             if (string.IsNullOrWhiteSpace(title))
                 throw new ArgumentException("La subtarea necesita título");
+            ValidateMilestoneDate(plannedDate);
 
-            _subtasks.Add(new Subtask(Guid.NewGuid(), title, isCompleted));
+            _subtasks.Add(new Subtask(Guid.NewGuid(), title, isCompleted, plannedDate));
 
             UpdateStatusBasedOnSubtasks();
         }
@@ -110,6 +118,10 @@ namespace ProcraStop.Domain.Tasks.Entities
 
         public void Complete()
         {
+            if (ActivityType == AcademicActivityType.Deliverable && !ReviewedAtUtc.HasValue)
+                throw new InvalidOperationException("Revisa el entregable antes de marcarlo como entregado.");
+
+            Start();
             Status = TaskItemStatus.Completed;
             CompletedAtUtc = DateTime.UtcNow;
 
@@ -121,6 +133,54 @@ namespace ProcraStop.Domain.Tasks.Entities
         {
             Status = TaskItemStatus.InProgress;
             CompletedAtUtc = null;
+        }
+
+        public void Start()
+        {
+            StartedAtUtc ??= DateTime.UtcNow;
+            if (Status == TaskItemStatus.Pending)
+                Status = TaskItemStatus.InProgress;
+        }
+
+        public void MarkReviewed()
+        {
+            if (ActivityType != AcademicActivityType.Deliverable)
+                throw new InvalidOperationException("Solo un entregable requiere revision.");
+            if (_subtasks.Any(s => !s.IsCompleted))
+                throw new InvalidOperationException("Termina los hitos antes de revisar el entregable.");
+
+            Start();
+            ReviewedAtUtc = DateTime.UtcNow;
+        }
+
+        public void SetAcademicPlan(
+            AcademicActivityType activityType,
+            DateTime? plannedStartDate,
+            string? firstStep,
+            DateTime? plannedReviewDate)
+        {
+            if (!Enum.IsDefined(activityType))
+                throw new ArgumentOutOfRangeException(nameof(activityType));
+            if (activityType == AcademicActivityType.Exam && !DueDate.HasValue)
+                throw new InvalidOperationException("Un examen necesita fecha.");
+            if (plannedStartDate.HasValue && DueDate.HasValue && plannedStartDate > DueDate)
+                throw new InvalidOperationException("El inicio previsto no puede ser posterior al vencimiento.");
+            if (plannedReviewDate.HasValue && activityType != AcademicActivityType.Deliverable)
+                throw new InvalidOperationException("La revision prevista solo aplica a entregables.");
+            if (plannedReviewDate.HasValue && DueDate.HasValue && plannedReviewDate > DueDate)
+                throw new InvalidOperationException("La revision debe ser antes de la entrega.");
+            if (plannedReviewDate.HasValue && plannedStartDate.HasValue && plannedReviewDate < plannedStartDate)
+                throw new InvalidOperationException("La revision no puede ser anterior al inicio previsto.");
+            foreach (var subtask in _subtasks)
+                ValidateMilestoneDate(subtask.PlannedDate);
+
+            ActivityType = activityType;
+            PlannedStartDate = plannedStartDate;
+            FirstStep = string.IsNullOrWhiteSpace(firstStep) ? null : firstStep.Trim();
+            PlannedReviewDate = plannedReviewDate;
+            if (activityType != AcademicActivityType.Deliverable)
+                ReviewedAtUtc = null;
+            UpdateStatusBasedOnSubtasks();
         }
 
         // =========================
@@ -181,7 +241,13 @@ namespace ProcraStop.Domain.Tasks.Entities
             int? estimatedMinutes,
             DateTime createdAtUtc,
             DateTime? completedAtUtc,
-            List<Subtask> subtasks)
+            List<Subtask> subtasks,
+            AcademicActivityType activityType = AcademicActivityType.Task,
+            DateTime? plannedStartDate = null,
+            DateTime? startedAtUtc = null,
+            string? firstStep = null,
+            DateTime? plannedReviewDate = null,
+            DateTime? reviewedAtUtc = null)
         {
             var task = new StudyTask
             {
@@ -196,7 +262,13 @@ namespace ProcraStop.Domain.Tasks.Entities
                 CourseId = courseId,
                 EstimatedMinutes = estimatedMinutes,
                 CreatedAtUtc = createdAtUtc,
-                CompletedAtUtc = completedAtUtc
+                CompletedAtUtc = completedAtUtc,
+                ActivityType = activityType,
+                PlannedStartDate = plannedStartDate,
+                StartedAtUtc = startedAtUtc,
+                FirstStep = firstStep,
+                PlannedReviewDate = plannedReviewDate,
+                ReviewedAtUtc = reviewedAtUtc
             };
 
             task.LoadSubtasks(subtasks);
@@ -208,8 +280,8 @@ namespace ProcraStop.Domain.Tasks.Entities
         {
             if (!_subtasks.Any())
             {
-                Status = TaskItemStatus.Pending;
-                CompletedAtUtc = null;
+                if (Status != TaskItemStatus.Completed)
+                    Status = StartedAtUtc.HasValue ? TaskItemStatus.InProgress : TaskItemStatus.Pending;
                 return;
             }
 
@@ -218,18 +290,30 @@ namespace ProcraStop.Domain.Tasks.Entities
 
             if (allCompleted)
             {
-                Status = TaskItemStatus.Completed;
-                CompletedAtUtc ??= DateTime.UtcNow;
+                Start();
+                if (ActivityType == AcademicActivityType.Deliverable)
+                {
+                    Status = TaskItemStatus.InProgress;
+                    CompletedAtUtc = null;
+                }
+                else
+                {
+                    Status = TaskItemStatus.Completed;
+                    CompletedAtUtc ??= DateTime.UtcNow;
+                }
             }
             else if (anyCompleted)
             {
+                Start();
                 Status = TaskItemStatus.InProgress;
                 CompletedAtUtc = null;
+                ReviewedAtUtc = null;
             }
             else
             {
-                Status = TaskItemStatus.Pending;
+                Status = StartedAtUtc.HasValue ? TaskItemStatus.InProgress : TaskItemStatus.Pending;
                 CompletedAtUtc = null;
+                ReviewedAtUtc = null;
             }
         }
         // archivar tarea
@@ -246,7 +330,11 @@ namespace ProcraStop.Domain.Tasks.Entities
     TaskPriority priority,
     Guid? courseId,
     int? estimatedMinutes,
-    List<Subtask> subtasks)
+    List<Subtask> subtasks,
+    AcademicActivityType activityType = AcademicActivityType.Task,
+    DateTime? plannedStartDate = null,
+    string? firstStep = null,
+    DateTime? plannedReviewDate = null)
         {
             Title = title;
             Description = description;
@@ -269,7 +357,7 @@ namespace ProcraStop.Domain.Tasks.Entities
             // 1. NUEVAS
             foreach (var dto in subtasks.Where(s => s.Id == Guid.Empty))
             {
-                AddSubtask(dto.Title, dto.IsCompleted);
+                AddSubtask(dto.Title, dto.IsCompleted, dto.PlannedDate);
             }
 
             // 2. EXISTENTES
@@ -279,16 +367,18 @@ namespace ProcraStop.Domain.Tasks.Entities
 
                 if (existing != null)
                 {
-                    existing.Update(dto.Title, dto.IsCompleted);
+                    ValidateMilestoneDate(dto.PlannedDate);
+                    existing.Update(dto.Title, dto.IsCompleted, dto.PlannedDate);
                 }
                 else
                 {
                     // fallback por seguridad (datos corruptos o edge case)
-                    AddSubtask(dto.Id, dto.Title, dto.IsCompleted);
+                    AddSubtask(dto.Id, dto.Title, dto.IsCompleted, dto.PlannedDate);
                 }
             }
 
             UpdateStatusBasedOnSubtasks();
+            SetAcademicPlan(activityType, plannedStartDate, firstStep, plannedReviewDate);
         }
         // =========================
         // logica de dificultad
@@ -314,5 +404,11 @@ namespace ProcraStop.Domain.Tasks.Entities
             DueDate.Value < DateTime.Now &&
             Status != TaskItemStatus.Completed &&
             !IsArchived;
+
+        private void ValidateMilestoneDate(DateTime? plannedDate)
+        {
+            if (plannedDate.HasValue && DueDate.HasValue && plannedDate.Value.Date > DueDate.Value.Date)
+                throw new InvalidOperationException("La fecha del hito no puede ser posterior a la actividad.");
+        }
     }
 }

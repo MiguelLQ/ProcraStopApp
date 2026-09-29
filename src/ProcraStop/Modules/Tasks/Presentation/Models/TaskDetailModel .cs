@@ -21,6 +21,31 @@ namespace ProcraStop.Modules.Tasks.Presentation.Models
         [ObservableProperty]
         private DateTime? reminderDate;
 
+        public AcademicActivityType ActivityType { get; set; }
+        public Guid? CourseId { get; set; }
+        public DateTime? PlannedStartDate { get; set; }
+        public DateTime? StartedAtUtc { get; set; }
+        public string? FirstStep { get; set; }
+        public DateTime? PlannedReviewDate { get; set; }
+        public DateTime? ReviewedAtUtc { get; set; }
+        public bool IsDeliverable => ActivityType == AcademicActivityType.Deliverable;
+        public bool IsExam => ActivityType == AcademicActivityType.Exam;
+        public bool CanStart => StartedAtUtc is null && Status != TaskItemStatus.Completed;
+        public bool CanReview => IsDeliverable && ReviewedAtUtc is null && Subtasks.All(x => x.IsCompleted);
+        public string ActivityTypeText => ActivityType switch
+        {
+            AcademicActivityType.Reading => "Lectura",
+            AcademicActivityType.Exam => "Examen",
+            AcademicActivityType.Deliverable => "Entregable",
+            _ => "Tarea"
+        };
+        public string AcademicPlanText =>
+            $"Inicio previsto: {PlannedStartDate?.ToString("dd/MM/yyyy") ?? "sin fecha"} · " +
+            $"Inicio real: {StartedAtUtc?.ToLocalTime().ToString("dd/MM/yyyy HH:mm") ?? "pendiente"}";
+        public string ReviewText => ReviewedAtUtc.HasValue
+            ? $"Revisado: {ReviewedAtUtc.Value.ToLocalTime():dd/MM/yyyy HH:mm}"
+            : $"Revisión prevista: {PlannedReviewDate?.ToString("dd/MM/yyyy") ?? "sin fecha"}";
+
         [ObservableProperty]
         private TaskPriority priority;
 
@@ -53,6 +78,8 @@ namespace ProcraStop.Modules.Tasks.Presentation.Models
         public string StatusText => Status switch
         {
             TaskItemStatus.Pending => "Pendiente",
+            TaskItemStatus.Completed when IsDeliverable => "Entregada",
+            TaskItemStatus.InProgress when IsDeliverable && ReviewedAtUtc.HasValue => "Revisada, lista para entregar",
             TaskItemStatus.InProgress => "En progreso",
             TaskItemStatus.Completed => "Completada",
             _ => "Pendiente"
@@ -134,10 +161,10 @@ namespace ProcraStop.Modules.Tasks.Presentation.Models
                 if (Status == TaskItemStatus.Completed)
                     return false;
 
-                if (Subtasks.Count == 0)
-                    return true;
+                if (IsDeliverable)
+                    return ReviewedAtUtc.HasValue && Subtasks.All(x => x.IsCompleted);
 
-                return false; // si hay subtareas → NO se puede usar el botón
+                return Subtasks.Count == 0;
             }
         }
         // boton activado desactivado color
@@ -148,7 +175,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.Models
         // texto para boton 
         public string CompleteButtonText =>
         Status == TaskItemStatus.Completed
-            ? "Completada"
-            : "Completar";
+            ? (IsDeliverable ? "Entregada" : "Completada")
+            : (IsDeliverable ? "Marcar entrega" : "Completar");
     }
 }

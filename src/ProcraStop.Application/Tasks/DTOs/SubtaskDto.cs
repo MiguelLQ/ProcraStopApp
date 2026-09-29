@@ -7,5 +7,6 @@ namespace ProcraStop.Application.Tasks.DTOs
         public Guid Id { get; init; }
         public string Title { get; init; } = string.Empty;
         public bool IsCompleted { get; init; }
+        public DateTime? PlannedDate { get; init; }
     }
 }

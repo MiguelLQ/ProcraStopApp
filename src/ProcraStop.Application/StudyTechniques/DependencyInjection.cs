@@ -12,6 +12,7 @@ public static class DependencyInjection
         services.AddScoped<StudyRecommendationEngine>();
         services.AddScoped<StudyDashboardService>();
         services.AddScoped<RegisterStudySessionHandler>();
+        services.AddScoped<AcademicHelpService>();
 
         return services;
     }

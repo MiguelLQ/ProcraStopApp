@@ -6,6 +6,8 @@ using ProcraStop.Application.Tasks.Commands.CompleteTask;
 using ProcraStop.Application.Tasks.Commands.CreateTask;
 using ProcraStop.Application.Tasks.Commands.ToggleSubtask;
 using ProcraStop.Application.Tasks.Commands.UpdateTask;
+using ProcraStop.Application.Tasks.Commands.StartTask;
+using ProcraStop.Application.Tasks.Commands.ReviewTask;
 using ProcraStop.Application.Tasks.EngineTask.Rules;
 using ProcraStop.Application.Tasks.EngineTask.Signals;
 using ProcraStop.Application.Tasks.Facade;
@@ -33,6 +35,8 @@ namespace ProcraStop.Application.Tasks
             services.AddTransient<GetTaskByIdQueryHandler>();
             services.AddTransient<ToggleSubtaskCommandHandler>();
             services.AddTransient<UpdateTaskCommandHandler>();
+            services.AddTransient<StartTaskCommandHandler>();
+            services.AddTransient<ReviewTaskCommandHandler>();
             // reglas de decision engine
             services.AddTransient<IDecisionRule, OverdueOverloadRule>();
             services.AddTransient<IDecisionRule, QuickWinRule>();

@@ -7,10 +7,12 @@ namespace ProcraStop.Application.Tasks.Commands.ArchiveTask
     public sealed class ArchiveTaskCommandHandler
     {
         private readonly ITaskRepository _repository;
+        private readonly ITaskReminderService _reminderService;
 
-        public ArchiveTaskCommandHandler(ITaskRepository repository)
+        public ArchiveTaskCommandHandler(ITaskRepository repository, ITaskReminderService reminderService)
         {
             _repository = repository;
+            _reminderService = reminderService;
 
         }
 
@@ -28,6 +30,7 @@ namespace ProcraStop.Application.Tasks.Commands.ArchiveTask
 
             //persistencia
             await _repository.UpdateAsync(task, ct);
+            await _reminderService.CancelAsync(task.Id, ct);
         }
     }
 }

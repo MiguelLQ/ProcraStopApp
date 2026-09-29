@@ -17,6 +17,12 @@ namespace ProcraStop.Infrastructure.Tasks.Persistence.Entities
         public int? EstimatedMinutes { get; set; }
         public DateTime CreatedAtUtc { get; set; }
         public DateTime? CompletedAtUtc { get; set; }
+        public int ActivityType { get; set; }
+        public DateTime? PlannedStartDate { get; set; }
+        public DateTime? StartedAtUtc { get; set; }
+        public string? FirstStep { get; set; }
+        public DateTime? PlannedReviewDate { get; set; }
+        public DateTime? ReviewedAtUtc { get; set; }
         public ICollection<SubtaskEntity> Subtasks { get; set; } = new List<SubtaskEntity>();
     }
 }

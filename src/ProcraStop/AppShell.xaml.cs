@@ -34,6 +34,7 @@ namespace ProcraStop
             Routing.RegisterRoute(nameof(TechniqueRecommendationPage), typeof(TechniqueRecommendationPage));
             Routing.RegisterRoute(nameof(TechniqueLibraryPage), typeof(TechniqueLibraryPage));
             Routing.RegisterRoute(nameof(StudySessionHistoryPage), typeof(StudySessionHistoryPage));
+            Routing.RegisterRoute(nameof(AcademicHelpPage), typeof(AcademicHelpPage));
             Routing.RegisterRoute(nameof(CreateHabitPage), typeof(CreateHabitPage));
             Routing.RegisterRoute(nameof(HabitListPage), typeof(HabitListPage));
             Routing.RegisterRoute(nameof(HabitAnalyticsPage), typeof(HabitAnalyticsPage));

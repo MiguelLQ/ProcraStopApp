@@ -76,6 +76,12 @@ namespace ProcraStop.Infrastructure.Tasks.Repositories
                 existing.CourseId = task.CourseId;
                 existing.EstimatedMinutes = task.EstimatedMinutes;
                 existing.CompletedAtUtc = task.CompletedAtUtc;
+                existing.ActivityType = (int)task.ActivityType;
+                existing.PlannedStartDate = task.PlannedStartDate;
+                existing.StartedAtUtc = task.StartedAtUtc;
+                existing.FirstStep = task.FirstStep;
+                existing.PlannedReviewDate = task.PlannedReviewDate;
+                existing.ReviewedAtUtc = task.ReviewedAtUtc;
 
                 // =========================
                 // 🔥 SUBTASKS (SOURCE = DOMAIN)
@@ -112,6 +118,7 @@ namespace ProcraStop.Infrastructure.Tasks.Repositories
                             Id = subtask.Id,
                             Title = subtask.Title,
                             IsCompleted = subtask.IsCompleted,
+                            PlannedDate = subtask.PlannedDate,
                             TaskId = task.Id
                         };
 
@@ -123,6 +130,7 @@ namespace ProcraStop.Infrastructure.Tasks.Repositories
                         Console.WriteLine($"UPDATE -> {subtask.Id} | {subtask.Title}");
                         found.Title = subtask.Title;
                         found.IsCompleted = subtask.IsCompleted;
+                        found.PlannedDate = subtask.PlannedDate;
                         // TaskId ya está seteado
                     }
                 }

@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:ProcraStop.Modules.Tasks.Presentation.ViewModels"
+             xmlns:models="clr-namespace:ProcraStop.Modules.Tasks.Presentation.Models"
              x:Class="ProcraStop.Modules.Tasks.Presentation.Views.CreateTaskPage"
              x:DataType="viewModels:CreateTaskPageViewModel"
              Title="Crear Tarea"
@@ -78,6 +79,29 @@
                             </Border>
                         </VerticalStackLayout>
                         <!-- fecha limite y recordatorio-->
+                        <VerticalStackLayout Spacing="6" Margin="0,4,0,8">
+                            <Label Text="Tipo de actividad" FontAttributes="Bold" />
+                            <Picker ItemsSource="{Binding ActivityTypes}"
+                                    ItemDisplayBinding="{Binding Name}"
+                                    SelectedItem="{Binding SelectedActivityOption}" />
+                            <Label Text="Primer paso concreto" FontAttributes="Bold" />
+                            <Entry Placeholder="Ej. abrir el material y resolver una pregunta"
+                                   Text="{Binding FirstStep}" />
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="Planificar inicio" VerticalOptions="Center" />
+                                <Switch Grid.Column="1" IsToggled="{Binding HasPlannedStart}" />
+                            </Grid>
+                            <DatePicker Date="{Binding SelectedPlannedStartDate}"
+                                        IsVisible="{Binding HasPlannedStart}" />
+                            <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding IsDeliverable}">
+                                <Label Text="Planificar revisión antes de entregar" VerticalOptions="Center" />
+                                <Switch Grid.Column="1" IsToggled="{Binding HasPlannedReview}" />
+                            </Grid>
+                            <DatePicker Date="{Binding SelectedPlannedReviewDate}"
+                                        IsVisible="{Binding HasPlannedReview}" />
+                            <Label Text="Para un examen, agrega los temas abajo; se crearán sesiones de estudio y repaso."
+                                   IsVisible="{Binding IsExam}" FontSize="12" />
+                        </VerticalStackLayout>
                         <VerticalStackLayout Spacing="2"  Margin="0,0,0,2">
                             <Grid ColumnDefinitions="*,Auto"
                                 VerticalOptions="Center">
@@ -189,7 +213,7 @@
 
                             <!-- HEADER SUBTAREAS -->
                             <Grid ColumnDefinitions="*,Auto" Padding="0,0,0,5">
-                                <Label Text="Subtareas (Opcional)"
+                                <Label Text="Hitos o temas (opcional para tareas)"
                                        FontSize="14"
                                        FontFamily="InterSemiBold"
                                        TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" 
@@ -217,11 +241,17 @@
                                     FontFamily="InterRegular"
                                     FontSize="14" />
                             </Border>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="Poner fecha al nuevo hito" VerticalOptions="Center" />
+                                <Switch Grid.Column="1" IsToggled="{Binding NewSubtaskHasDate}" />
+                            </Grid>
+                            <DatePicker Date="{Binding NewSubtaskDate}"
+                                        IsVisible="{Binding NewSubtaskHasDate}" />
 
                             <!-- LISTA -->
                             <CollectionView ItemsSource="{Binding Subtasks}">
                                 <CollectionView.ItemTemplate>
-                                    <DataTemplate x:DataType="x:String">
+                                    <DataTemplate x:DataType="models:SubtaskModel">
 
                                         <Border Padding="4"
                                                 Margin="0,5"
@@ -230,7 +260,7 @@
 
                                             <Grid ColumnDefinitions="*,Auto">
 
-                                                <Label Text="{Binding .}"
+                                                <Label Text="{Binding PlanText}"
                                                        Margin="10,0,0,0"
                                                        VerticalOptions="Center"
                                                        FontFamily="InterRegular"
@@ -258,11 +288,12 @@
 
                         </VerticalStackLayout>
                        
-                        <Button Text="Guardar tarea"
+                        <Button Text="Guardar actividad"
                             Command="{Binding SaveCommand}"
                             HeightRequest="50"
                             TextColor="White"
                             IsEnabled="{Binding CanSave}" />
+                        <Label Text="{Binding ValidationMessage}" TextColor="#DC2626" />
 
                         <ActivityIndicator IsRunning="{Binding IsSaving}"
                             IsVisible="{Binding IsSaving}" />

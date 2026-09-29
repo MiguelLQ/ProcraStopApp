@@ -164,6 +164,40 @@
                     </VerticalStackLayout>
                 </Border>
 
+                <Border Margin="15,0" Padding="14"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
+                        StrokeShape="RoundRectangle 14">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="{Binding CurrentTask.ActivityTypeText}" FontAttributes="Bold" />
+                        <Label Text="{Binding CurrentTask.AcademicPlanText}" FontSize="13" />
+                        <Label Text="{Binding CurrentTask.FirstStep}" FontSize="13" />
+                        <Button Text="Empezar ahora" Command="{Binding StartTaskCommand}"
+                                IsVisible="{Binding CurrentTask.CanStart}" />
+                        <Button Text="Practicar con técnicas de estudio"
+                                Command="{Binding PracticeExamCommand}"
+                                IsVisible="{Binding CurrentTask.IsExam}" />
+                        <Button Text="Necesito ayuda con esta actividad"
+                                Command="{Binding GoToHelpCommand}" />
+                        <VerticalStackLayout IsVisible="{Binding CurrentTask.IsDeliverable}" Spacing="5">
+                            <Label Text="{Binding CurrentTask.ReviewText}" FontSize="13" />
+                            <VerticalStackLayout IsVisible="{Binding CurrentTask.CanReview}">
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <CheckBox IsChecked="{Binding ReviewContentChecked}" />
+                                    <Label Grid.Column="1" Text="Contenido y criterios completos"
+                                           VerticalOptions="Center" />
+                                </Grid>
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <CheckBox IsChecked="{Binding ReviewFormatChecked}" />
+                                    <Label Grid.Column="1" Text="Formato, citas y archivo revisados"
+                                           VerticalOptions="Center" />
+                                </Grid>
+                                <Button Text="Confirmar revisión" Command="{Binding ReviewTaskCommand}"
+                                        IsEnabled="{Binding CanConfirmReview}" />
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
                 <!-- SUBTASKS -->
                 <Label Text="Subtareas"
                        Margin="15,10,15,0"
@@ -199,7 +233,7 @@
                                           CommandParameter="{Binding .}" />
 
                                     <Label Grid.Column="1"
-                                           Text="{Binding Title}"
+                                           Text="{Binding PlanText}"
                                            FontSize="14"
                                            FontFamily="OpenSansRegular"
                                            VerticalOptions="Center"

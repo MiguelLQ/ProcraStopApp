@@ -24,6 +24,12 @@ namespace ProcraStop.Application.Tasks.DTOs
         public string? CourseName { get; init; }
         public string? CourseColor { get; init; }
         public List<SubtaskDto> Subtasks { get; init; } = new();
+        public AcademicActivityType ActivityType { get; init; }
+        public DateTime? PlannedStartDate { get; init; }
+        public DateTime? StartedAtUtc { get; init; }
+        public string? FirstStep { get; init; }
+        public DateTime? PlannedReviewDate { get; init; }
+        public DateTime? ReviewedAtUtc { get; init; }
 
       
     }

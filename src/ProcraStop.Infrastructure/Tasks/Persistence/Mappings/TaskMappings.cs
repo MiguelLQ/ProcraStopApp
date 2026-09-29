@@ -24,6 +24,12 @@ namespace ProcraStop.Infrastructure.Tasks.Persistence.Mappings
                 EstimatedMinutes = task.EstimatedMinutes,
                 CreatedAtUtc = task.CreatedAtUtc,
                 CompletedAtUtc = task.CompletedAtUtc,
+                ActivityType = (int)task.ActivityType,
+                PlannedStartDate = task.PlannedStartDate,
+                StartedAtUtc = task.StartedAtUtc,
+                FirstStep = task.FirstStep,
+                PlannedReviewDate = task.PlannedReviewDate,
+                ReviewedAtUtc = task.ReviewedAtUtc,
                 // SUBTASKS
                 Subtasks = (task.Subtasks ?? [])
                 .Select(s => new SubtaskEntity
@@ -31,6 +37,7 @@ namespace ProcraStop.Infrastructure.Tasks.Persistence.Mappings
                     Id = s.Id,
                     Title = s.Title,
                     IsCompleted = s.IsCompleted,
+                    PlannedDate = s.PlannedDate,
                     TaskId = task.Id
                 })
                 .ToList()
@@ -43,7 +50,8 @@ namespace ProcraStop.Infrastructure.Tasks.Persistence.Mappings
                 .Select(s => new Subtask(
                     s.Id,
                     s.Title,
-                    s.IsCompleted
+                    s.IsCompleted,
+                    s.PlannedDate
                 ))
                 .ToList();
 
@@ -60,7 +68,13 @@ namespace ProcraStop.Infrastructure.Tasks.Persistence.Mappings
                 entity.EstimatedMinutes,
                 entity.CreatedAtUtc,
                 entity.CompletedAtUtc,
-                subtasks
+                subtasks,
+                (AcademicActivityType)entity.ActivityType,
+                entity.PlannedStartDate,
+                entity.StartedAtUtc,
+                entity.FirstStep,
+                entity.PlannedReviewDate,
+                entity.ReviewedAtUtc
             );
         }
     }

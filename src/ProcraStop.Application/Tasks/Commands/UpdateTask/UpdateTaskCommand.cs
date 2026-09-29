@@ -19,5 +19,9 @@ namespace ProcraStop.Application.Tasks.Commands.UpdateTask
         public int? EstimatedMinutes { get; init; }
 
         public List<SubtaskDto>? Subtasks { get; init; }
+        public AcademicActivityType ActivityType { get; init; } = AcademicActivityType.Task;
+        public DateTime? PlannedStartDate { get; init; }
+        public string? FirstStep { get; init; }
+        public DateTime? PlannedReviewDate { get; init; }
     }
 }

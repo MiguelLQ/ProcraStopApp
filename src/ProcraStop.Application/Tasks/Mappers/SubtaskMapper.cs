@@ -10,7 +10,8 @@ namespace ProcraStop.Application.Tasks.Mappers
         => new(
             dto.Id == Guid.Empty ? Guid.NewGuid() : dto.Id,
             dto.Title,
-            dto.IsCompleted
+            dto.IsCompleted,
+            dto.PlannedDate
         );
     }
 }

@@ -16,6 +16,9 @@ namespace ProcraStop.Application.Tasks.DTOs
         public int? EstimatedMinutes { get; init; }
         public bool IsOverdue { get; init; }
         public bool HasSubtasks { get; init; } // editbycodex: proyeccion ligera para habilitar completado rapido.
+        public AcademicActivityType ActivityType { get; init; }
+        public DateTime? PlannedStartDate { get; init; }
+        public DateTime? StartedAtUtc { get; init; }
         // conexion con curso para ui listado
         public Guid? CourseId { get; set; }
         public string? CourseName { get; set; }

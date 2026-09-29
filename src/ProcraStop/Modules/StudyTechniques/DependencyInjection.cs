@@ -17,6 +17,8 @@ public static class DependencyInjection
         services.AddTransient<StudySessionHistoryPage>();
         services.AddTransient<PomodoroViewModel>();
         services.AddTransient<PomodoroPage>();
+        services.AddTransient<AcademicHelpViewModel>();
+        services.AddTransient<AcademicHelpPage>();
 
         return services;
     }

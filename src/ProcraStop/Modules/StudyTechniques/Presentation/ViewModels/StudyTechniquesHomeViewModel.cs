@@ -46,6 +46,7 @@ public partial class StudyTechniquesHomeViewModel : ObservableObject
     [RelayCommand] public Task GoToLibraryAsync() => Shell.Current.GoToAsync(nameof(TechniqueLibraryPage));
     [RelayCommand] public Task GoToPomodoroAsync() => Shell.Current.GoToAsync(nameof(PomodoroPage));
     [RelayCommand] public Task GoToHistoryAsync() => Shell.Current.GoToAsync(nameof(StudySessionHistoryPage));
+    [RelayCommand] public Task GoToHelpAsync() => Shell.Current.GoToAsync(nameof(AcademicHelpPage));
 
     [RelayCommand]
     public Task GoToTaskRecommendationAsync(StudyRescueTaskItem task)

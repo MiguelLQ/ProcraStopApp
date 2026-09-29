@@ -100,6 +100,15 @@ public partial class StudyTechniquesViewModel : ObservableObject, IQueryAttribut
     }
 
     [RelayCommand]
+    public Task GoToHelpAsync()
+    {
+        var parameters = new Dictionary<string, object> { ["topic"] = Topic };
+        if (SelectedCourse is not null)
+            parameters["courseId"] = SelectedCourse.Id.ToString();
+        return Shell.Current.GoToAsync(nameof(AcademicHelpPage), parameters);
+    }
+
+    [RelayCommand]
     public async Task RecommendAsync()
     {
         var recent = await _sessionRepository.GetRecentAsync(14, CancellationToken.None);

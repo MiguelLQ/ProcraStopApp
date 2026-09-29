@@ -6,6 +6,7 @@ using ProcraStop.Application.Academic.Queries.GetCourses;
 using ProcraStop.Application.Tasks.DTOs;
 using ProcraStop.Domain.Tasks.Enums;
 using ProcraStop.Shared.Services;
+using ProcraStop.Modules.Tasks.Presentation.Models;
 using System.Collections.ObjectModel;
 
 namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
@@ -16,7 +17,49 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
         private readonly GetCoursesQueryHandler _getCoursesHandler;
             // subtareas
             [ObservableProperty]
-        private ObservableCollection<string> subtasks = new();
+        private ObservableCollection<SubtaskModel> subtasks = new();
+
+        [ObservableProperty]
+        private AcademicActivityType selectedActivityType = AcademicActivityType.Task;
+
+        public IReadOnlyList<AcademicActivityOption> ActivityTypes { get; } = AcademicActivityOption.All;
+        [ObservableProperty]
+        private AcademicActivityOption selectedActivityOption = AcademicActivityOption.All[0];
+        partial void OnSelectedActivityOptionChanged(AcademicActivityOption value)
+            => SelectedActivityType = value.Value;
+        public bool IsExam => SelectedActivityType == AcademicActivityType.Exam;
+        public bool IsDeliverable => SelectedActivityType == AcademicActivityType.Deliverable;
+
+        [ObservableProperty]
+        private bool hasPlannedStart;
+
+        [ObservableProperty]
+        private DateTime selectedPlannedStartDate = DateTime.Today;
+
+        [ObservableProperty]
+        private string? firstStep;
+
+        [ObservableProperty]
+        private bool hasPlannedReview;
+
+        [ObservableProperty]
+        private DateTime selectedPlannedReviewDate = DateTime.Today;
+
+        [ObservableProperty]
+        private bool newSubtaskHasDate;
+
+        [ObservableProperty]
+        private DateTime newSubtaskDate = DateTime.Today;
+
+        partial void OnSelectedActivityTypeChanged(AcademicActivityType value)
+        {
+            OnPropertyChanged(nameof(IsExam));
+            OnPropertyChanged(nameof(IsDeliverable));
+            if (value != AcademicActivityType.Deliverable)
+                HasPlannedReview = false;
+            if (value == AcademicActivityType.Exam)
+                HasDueDate = true;
+        }
         
         [ObservableProperty]
         private string newSubtaskText = string.Empty;
@@ -53,6 +96,9 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
 
         [ObservableProperty]
         private bool isSaving;
+
+        [ObservableProperty]
+        private string? validationMessage;
 
         [ObservableProperty]
         private int selectedReminderOffsetIndex = 0;
@@ -213,6 +259,9 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             try
             {
                 IsSaving = true;
+                ValidationMessage = null;
+                if (IsExam && (!ComputedDueDate.HasValue || Subtasks.Count == 0))
+                    throw new InvalidOperationException("El examen necesita fecha y al menos un tema.");
 
                 var command = new CreateTaskCommand
                 {
@@ -226,7 +275,16 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
                     EstimatedMinutes = estimatedMinutes,
                     Priority = SelectedPriority,
                     CourseId = selectedCourseId,
-                    Subtasks = Subtasks.ToList()
+                    ActivityType = SelectedActivityType,
+                    PlannedStartDate = HasPlannedStart ? SelectedPlannedStartDate.Date : null,
+                    FirstStep = FirstStep,
+                    PlannedReviewDate = IsDeliverable && HasPlannedReview ? SelectedPlannedReviewDate.Date : null,
+                    Subtasks = IsExam ? Subtasks.Select(x => x.Title).ToList() : null,
+                    Milestones = IsExam ? null : Subtasks.Select(x => new PlannedStepDto
+                    {
+                        Title = x.Title,
+                        PlannedDate = x.PlannedDate
+                    }).ToList()
                 };
                 await _createTaskHandler.HandleAsync(command);
                 Console.WriteLine($"OFFSET FINAL: {SelectedReminderOffset}");
@@ -235,6 +293,14 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
                 TaskCreated?.Invoke();
                 PendingNotificationService.Set("Tarea creada con exito!");
 
+            }
+            catch (ArgumentException ex)
+            {
+                ValidationMessage = ex.Message;
+            }
+            catch (InvalidOperationException ex)
+            {
+                ValidationMessage = ex.Message;
             }
             finally
             {
@@ -248,13 +314,18 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             if (string.IsNullOrWhiteSpace(NewSubtaskText))
                 return;
 
-            Subtasks.Add(NewSubtaskText.Trim());
+            Subtasks.Add(new SubtaskModel
+            {
+                Title = NewSubtaskText.Trim(),
+                HasPlannedDate = NewSubtaskHasDate,
+                SelectedPlannedDate = NewSubtaskDate
+            });
 
             NewSubtaskText = string.Empty;
 
         }
         [RelayCommand]
-        private void RemoveSubtask(string subtask)
+        private void RemoveSubtask(SubtaskModel subtask)
         {
             if (Subtasks.Contains(subtask))
                 Subtasks.Remove(subtask);

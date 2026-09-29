@@ -7,6 +7,7 @@
 
         public string Title { get; set; } = string.Empty;
         public bool IsCompleted { get; set; }
+        public DateTime? PlannedDate { get; set; }
 
         // navegación (opcional pero recomendado)
         public StudyTaskEntity Task { get; set; } = null!;

@@ -127,7 +127,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
         private async Task CompleteFromList(Guid taskId)
         {
             var item = _allTasks.FirstOrDefault(x => x.Id == taskId);
-            if (item is null || item.HasSubtasks || item.IsCompleted || !_completingTaskIds.Add(taskId))
+            if (item is null || !item.CanQuickComplete || !_completingTaskIds.Add(taskId))
                 return;
 
             try

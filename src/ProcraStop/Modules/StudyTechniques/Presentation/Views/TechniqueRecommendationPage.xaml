@@ -66,6 +66,8 @@
                     <Label Text="{Binding RecommendationTitle}" FontFamily="MontserratSemiBold" FontSize="16" TextColor="{AppThemeBinding Light=#111827, Dark=#F4F7FB}" />
                     <Label Text="{Binding RecommendationAction}" Style="{StaticResource RecDetailStyle}" />
                     <Label Text="{Binding HelpPrompt}" Style="{StaticResource RecDetailStyle}" />
+                    <Button Text="Preparar una consulta" Command="{Binding GoToHelpCommand}"
+                            Style="{StaticResource RecPrimaryButtonStyle}" />
                 </VerticalStackLayout>
             </Border>
 

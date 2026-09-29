@@ -210,7 +210,7 @@ CommandParameter="{Binding Filter}" />
 
                                 <!-- CONTENIDO -->
                                 <Grid Grid.Column="1"
-                              RowDefinitions="Auto,Auto,Auto,Auto"
+                              RowDefinitions="Auto,Auto,Auto,Auto,Auto"
                               RowSpacing="1">
 
                                     <Grid.GestureRecognizers>
@@ -314,6 +314,11 @@ CommandParameter="{Binding Filter}" />
                                         
 
                                     </Grid>
+
+                                    <Label Grid.Row="4" Text="Es hora de empezar esta actividad"
+                                           FontSize="12" FontAttributes="Bold"
+                                           TextColor="#B45309"
+                                           IsVisible="{Binding ShouldStartNow}" />
 
                                     <!-- INFO SECUNDARIA -->
                                     <Grid Grid.Row="3"

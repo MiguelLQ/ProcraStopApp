@@ -64,6 +64,43 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
         private string? description;
 
         [ObservableProperty]
+        private AcademicActivityType selectedActivityType;
+
+        public IReadOnlyList<AcademicActivityOption> ActivityTypes { get; } = AcademicActivityOption.All;
+        [ObservableProperty]
+        private AcademicActivityOption? selectedActivityOption;
+        partial void OnSelectedActivityOptionChanged(AcademicActivityOption? value)
+        {
+            if (value is not null)
+                SelectedActivityType = value.Value;
+        }
+        public bool IsDeliverable => SelectedActivityType == AcademicActivityType.Deliverable;
+
+        [ObservableProperty]
+        private bool hasPlannedStart;
+        [ObservableProperty]
+        private DateTime selectedPlannedStartDate = DateTime.Today;
+        [ObservableProperty]
+        private string? firstStep;
+        [ObservableProperty]
+        private bool hasPlannedReview;
+        [ObservableProperty]
+        private DateTime selectedPlannedReviewDate = DateTime.Today;
+        [ObservableProperty]
+        private bool newSubtaskHasDate;
+        [ObservableProperty]
+        private DateTime newSubtaskDate = DateTime.Today;
+
+        partial void OnSelectedActivityTypeChanged(AcademicActivityType value)
+        {
+            OnPropertyChanged(nameof(IsDeliverable));
+            if (value != AcademicActivityType.Deliverable)
+                HasPlannedReview = false;
+            if (value == AcademicActivityType.Exam)
+                HasDueDate = true;
+        }
+
+        [ObservableProperty]
         private bool hasDueDate;
 
         [ObservableProperty]
@@ -180,6 +217,9 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
         [ObservableProperty]
         private bool isSaving;
 
+        [ObservableProperty]
+        private string? validationMessage;
+
         partial void OnTitleChanged(string value)
         {
             SaveCommand.NotifyCanExecuteChanged();
@@ -214,6 +254,13 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             // MAPEO (igual que create pero inverso)
             Title = dto.Title;
             Description = dto.Description;
+            SelectedActivityType = dto.ActivityType;
+            SelectedActivityOption = ActivityTypes.FirstOrDefault(x => x.Value == dto.ActivityType) ?? ActivityTypes[0];
+            HasPlannedStart = dto.PlannedStartDate.HasValue;
+            SelectedPlannedStartDate = dto.PlannedStartDate ?? DateTime.Today;
+            FirstStep = dto.FirstStep;
+            HasPlannedReview = dto.PlannedReviewDate.HasValue;
+            SelectedPlannedReviewDate = dto.PlannedReviewDate ?? DateTime.Today;
             SelectedPriority = Enum.IsDefined(typeof(TaskPriority), dto.Priority)
                 ? (TaskPriority)dto.Priority
                 : TaskPriority.Medium;
@@ -263,7 +310,9 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
                 {
                     Id = s.Id,
                     Title = s.Title,
-                    IsCompleted = s.IsCompleted
+                    IsCompleted = s.IsCompleted,
+                    HasPlannedDate = s.PlannedDate.HasValue,
+                    SelectedPlannedDate = s.PlannedDate ?? DateTime.Today
                 }));
           
         }
@@ -280,13 +329,15 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             try
             {
                 IsSaving = true;
+                ValidationMessage = null;
                 var mappedSubtasks = Subtasks
                 .Where(s => !string.IsNullOrWhiteSpace(s.Title)) // evita basura
                 .Select(s => new SubtaskDto
                 {
                     Id = s.Id,
                     Title = s.Title.Trim(),
-                    IsCompleted = s.IsCompleted
+                    IsCompleted = s.IsCompleted,
+                    PlannedDate = s.PlannedDate
                 })
                 .ToList();
                 int? estimatedMinutes = null;
@@ -311,6 +362,10 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
                     CourseId = SelectedCourseId,
                     EstimatedMinutes = estimatedMinutes,
                     Subtasks = mappedSubtasks,
+                    ActivityType = SelectedActivityType,
+                    PlannedStartDate = HasPlannedStart ? SelectedPlannedStartDate.Date : null,
+                    FirstStep = FirstStep,
+                    PlannedReviewDate = IsDeliverable && HasPlannedReview ? SelectedPlannedReviewDate.Date : null,
                   
                 };
 
@@ -319,6 +374,14 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
                 PendingNotificationService.Set("Tarea actualizada");
                 // redirigir atras
                 await Shell.Current.GoToAsync("..");
+            }
+            catch (ArgumentException ex)
+            {
+                ValidationMessage = ex.Message;
+            }
+            catch (InvalidOperationException ex)
+            {
+                ValidationMessage = ex.Message;
             }
             finally
             {
@@ -340,6 +403,8 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
                 Id = Guid.Empty, // Id se generará en la capa de dominio al guardar
                 Title = NewSubtaskText.Trim(),
                 IsCompleted = false
+                ,HasPlannedDate = NewSubtaskHasDate,
+                SelectedPlannedDate = NewSubtaskDate
             });
 
             NewSubtaskText = string.Empty;

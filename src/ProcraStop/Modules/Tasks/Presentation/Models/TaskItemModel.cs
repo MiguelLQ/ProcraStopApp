@@ -19,6 +19,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.Models
         [NotifyPropertyChangedFor(nameof(CanComplete))]
         [NotifyPropertyChangedFor(nameof(IsCompleted))]
         [NotifyPropertyChangedFor(nameof(CanQuickComplete))]
+        [NotifyPropertyChangedFor(nameof(ShouldStartNow))]
         [NotifyPropertyChangedFor(nameof(IsActuallyOverdue))]
         [NotifyPropertyChangedFor(nameof(ShowOverdue))]
         [NotifyPropertyChangedFor(nameof(OverdueText))]
@@ -26,6 +27,12 @@ namespace ProcraStop.Modules.Tasks.Presentation.Models
         private TaskItemStatus status;
         public bool IsOverdue { get; init; }
         public bool HasSubtasks { get; init; } // editbycodex: decide si el card admite check directo.
+        public AcademicActivityType ActivityType { get; init; }
+        public DateTime? PlannedStartDate { get; init; }
+        public DateTime? StartedAtUtc { get; init; }
+        public bool ShouldStartNow => PlannedStartDate.HasValue &&
+            PlannedStartDate.Value.Date <= DateTime.Today &&
+            StartedAtUtc is null && !IsCompleted;
         public string? CourseName { get; set; }
         public string? CourseColor { get; set; }
         public bool HasCourse => !string.IsNullOrWhiteSpace(CourseName);
@@ -33,6 +40,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.Models
         {
             TaskItemStatus.Pending => "Pendiente",
             TaskItemStatus.InProgress => "En progreso",
+            TaskItemStatus.Completed when ActivityType == AcademicActivityType.Deliverable => "Entregada",
             TaskItemStatus.Completed => "Completada",
             _ => "Pendiente"
         };
@@ -152,7 +160,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.Models
         public bool CanComplete => Status != TaskItemStatus.Completed;
         public bool IsCompleted => Status == TaskItemStatus.Completed;
         public bool HasNoSubtasks => !HasSubtasks;
-        public bool CanQuickComplete => !HasSubtasks && !IsCompleted; // editbycodex: regla visual equivalente al handler.
+        public bool CanQuickComplete => !HasSubtasks && !IsCompleted && ActivityType != AcademicActivityType.Deliverable;
         public bool HasDescription => !string.IsNullOrWhiteSpace(Description);
 
         public bool HasDueDate => DueDate.HasValue;
@@ -182,6 +190,9 @@ namespace ProcraStop.Modules.Tasks.Presentation.Models
                 Status = dto.Status,
                 IsOverdue = dto.IsOverdue,
                 HasSubtasks = dto.HasSubtasks,
+                ActivityType = dto.ActivityType,
+                PlannedStartDate = dto.PlannedStartDate,
+                StartedAtUtc = dto.StartedAtUtc,
                 // mapear curso
                 CourseName = dto.CourseName,
                 CourseColor = dto.CourseColor ?? "#6B7280"

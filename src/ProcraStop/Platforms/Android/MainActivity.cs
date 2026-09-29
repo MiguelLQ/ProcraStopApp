@@ -14,19 +14,21 @@ namespace ProcraStop.Platforms.Android
 
             AndroidStatusBarService.ApplyThemeStatusBar(this);
             CreateNotificationChannel();
+            AndroidTaskReminderService.ReArmAll();
         }
 
         protected override void OnResume()
         {
             base.OnResume();
             AndroidStatusBarService.ApplyThemeStatusBar(this);
+            AndroidTaskReminderService.ReArmAll();
         }
 
         private void CreateNotificationChannel()
         {
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
-                var channelId = "default_channel_id";
+                var channelId = AndroidTaskReminderService.ChannelId;
                 var channelName = "Recordatorios de tareas";
 
                 var channel = new NotificationChannel(
@@ -34,7 +36,8 @@ namespace ProcraStop.Platforms.Android
                     channelName,
                     NotificationImportance.High)
                 {
-                    Description = "Notificaciones de tareas y recordatorios"
+                    Description = "Notificaciones de tareas y recordatorios",
+                    LockscreenVisibility = NotificationVisibility.Private
                 };
 
                 var manager = (NotificationManager)GetSystemService(NotificationService);
