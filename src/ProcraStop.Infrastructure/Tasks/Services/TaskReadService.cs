@@ -281,6 +281,9 @@ namespace ProcraStop.Infraestructure.Tasks.Services
                 {
                     DueDate = x.DueDate,
                     CompletedAtUtc = x.CompletedAtUtc,
+                    CreatedAtUtc = x.CreatedAtUtc,
+                    PlannedStartDate = x.PlannedStartDate,
+                    StartedAtUtc = x.StartedAtUtc,
                     Priority = (TaskPriority)x.Priority,
                     Status = (TaskItemStatus)x.Status,
                     EstimatedMinutes = x.EstimatedMinutes,

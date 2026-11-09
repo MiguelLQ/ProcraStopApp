@@ -14,6 +14,15 @@ namespace ProcraStop.Application.Tasks.Analytics
         public int MediumPriority { get; set; }
         public int LowPriority { get; set; }
 
+        // D1 EPA: postergacion al ultimo momento.
+        public double? AvgHoursToFirstProgress { get; set; }
+        public double? AvgStartDelayDays { get; set; }
+        public double OnTimeStartRate { get; set; }
+        public double LastMinuteStartRate { get; set; }
+        public int OverdueStartNotStarted { get; set; }
+        public int MeasuredStarts { get; set; }
+        public int MeasuredDueStarts { get; set; }
+
         public Dictionary<string, int> ByCourse { get; set; } = new();
 
         public double AvgEffort { get; set; }

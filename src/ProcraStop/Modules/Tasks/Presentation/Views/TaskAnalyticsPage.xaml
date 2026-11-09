@@ -143,6 +143,91 @@
                             </VerticalStackLayout>
                         </Border>
                     </Grid>
+
+                    <!-- D1 EPA: postergación al último momento -->
+                    <Border Padding="15,0,15,0">
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="Postergación (EPA D1)" FontFamily="MontserratSemiBold"
+                                   FontSize="17" />
+                            <Label Text="Cuándo empiezas realmente tus tareas, no solo cuándo las terminas"
+                                   FontFamily="OpenSansRegular"
+                                   FontSize="14"
+                                   TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+
+                            <Border IsVisible="{Binding HasOverdueStarts}"
+                                    BackgroundColor="{AppThemeBinding Light=#FEF3C7, Dark=#3A2E12}"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 10"
+                                    Padding="12,9">
+                                <Label Text="{Binding OverdueStartNotStarted, StringFormat='{0} tarea(s) debían empezar y siguen sin iniciar'}"
+                                       FontFamily="ManropeSemiBold"
+                                       FontSize="12"
+                                       TextColor="{AppThemeBinding Light=#B45309, Dark=#FBBF24}" />
+                            </Border>
+
+                            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto"
+                                  ColumnSpacing="10" RowSpacing="10">
+                                <Border Grid.Row="0" Grid.Column="0"
+                                        BackgroundColor="{AppThemeBinding Light={StaticResource EntryClar}, Dark={StaticResource EntryDark}}">
+                                    <VerticalStackLayout Spacing="3">
+                                        <Label Text="Primer avance"
+                                               FontFamily="MontserratSemiBold"
+                                               FontSize="17" />
+                                        <Label Text="{Binding FirstProgressAverageText}" TextColor="#4F8CFF" />
+                                        <Label Text="desde que creaste la tarea" FontFamily="OpenSansRegular"
+                                               FontSize="13"
+                                               TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <Border Grid.Row="0" Grid.Column="1"
+                                        BackgroundColor="{AppThemeBinding Light={StaticResource EntryClar}, Dark={StaticResource EntryDark}}">
+                                    <VerticalStackLayout Spacing="3">
+                                        <Label Text="Retraso al iniciar"
+                                               FontFamily="MontserratSemiBold"
+                                               FontSize="17" />
+                                        <Label Text="{Binding StartDelayAverageText}" TextColor="#F4B740" />
+                                        <Label Text="frente al inicio previsto" FontFamily="OpenSansRegular"
+                                               FontSize="13"
+                                               TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <Border Grid.Row="1" Grid.Column="0"
+                                        BackgroundColor="{AppThemeBinding Light={StaticResource EntryClar}, Dark={StaticResource EntryDark}}">
+                                    <VerticalStackLayout Spacing="3">
+                                        <Label Text="Inicio puntual"
+                                               FontFamily="MontserratSemiBold"
+                                               FontSize="17" />
+                                        <Label Text="{Binding OnTimeStartRateText}" TextColor="#34C77B" />
+                                        <Label Text="empezaron a tiempo" FontFamily="OpenSansRegular"
+                                               FontSize="13"
+                                               TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <Border Grid.Row="1" Grid.Column="1"
+                                        BackgroundColor="{AppThemeBinding Light={StaticResource EntryClar}, Dark={StaticResource EntryDark}}">
+                                    <VerticalStackLayout Spacing="3">
+                                        <Label Text="Inicio al límite"
+                                               FontFamily="MontserratSemiBold"
+                                               FontSize="17" />
+                                        <Label Text="{Binding LastMinuteStartRateText}" TextColor="#EF5B5B" />
+                                        <Label Text="en las últimas 24 h" FontFamily="OpenSansRegular"
+                                               FontSize="13"
+                                               TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                                    </VerticalStackLayout>
+                                </Border>
+                            </Grid>
+
+                            <Label IsVisible="{Binding HasStartMetrics}"
+                                   Text="{Binding MeasuredStarts, StringFormat='Basado en {0} tarea(s) con inicio medido.'}"
+                                   FontFamily="OpenSansRegular"
+                                   FontSize="12"
+                                   TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                        </VerticalStackLayout>
+                    </Border>
+
                     <!--indicadores-->
                     <Border  Padding="15,0,15,0">
                         <VerticalStackLayout Spacing="8">

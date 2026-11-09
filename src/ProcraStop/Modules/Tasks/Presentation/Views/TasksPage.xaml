@@ -1,384 +1,287 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <base:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:models="clr-namespace:ProcraStop.Modules.Tasks.Presentation.Models"
-             xmlns:controls="clr-namespace:ProcraStop.Modules.Tasks.Presentation.Controls"
-             xmlns:viewModels="clr-namespace:ProcraStop.Modules.Tasks.Presentation.ViewModels"
-             x:Class="ProcraStop.Modules.Tasks.Presentation.Views.TasksPage"
-             x:DataType="viewModels:TasksPageViewModel"
-             xmlns:base="clr-namespace:ProcraStop.Shared.UI.Layouts"
-             Title="Lista de tareas"
-                 Shell.BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}"
-             Shell.TitleColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}"
-             Shell.ForegroundColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}"
-             BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:f="clr-namespace:Fonts"
+               xmlns:models="clr-namespace:ProcraStop.Modules.Tasks.Presentation.Models"
+               xmlns:controls="clr-namespace:ProcraStop.Modules.Tasks.Presentation.Controls"
+               xmlns:viewModels="clr-namespace:ProcraStop.Modules.Tasks.Presentation.ViewModels"
+               xmlns:base="clr-namespace:ProcraStop.Shared.UI.Layouts"
+               x:Class="ProcraStop.Modules.Tasks.Presentation.Views.TasksPage"
+               x:DataType="viewModels:TasksPageViewModel"
+               Title="Mis tareas"
+               Shell.BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}"
+               Shell.TitleColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}"
+               Shell.ForegroundColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}"
+               BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
 
-    <Grid Padding="0,0,0,0"
-          RowDefinitions="Auto,Auto,Auto,*"
-          RowSpacing="10">
-        <!-- editbycodex: buscador nuevo simplificado; reemplaza el header anterior oculto para evitar capas que bloqueen foco. -->
-        <Border Grid.Row="0"
-                BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}"
-                StrokeThickness="0"
-                Padding="16,0,16,12"
-                StrokeShape="RoundRectangle 0,0,32,32">
+    <base:BasePage.ToolbarItems>
+        <ToolbarItem Text="Calendario"
+                     IconImageSource="{StaticResource IconCalendar}"
+                     Order="Primary"
+                     Priority="0"
+                     Command="{Binding ToggleCalendarCommand}" />
+    </base:BasePage.ToolbarItems>
 
-            <VerticalStackLayout Spacing="6">
-                <Border BackgroundColor="{AppThemeBinding Light=#F3F4F6, Dark={StaticResource DarkBackground}}"
-                        Margin="10,0,10,0"
-                        StrokeThickness="0"
-                        StrokeShape="RoundRectangle 15"
-                        HeightRequest="46"
-                        Padding="0">
-
-                    <!-- editbycodex: SearchBar nativo enfocable; reemplaza el falso buscador estatico. -->
-                    <SearchBar Text="{Binding SearchText}"
-                               Placeholder="Buscar tarea..."
-                               PlaceholderColor="#8A94A6"
-                               FontFamily="InterRegular"
-                               FontSize="14"
-                               TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}"
-                               BackgroundColor="Transparent"
-                               CancelButtonColor="{StaticResource primarioS}"
-                               SearchCommand="{Binding SearchCommand}" />
-                </Border>
-
-                <Label Text="{Binding SearchSummaryText}"
-                       IsVisible="{Binding IsSearchActive}"
+    <Grid RowDefinitions="Auto,Auto,Auto,*" RowSpacing="8" Padding="0,6,0,0">
+        <Grid Grid.Row="0" Margin="18,0" ColumnDefinitions="*,Auto">
+            <VerticalStackLayout Spacing="1">
+                <Label Text="Agenda del día"
+                       FontFamily="MontserratSemiBold"
+                       FontSize="21"
+                       TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+                <Label Text="{Binding SelectedDate, StringFormat='{0:dddd, dd MMMM}'}"
                        FontFamily="ManropeRegular"
                        FontSize="12"
-                       Margin="4,0,0,0"
                        TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
             </VerticalStackLayout>
-        </Border>
-        <!-- calendario profesional -->
-        <controls:TaskCalendarView Grid.Row="1"
-                           Margin="10,0,10,0"
-                           VisibleMonthText="{Binding VisibleMonthText}"
-                           WeekDays="{Binding WeekDays}"
-                           MonthDays="{Binding MonthDays}"
-                           IsExpanded="{Binding IsCalendarExpanded}"
-                           IsCompactVisible="{Binding IsCompactCalendarVisible}"
-                           ToggleCalendarCommand="{Binding ToggleCalendarCommand}"
-                           PreviousMonthCommand="{Binding PreviousMonthCommand}"
-                           NextMonthCommand="{Binding NextMonthCommand}"
-                           SelectDateCommand="{Binding SelectDateCommand}" />
-        <Grid Grid.Row="2" Margin="10,0,10,0">
-            <!-- FILTROS DINÁMICOS LIGEROS -->
-            <CollectionView
-                    
-                    ItemsSource="{Binding Filters}"
-                    ItemsLayout="HorizontalList"
-                    HorizontalOptions="Fill"
-                    SelectionMode="None"
-                    HorizontalScrollBarVisibility="Never"
-                    Margin="0,0,0,0">
-
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:TaskFilterChip">
-                        <Border StrokeThickness="0"
-                                Margin="0,0,10,0"
-                                Padding="0"
-                                HeightRequest="35"
-                                BackgroundColor="{AppThemeBinding Light=#F3F4F6, Dark=#333847}">
-
-                            <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="18" />
-                            </Border.StrokeShape>
-
-                            <Border.GestureRecognizers>
-                                <TapGestureRecognizer
-Command="{Binding ChangeFilterCommand, Source={RelativeSource AncestorType={x:Type viewModels:TasksPageViewModel}}}"
-CommandParameter="{Binding Filter}" />
-                            </Border.GestureRecognizers>
-
-                            <Border.Triggers>
-                                <DataTrigger TargetType="Border"
-     Binding="{Binding IsSelected}"
-     Value="True">
-                                    <Setter Property="BackgroundColor" Value="{DynamicResource primarioS}" />
-                                </DataTrigger>
-                            </Border.Triggers>
-
-                            <Label Text="{Binding Title}"
-   Padding="16,8"
-   FontSize="13"
-   FontAttributes="Bold"
-   TextColor="{AppThemeBinding Light=#374151, Dark=#D1D5DB}">
-
-                                <Label.Triggers>
-                                    <DataTrigger TargetType="Label"
-         Binding="{Binding IsSelected}"
-         Value="True">
-                                        <Setter Property="TextColor" Value="White" />
-                                    </DataTrigger>
-                                </Label.Triggers>
-                            </Label>
-                        </Border>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+            <Border Grid.Column="1" Padding="10,5" StrokeThickness="0"
+                    StrokeShape="RoundRectangle 14"
+                    BackgroundColor="{AppThemeBinding Light=#EEF2FF, Dark=#272A3D}"
+                    VerticalOptions="Center">
+                <Label Text="{Binding Tasks.Count, StringFormat='{0} tareas'}"
+                       FontFamily="ManropeSemiBold" FontSize="12"
+                       TextColor="{StaticResource primarioS}" />
+            </Border>
         </Grid>
 
+        <!-- La semana compacta siempre queda visible; el botón del navbar despliega el mes. -->
+        <controls:TaskCalendarView Grid.Row="1"
+                                   Margin="8,0"
+                                   VisibleMonthText="{Binding VisibleMonthText}"
+                                   WeekDays="{Binding WeekDays}"
+                                   MonthDays="{Binding MonthDays}"
+                                   IsExpanded="{Binding IsCalendarExpanded}"
+                                   IsCompactVisible="{Binding IsCompactCalendarVisible}"
+                                   ToggleCalendarCommand="{Binding ToggleCalendarCommand}"
+                                   PreviousMonthCommand="{Binding PreviousMonthCommand}"
+                                   NextMonthCommand="{Binding NextMonthCommand}"
+                                   SelectDateCommand="{Binding SelectDateCommand}" />
 
-        <!-- TASK LIST -->
-        <Grid Grid.Row="3" Margin="10,0,10,0">
+        <CollectionView Grid.Row="2" Margin="14,0"
+                        ItemsSource="{Binding Filters}"
+                        ItemsLayout="HorizontalList"
+                        SelectionMode="None"
+                        HorizontalScrollBarVisibility="Never">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:TaskFilterChip">
+                    <Border HeightRequest="34" Margin="0,0,8,0" Padding="14,7"
+                            StrokeThickness="0" StrokeShape="RoundRectangle 17"
+                            BackgroundColor="{AppThemeBinding Light=#F1F3F7, Dark=#333847}">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ChangeFilterCommand, Source={RelativeSource AncestorType={x:Type viewModels:TasksPageViewModel}}}"
+                                                  CommandParameter="{Binding Filter}" />
+                        </Border.GestureRecognizers>
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                <Setter Property="BackgroundColor" Value="{StaticResource primarioS}" />
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <Label Text="{Binding Title}" FontFamily="ManropeSemiBold" FontSize="12"
+                               TextColor="{AppThemeBinding Light=#475569, Dark=#D1D5DB}">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding IsSelected}" Value="True">
+                                    <Setter Property="TextColor" Value="White" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
 
+        <Grid Grid.Row="3">
             <CollectionView ItemsSource="{Binding Tasks}"
-                    SelectionMode="None">
-
+                            SelectionMode="None"
+                            ItemSizingStrategy="MeasureFirstItem"
+                            Margin="6,0">
                 <CollectionView.EmptyView>
-                    <VerticalStackLayout Padding="24"
-                                 Spacing="10"
-                                 HorizontalOptions="Center"
-                                 VerticalOptions="Center">
-
-                        <Label Text="No tienes tareas todavía"
-                       HorizontalOptions="Center"
-                       FontSize="18"
-                       FontAttributes="Bold"
-                       TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource White}}" />
-
-                        <Label Text="Crea tu primera tarea para empezar."
-                       HorizontalOptions="Center"
-                       FontSize="13"
-                       TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray300}}" />
-
+                    <VerticalStackLayout Padding="30" Spacing="8"
+                                         HorizontalOptions="Center" VerticalOptions="Center">
+                        <Label Text="No hay tareas en esta vista"
+                               HorizontalOptions="Center"
+                               FontFamily="MontserratSemiBold" FontSize="18"
+                               TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+                        <Label Text="Selecciona otro día o crea una tarea."
+                               HorizontalOptions="Center" FontSize="13"
+                               TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
                     </VerticalStackLayout>
                 </CollectionView.EmptyView>
-
-                <!-- 1 card por fila -->
                 <CollectionView.ItemsLayout>
-                    <LinearItemsLayout Orientation="Vertical"
-                               ItemSpacing="1" />
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="0" />
                 </CollectionView.ItemsLayout>
-
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:TaskItemModel">
+                        <Grid ColumnDefinitions="58,*" ColumnSpacing="7" Padding="0,3,0,6">
+                            <!-- Hora y línea de agenda -->
+                            <Grid Grid.Column="0" RowDefinitions="Auto,*" RowSpacing="4">
+                                <VerticalStackLayout Spacing="0" HorizontalOptions="Center">
+                                    <Label Text="{Binding TimelineTimeText}"
+                                           FontFamily="ManropeSemiBold" FontSize="12"
+                                           HorizontalTextAlignment="Center"
+                                           TextColor="{AppThemeBinding Light=#334155, Dark=#E5E7EB}" />
+                                    <Label Text="{Binding TimelinePeriodText}"
+                                           FontSize="9" HorizontalTextAlignment="Center"
+                                           TextColor="{AppThemeBinding Light=#94A3B8, Dark=#6B7280}" />
+                                </VerticalStackLayout>
+                                <Grid Grid.Row="1" WidthRequest="14" HorizontalOptions="Center">
+                                    <BoxView WidthRequest="1" HorizontalOptions="Center" VerticalOptions="Fill"
+                                             Color="{AppThemeBinding Light=#DDE3EC, Dark=#3D4353}" />
+                                    <Ellipse WidthRequest="8" HeightRequest="8" VerticalOptions="Start"
+                                             Fill="{Binding PriorityColorHex}" />
+                                </Grid>
+                            </Grid>
 
-                        <Border Padding="12"
-                        Margin="10,0,10,10"
-                        BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}"
-                        StrokeShape="RoundRectangle 20"
-                        MinimumHeightRequest="100">
-
-                            <Grid ColumnDefinitions="Auto,*"
-                          ColumnSpacing="12"
-                                  RowSpacing="2"
-                                  >
-
-                                <!-- editbycodex: pin y completado rapido comparten una columna estable. -->
-                                <VerticalStackLayout Grid.Column="0"
-                                                     Spacing="8"
-                                                     HorizontalOptions="Center"
-                                                     VerticalOptions="Start">
-                                <Border
-                                WidthRequest="34"
-                                HeightRequest="34"
-                                Padding="0"
-                                StrokeThickness="0"
-                                BackgroundColor="{AppThemeBinding Light={StaticResource shipsligth}, Dark={StaticResource DarkBackground}}"
-                                StrokeShape="RoundRectangle 14"
-                                VerticalOptions="Start"
-                                HorizontalOptions="Center">
-
-                                    <Label Text="📌"
-                                   FontSize="22"
-                                   HorizontalOptions="Center"
-                                   VerticalOptions="Center" />
-
-                                </Border>
-
-                                    <Grid IsVisible="{Binding HasNoSubtasks}"
-                                          WidthRequest="34"
-                                          HeightRequest="34">
+                            <!-- Una sola plantilla adaptable evita congelar la UI al buscar o mostrar Sin fecha. -->
+                            <Border Grid.Column="1" Margin="0,0,5,7" Padding="14,11"
+                                    MinimumHeightRequest="108"
+                                    StrokeThickness="0" StrokeShape="RoundRectangle 20"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}">
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding IsGroupTask}" Value="True">
+                                        <Setter Property="MinimumHeightRequest" Value="142" />
+                                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#EEF1FF, Dark=#272A46}" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                    <!-- Esta zona abre el detalle; queda separada del check para evitar doble navegación. -->
+                                    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
                                         <Grid.GestureRecognizers>
-                                            <TapGestureRecognizer
-                                                Command="{Binding CompleteFromListCommand, Source={RelativeSource AncestorType={x:Type viewModels:TasksPageViewModel}}}"
-                                                CommandParameter="{Binding Id}" />
+                                            <TapGestureRecognizer Command="{Binding OpenDetailCommand, Source={RelativeSource AncestorType={x:Type viewModels:TasksPageViewModel}}}"
+                                                                  CommandParameter="{Binding Id}" />
                                         </Grid.GestureRecognizers>
+                                        <HorizontalStackLayout Spacing="6">
+                                            <Border Padding="8,3" StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                                    BackgroundColor="{StaticResource primarioS}"
+                                                    IsVisible="{Binding IsGroupTask}">
+                                                <Label Text="GRUPAL" FontFamily="ManropeSemiBold" FontSize="9" TextColor="White" />
+                                            </Border>
+                                            <Border Padding="8,3" StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                                    BackgroundColor="{AppThemeBinding Light=#F3F4F6, Dark={StaticResource DarkBackground}}">
+                                                <Label Text="{Binding PriorityText}" FontFamily="LatoBold" FontSize="10"
+                                                       TextColor="{Binding PriorityColorHex}" />
+                                            </Border>
+                                        </HorizontalStackLayout>
+                                        <Label Grid.Row="1" Text="{Binding Title}" MaxLines="2"
+                                               FontFamily="MontserratSemiBold" FontSize="15"
+                                               TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+                                        <Label Grid.Row="2" Text="{Binding CourseName}" MaxLines="1"
+                                               IsVisible="{Binding HasCourse}"
+                                               FontFamily="ManropeRegular" FontSize="11"
+                                               TextColor="{Binding CourseColor}" />
+                                        <HorizontalStackLayout Grid.Row="3" Spacing="7"
+                                                               IsVisible="{Binding HasGroupMember}">
+                                            <Border WidthRequest="27" HeightRequest="27" Padding="0"
+                                                    StrokeThickness="2" Stroke="White"
+                                                    StrokeShape="RoundRectangle 14"
+                                                    BackgroundColor="{StaticResource primarioS}">
+                                                <Label Text="{Binding GroupMemberInitials}"
+                                                       HorizontalTextAlignment="Center"
+                                                       VerticalTextAlignment="Center"
+                                                       FontFamily="ManropeSemiBold" FontSize="9" TextColor="White" />
+                                            </Border>
+                                            <VerticalStackLayout Spacing="-2" VerticalOptions="Center">
+                                                <Label Text="Con un compañero" FontSize="9"
+                                                       TextColor="{AppThemeBinding Light=#64748B, Dark=#AAB2C2}" />
+                                                <Label Text="{Binding GroupMemberName}" FontFamily="ManropeSemiBold" FontSize="11"
+                                                       TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
+                                            </VerticalStackLayout>
+                                        </HorizontalStackLayout>
+                                        <Grid Grid.Row="4" ColumnDefinitions="*,Auto" ColumnSpacing="6">
+                                            <Label Text="{Binding EstimatedMinutesText}" FontSize="11"
+                                                   TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                                            <Label Grid.Column="1" Text="{Binding StatusText}" FontFamily="ManropeSemiBold"
+                                                   FontSize="10" TextColor="{Binding StatusColorHex}" />
+                                        </Grid>
+                                        <Border Grid.Row="5" IsVisible="{Binding HasStartWarning}"
+                                                Padding="8,4" Margin="0,1,0,0"
+                                                StrokeThickness="0" StrokeShape="RoundRectangle 8"
+                                                BackgroundColor="{AppThemeBinding Light=#FEF3C7, Dark=#3A2E12}">
+                                            <Label Text="{Binding StartWarningText}"
+                                                   FontFamily="ManropeSemiBold" FontSize="10"
+                                                   TextColor="{AppThemeBinding Light=#B45309, Dark=#FBBF24}" />
+                                        </Border>
+                                    </Grid>
 
-                                        <!-- editbycodex: check nativo, solo lectura visual; el comando guarda antes de actualizar. -->
+                                    <Grid Grid.Column="1" IsVisible="{Binding HasNoSubtasks}"
+                                          WidthRequest="36" HeightRequest="36" VerticalOptions="Start">
+                                        <Grid.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding CompleteFromListCommand, Source={RelativeSource AncestorType={x:Type viewModels:TasksPageViewModel}}}"
+                                                                  CommandParameter="{Binding Id}" />
+                                        </Grid.GestureRecognizers>
                                         <CheckBox IsChecked="{Binding IsCompleted, Mode=OneWay}"
                                                   IsEnabled="{Binding CanQuickComplete}"
                                                   InputTransparent="True"
-                                                  Color="{StaticResource primarioS}"
-                                                  HorizontalOptions="Center"
-                                                  VerticalOptions="Center" />
+                                                  Color="{StaticResource primarioS}" />
                                     </Grid>
-                                </VerticalStackLayout>
-
-                                <!-- CONTENIDO -->
-                                <Grid Grid.Column="1"
-                              RowDefinitions="Auto,Auto,Auto,Auto,Auto"
-                              RowSpacing="1">
-
-                                    <Grid.GestureRecognizers>
-                                        <!-- editbycodex: abrir detalle queda separado del area del check. -->
-                                        <TapGestureRecognizer
-                                            Command="{Binding OpenDetailCommand, Source={RelativeSource AncestorType={x:Type viewModels:TasksPageViewModel}}}"
-                                            CommandParameter="{Binding Id}" />
-                                    </Grid.GestureRecognizers>
-
-                                    <!-- TOP BADGES -->
-                                    <Grid Grid.Row="0"
-                                  ColumnDefinitions="Auto,*"
-                                  ColumnSpacing="8">
-
-                                        <Border Padding="8,4"
-                                            StrokeThickness="0"
-                                            BackgroundColor="{AppThemeBinding Light={StaticResource shipsligth}, Dark={StaticResource DarkBackground}}"
-                                            StrokeShape="RoundRectangle 12"
-                                            HorizontalOptions="Start">
-
-                                            <Label Text="{Binding PriorityText}"
-                                                   FontSize="10"
-                                                   FontFamily="LatoBold"
-                                                   TextColor="{Binding PriorityColorHex}" />
-
-                                        </Border>
-                                        <!-- Curso -->
-                                        <Border Grid.Column="1"
-                                            IsVisible="{Binding HasCourse}"
-                                            Padding="8,4"
-                                            StrokeShape="RoundRectangle 10"
-                                            Background="{Binding CourseColor}"
-                                            VerticalOptions="Center">
-
-                                            <HorizontalStackLayout Spacing="6"
-                                               VerticalOptions="Center">
-
-                                                <BoxView WidthRequest="6"
-                                                     HeightRequest="6"
-                                                     CornerRadius="2"
-                                                     Background="Transparent"
-                                                     Color="{Binding CourseColor}" />
-
-                                                <Label Text="Curso:"
-                                                   FontSize="11"
-                                                   FontFamily="MontserratRegular"
-                                                   TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
-
-                                                <Label Text="{Binding CourseName}"
-                                                   FontSize="11"
-                                                   FontFamily="OpenSansRegular"
-                                                   LineBreakMode="TailTruncation"
-                                                   MaxLines="1"
-                                                   TextColor="{Binding CourseColor}" />
-
-                                            </HorizontalStackLayout>
-
-                                        </Border>
-
-                                        <Label Grid.Column="2"
-                                       Text="{Binding StatusText}"
-                                       FontSize="12"
-                                       HorizontalTextAlignment="End"
-                                       VerticalTextAlignment="Center"
-                                       FontFamily="OpenSansRegular"
-                                       LineBreakMode="TailTruncation"
-                                       TextColor="{Binding StatusColorHex}" />
-
-                                    </Grid>
-
-                                    <!-- TITLE -->
-                                    <Label Grid.Row="1"
-                                   Text="{Binding Title}"
-                                   FontSize="15"
-                                   FontFamily="MontserratSemiBold"
-                                   MaxLines="2"
-                                   LineBreakMode="TailTruncation"
-                                   TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
-
-                                    <!-- INFO PRINCIPAL -->
-                                    <Grid Grid.Row="2"
-                                  ColumnDefinitions="*,Auto"
-                                  ColumnSpacing="10">
-
-                                        <!-- Fecha principal -->
-                                        <HorizontalStackLayout Grid.Column="0"
-                                                       Spacing="6"
-                                                       VerticalOptions="Center">
-
-                                            <Label Text="⏰"
-                                           FontSize="12" />
-
-                                            <Label Text="{Binding DueDatePrimaryText}"
-                                           FontSize="12"
-                                           FontAttributes="Bold"
-                                           LineBreakMode="TailTruncation"
-                                           TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
-
-                                        </HorizontalStackLayout>
-
-                                        
-
-                                    </Grid>
-
-                                    <Label Grid.Row="4" Text="Es hora de empezar esta actividad"
-                                           FontSize="12" FontAttributes="Bold"
-                                           TextColor="#B45309"
-                                           IsVisible="{Binding ShouldStartNow}" />
-
-                                    <!-- INFO SECUNDARIA -->
-                                    <Grid Grid.Row="3"
-                                  ColumnDefinitions="*,Auto"
-                                  ColumnSpacing="10">
-
-                                        <!-- Tiempo estimado -->
-                                        <HorizontalStackLayout Grid.Column="0"
-                                           Spacing="6"
-                                           VerticalOptions="Center">
-
-                                            <Label Text="⏳"
-                                                   FontSize="12" />
-
-                                            <Label Text="{Binding EstimatedMinutesText}"
-                                               FontSize="12"
-                                               FontFamily="MontserratRegular"
-                                               LineBreakMode="TailTruncation"
-                                               TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
-
-                                        </HorizontalStackLayout>
-                                        <!-- Fecha relativa -->
-                                        <Label Grid.Column="1"
-                                       Text="{Binding DueDateRelativeText}"
-                                       FontSize="12"
-                                       FontAttributes="Bold"
-                                       LineBreakMode="TailTruncation"
-                                       TextColor="{Binding DueDateRelativeColorHex}"
-                                       IsVisible="{Binding HasDueDateRelativeText}"
-                                       VerticalOptions="Center" />
-
-                                        
-
-                                    </Grid>
-
                                 </Grid>
-
-                            </Grid>
-
-                        </Border>
-
+                            </Border>
+                        </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
-
             </CollectionView>
 
-            <!-- FAB FLOTANTE REAL (SUPERPUESTO, SIN RESERVAR ESPACIO) -->
-            <Button Text="+"
-                    Clicked="OnAddTaskClicked"
-                    BackgroundColor="{StaticResource primarioS}"
-                    TextColor="{StaticResource White}"
-                    FontSize="28"
-                    WidthRequest="70"
-                    HeightRequest="70"
-                    CornerRadius="40"
-                    HorizontalOptions="End"
-                    VerticalOptions="End"
-                    Margin="0,0,0,0"
-                    ZIndex="10" />
-        </Grid>
+            <!-- Campo simple y ligero; evita el bloqueo nativo observado con SearchBar. -->
+            <Border IsVisible="{Binding IsSearchPanelOpen}"
+                    Margin="14,0,14,16" Padding="14,0,4,0" HeightRequest="52"
+                    HorizontalOptions="Fill" VerticalOptions="End"
+                    StrokeThickness="1" Stroke="{AppThemeBinding Light=#E2E8F0, Dark=#3D4353}"
+                    StrokeShape="RoundRectangle 26"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#252A36}"
+                    ZIndex="20">
+                <Grid ColumnDefinitions="Auto,*,42" ColumnSpacing="8">
+                    <Label Text="{x:Static f:FluentUI.search_24_regular}"
+                           FontFamily="{x:Static f:FluentUI.FontFamily}" FontSize="20"
+                           VerticalTextAlignment="Center"
+                           TextColor="{AppThemeBinding Light=#64748B, Dark=#CBD5E1}" />
+                    <Entry x:Name="SearchInput" Grid.Column="1"
+                           Text="{Binding SearchText}"
+                           Placeholder="Buscar tarea..."
+                           ReturnType="Search"
+                           ClearButtonVisibility="WhileEditing"
+                           BackgroundColor="Transparent"
+                           FontFamily="InterRegular" FontSize="14" />
+                    <Label Grid.Column="2" Text="×" FontSize="26"
+                           HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
+                           TextColor="{AppThemeBinding Light=#475569, Dark=#CBD5E1}">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding CloseSearchPanelCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                </Grid>
+            </Border>
 
+            <!-- Acciones contextuales de esta página, fuera del Shell. -->
+            <Grid IsVisible="{Binding IsSearchPanelOpen, Converter={StaticResource InverseBoolConverter}}"
+                  HorizontalOptions="Fill" VerticalOptions="End" ZIndex="20">
+                <HorizontalStackLayout HorizontalOptions="End" VerticalOptions="End"
+                                       Margin="0,0,14,16" Spacing="10">
+                    <Border WidthRequest="52" HeightRequest="52" Padding="0" StrokeThickness="1"
+                            Stroke="{AppThemeBinding Light=#E2E8F0, Dark=#3D4353}"
+                            StrokeShape="RoundRectangle 26"
+                            BackgroundColor="{AppThemeBinding Light=White, Dark=#252A36}">
+                        <Label Text="{x:Static f:FluentUI.search_24_regular}"
+                               FontFamily="{x:Static f:FluentUI.FontFamily}" FontSize="22"
+                               HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
+                               TextColor="{AppThemeBinding Light=#334155, Dark=#F8FAFC}" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnSearchButtonTapped" />
+                        </Border.GestureRecognizers>
+                    </Border>
+
+                    <Border WidthRequest="56" HeightRequest="56" Padding="0" StrokeThickness="0"
+                            StrokeShape="RoundRectangle 28"
+                            BackgroundColor="{StaticResource primarioS}"
+                            Shadow="{Shadow Brush=#50000000, Offset='0,4', Radius=10, Opacity=0.35}">
+                        <Label Text="+" FontFamily="InterRegular" FontSize="34"
+                               TranslationY="-2"
+                               HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
+                               TextColor="White" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnAddTaskTapped" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                </HorizontalStackLayout>
+            </Grid>
+        </Grid>
     </Grid>
 </base:BasePage>

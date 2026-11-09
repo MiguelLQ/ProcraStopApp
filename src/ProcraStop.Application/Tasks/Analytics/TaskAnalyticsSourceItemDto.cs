@@ -7,6 +7,9 @@ namespace ProcraStop.Application.Tasks.Analytics
     {
         public DateTime? DueDate { get; init; }
         public DateTime? CompletedAtUtc { get; init; }
+        public DateTime CreatedAtUtc { get; init; }
+        public DateTime? PlannedStartDate { get; init; }
+        public DateTime? StartedAtUtc { get; init; }
         public TaskPriority Priority { get; init; }
         public TaskItemStatus Status { get; init; }
         public int? EstimatedMinutes { get; init; }

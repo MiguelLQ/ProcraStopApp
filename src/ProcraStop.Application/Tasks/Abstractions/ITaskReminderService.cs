@@ -1,20 +1,40 @@
-﻿
+﻿using ProcraStop.Domain.Tasks.Enums;
 
 namespace ProcraStop.Application.Tasks.Abstractions
 {
     public interface ITaskReminderService
     {
-        // Este método programa un recordatorio para una tarea específica.
-        // Recibe el ID de la tarea, el título, una descripción opcional, la fecha del recordatorio, la fecha de vencimiento opcional y un token de cancelación.
-        // El servicio se encargará de mostrar una notificación al usuario en la fecha del recordatorio.
+        // Programa el recordatorio de vencimiento de una tarea.
         Task ScheduleAsync(
             Guid taskId,
             string title,
             string? description,
             DateTime reminderDate,
             DateTime? dueDate,
+            TaskPriority priority,
             CancellationToken cancellationToken = default);
-        // Este método cancela un recordatorio previamente programado para una tarea específica.
+
+        // Programa el aviso de inicio previsto. Es independiente del recordatorio de vencimiento,
+        // de modo que una tarea puede tener ambos avisos activos a la vez.
+        Task ScheduleStartReminderAsync(
+            Guid taskId,
+            string title,
+            string? description,
+            DateTime plannedStartDate,
+            TaskPriority priority,
+            CancellationToken cancellationToken = default);
+
+        // Cancela solo el recordatorio de vencimiento.
+        Task CancelDueReminderAsync(
+            Guid taskId,
+            CancellationToken cancellationToken = default);
+
+        // Cancela solo el aviso de inicio previsto.
+        Task CancelStartReminderAsync(
+            Guid taskId,
+            CancellationToken cancellationToken = default);
+
+        // Cancela todos los avisos de la tarea (vencimiento e inicio).
         Task CancelAsync(
             Guid taskId,
             CancellationToken cancellationToken = default);

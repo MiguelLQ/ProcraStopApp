@@ -44,7 +44,12 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
         private string searchSummaryText = string.Empty; // editbycodex: resumen profesional debajo del buscador.
 
         [ObservableProperty]
+        private bool isSearchPanelOpen;
+
+        [ObservableProperty]
         private TaskFilterOption selectedFilter = TaskFilterOption.All;
+
+        private bool _isNavigating;
 
         public bool IsAllSelected => SelectedFilter == TaskFilterOption.All;
         public bool IsPendingSelected => SelectedFilter == TaskFilterOption.Pending;
@@ -103,6 +108,23 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
                     .Select(TaskItemModel.FromDto)
                     .ToList();
 
+                // Vista temporal para validar el diseño grupal sin persistir datos de prueba.
+                _allTasks.Insert(0, new TaskItemModel
+                {
+                    Id = Guid.Empty,
+                    IsDesignPreview = true,
+                    Title = "Preparar presentación del proyecto",
+                    Description = "Tarea grupal de muestra para validar la tarjeta.",
+                    DueDate = SelectedDate.Date.AddHours(16),
+                    EstimatedMinutes = 60,
+                    Priority = TaskPriority.High,
+                    Status = TaskItemStatus.InProgress,
+                    CourseName = "Diseño de interfaces",
+                    CourseColor = "#5B5FEF",
+                    GroupMemberName = "Ana Torres",
+                    GroupMemberInitials = "AT"
+                });
+
                 if (string.IsNullOrWhiteSpace(SearchText))
                     ApplyFilter();
                 else
@@ -118,9 +140,22 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
         [RelayCommand]
         private async Task OpenDetail(Guid taskId)
         {
-            Console.WriteLine($" CLICK TASK: {taskId}");
+            if (_isNavigating)
+                return;
 
-            await Shell.Current.GoToAsync($"task-detail?taskId={taskId}");
+            if (_allTasks.FirstOrDefault(x => x.Id == taskId)?.IsDesignPreview == true)
+                return;
+
+            Console.WriteLine($" CLICK TASK: {taskId}");
+            try
+            {
+                _isNavigating = true;
+                await Shell.Current.GoToAsync($"task-detail?taskId={taskId}");
+            }
+            finally
+            {
+                _isNavigating = false;
+            }
         }
 
         [RelayCommand]
@@ -157,6 +192,19 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             {
                 _completingTaskIds.Remove(taskId);
             }
+        }
+
+        [RelayCommand]
+        private void ToggleSearchPanel()
+        {
+            IsSearchPanelOpen = !IsSearchPanelOpen;
+        }
+
+        [RelayCommand]
+        private void CloseSearchPanel()
+        {
+            IsSearchPanelOpen = false;
+            SearchText = string.Empty;
         }
 
         private void ApplyCompletedTaskIncrementally(TaskItemModel item, bool wasOverdue)
@@ -200,16 +248,18 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
                 _ => filtered
             };
 
-            Tasks = new ObservableCollection<TaskItemModel>(filtered);
+            Tasks = new ObservableCollection<TaskItemModel>(
+                filtered.OrderBy(x => x.DueDate ?? DateTime.MaxValue));
             UpdateSearchSummary(Tasks.Count, SearchText);
         }
         public ObservableCollection<TaskFilterChip> Filters { get; } = new()
         {
             new() { Title = "Todas", Filter = TaskFilterOption.All, IsSelected = true },
+            // Se mantiene a la vista sin exigir desplazarse hasta el final de los chips.
+            new() { Title = "Sin fecha", Filter = TaskFilterOption.WithoutDate },
             new() { Title = "Pendientes", Filter = TaskFilterOption.Pending },
             new() { Title = "Completadas", Filter = TaskFilterOption.Completed },
-            new() { Title = "Vencidas", Filter = TaskFilterOption.Overdue },
-            new() { Title = "Sin fecha", Filter = TaskFilterOption.WithoutDate } // editbycodex: acceso a tareas no programadas.
+            new() { Title = "Vencidas", Filter = TaskFilterOption.Overdue }
         };
 
         [RelayCommand]
@@ -229,7 +279,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
                 _ = SearchWithDebounceAsync(SearchText, immediate: true); // editbycodex: chips y busqueda trabajan juntos.
         }
 
-        private async Task SearchWithDebounceAsync(string value, bool immediate = false)
+        private async Task SearchWithDebounceAsync(string? value, bool immediate = false)
         {
             _searchDebounceCts?.Cancel();
             _searchDebounceCts?.Dispose();
@@ -248,9 +298,9 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             }
         }
 
-        private Task SearchNowAsync(string value, CancellationToken ct)
+        private Task SearchNowAsync(string? value, CancellationToken ct)
         {
-            var text = value.Trim();
+            var text = (value ?? string.Empty).Trim();
             IsSearchActive = !string.IsNullOrWhiteSpace(text);
 
             if (!IsSearchActive)
@@ -278,7 +328,8 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
                 _ => mapped // editbycodex: Todas y Sin fecha no limitan una busqueda global.
             };
 
-            Tasks = new ObservableCollection<TaskItemModel>(mapped.Take(40));
+            Tasks = new ObservableCollection<TaskItemModel>(
+                mapped.OrderBy(x => x.DueDate ?? DateTime.MaxValue).Take(30));
             UpdateSearchSummary(Tasks.Count, text); // editbycodex: feedback inmediato de resultados.
             return Task.CompletedTask;
         }

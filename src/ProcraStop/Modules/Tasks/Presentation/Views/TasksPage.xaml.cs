@@ -11,6 +11,7 @@ public partial class TasksPage : BasePage
     // editbycodex: usa el status bar primario definido por BasePage.
     private readonly TasksPageViewModel _viewModel;
     private readonly IServiceProvider _serviceProvider;
+    private bool _isNavigatingToCreate;
 
     public TasksPage(TasksPageViewModel viewModel, IServiceProvider serviceProvider, ISnackbarService snackbarService)
     {
@@ -42,8 +43,27 @@ public partial class TasksPage : BasePage
         });
     }
 
-    private async void OnAddTaskClicked(object sender, EventArgs e)
+    private async void OnAddTaskTapped(object? sender, TappedEventArgs e)
     {
-        await Shell.Current.GoToAsync(nameof(CreateTaskPage));
+        if (_isNavigatingToCreate)
+            return;
+
+        try
+        {
+            _isNavigatingToCreate = true;
+            await Shell.Current.GoToAsync(nameof(CreateTaskPage));
+        }
+        finally
+        {
+            _isNavigatingToCreate = false;
+        }
+    }
+
+    private void OnSearchButtonTapped(object? sender, TappedEventArgs e)
+    {
+        _viewModel.ToggleSearchPanelCommand.Execute(null);
+        Dispatcher.DispatchDelayed(
+            TimeSpan.FromMilliseconds(100),
+            () => SearchInput.Focus());
     }
 }

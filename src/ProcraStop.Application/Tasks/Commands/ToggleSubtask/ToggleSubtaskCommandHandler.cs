@@ -1,5 +1,6 @@
 ﻿
 using ProcraStop.Application.Tasks.Abstractions;
+using ProcraStop.Application.Tasks.Services;
 
 namespace ProcraStop.Application.Tasks.Commands.ToggleSubtask
 {
@@ -30,10 +31,7 @@ namespace ProcraStop.Application.Tasks.Commands.ToggleSubtask
 
             // PERSIST
             await _repository.UpdateAsync(task, ct);
-            if (!task.IsCompleted && !task.IsArchived && task.ReminderDate is { } reminder && reminder > DateTime.Now)
-                await _reminderService.ScheduleAsync(task.Id, task.Title, task.Description, reminder, task.DueDate, ct);
-            else
-                await _reminderService.CancelAsync(task.Id, ct);
+            await _reminderService.SyncTaskRemindersAsync(task, ct);
         }
     }
 }

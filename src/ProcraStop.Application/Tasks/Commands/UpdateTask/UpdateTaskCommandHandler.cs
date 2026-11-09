@@ -1,5 +1,6 @@
 ﻿using ProcraStop.Application.Tasks.Abstractions;
 using ProcraStop.Application.Tasks.Mappers;
+using ProcraStop.Application.Tasks.Services;
 using ProcraStop.Domain.Tasks.Entities;
 namespace ProcraStop.Application.Tasks.Commands.UpdateTask
 {
@@ -41,10 +42,7 @@ namespace ProcraStop.Application.Tasks.Commands.UpdateTask
             );
 
             await _repository.UpdateAsync(task, ct);
-            if (task.IsArchived || task.IsCompleted || task.ReminderDate is not { } reminder || reminder <= DateTime.Now)
-                await _reminderService.CancelAsync(task.Id, ct);
-            else
-                await _reminderService.ScheduleAsync(task.Id, task.Title, task.Description, reminder, task.DueDate, ct);
+            await _reminderService.SyncTaskRemindersAsync(task, ct);
         }
     }
 }

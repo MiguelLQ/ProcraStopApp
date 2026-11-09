@@ -9,6 +9,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.Views;
 public partial class CreateTaskPage : ContentPage
 {
     private readonly CreateTaskPageViewModel _viewModel;
+    private bool _isReturningToTasks;
 
     public CreateTaskPage(CreateTaskPageViewModel viewModel)
     {
@@ -20,9 +21,20 @@ public partial class CreateTaskPage : ContentPage
         _viewModel.TaskCreated += OnTaskCreated;
     }
 
-    private async void OnTaskCreated()
+    private async Task OnTaskCreated()
     {
-        await Shell.Current.GoToAsync("..");
+        if (_isReturningToTasks || Shell.Current is not { } shell)
+            return;
+
+        try
+        {
+            _isReturningToTasks = true;
+            await shell.GoToAsync("..");
+        }
+        finally
+        {
+            _isReturningToTasks = false;
+        }
     }
 
     protected override void OnDisappearing()

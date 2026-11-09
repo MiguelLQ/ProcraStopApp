@@ -20,6 +20,8 @@ namespace ProcraStop.Modules.Tasks.Presentation.Models
         [NotifyPropertyChangedFor(nameof(IsCompleted))]
         [NotifyPropertyChangedFor(nameof(CanQuickComplete))]
         [NotifyPropertyChangedFor(nameof(ShouldStartNow))]
+        [NotifyPropertyChangedFor(nameof(StartWarningText))]
+        [NotifyPropertyChangedFor(nameof(HasStartWarning))]
         [NotifyPropertyChangedFor(nameof(IsActuallyOverdue))]
         [NotifyPropertyChangedFor(nameof(ShowOverdue))]
         [NotifyPropertyChangedFor(nameof(OverdueText))]
@@ -33,9 +35,38 @@ namespace ProcraStop.Modules.Tasks.Presentation.Models
         public bool ShouldStartNow => PlannedStartDate.HasValue &&
             PlannedStartDate.Value.Date <= DateTime.Today &&
             StartedAtUtc is null && !IsCompleted;
+
+        // D1 EPA: senal visible cuando la fecha de inicio prevista ya llego.
+        public string StartWarningText
+        {
+            get
+            {
+                if (!ShouldStartNow || !PlannedStartDate.HasValue)
+                    return string.Empty;
+
+                var days = (DateTime.Today - PlannedStartDate.Value.Date).Days;
+                return days <= 0
+                    ? "Debías empezar hoy"
+                    : $"Debías empezar hace {days} día(s)";
+            }
+        }
+        public bool HasStartWarning => !string.IsNullOrWhiteSpace(StartWarningText);
         public string? CourseName { get; set; }
         public string? CourseColor { get; set; }
+        public bool IsDesignPreview { get; init; }
+        public string? GroupMemberName { get; init; }
+        public string? GroupMemberInitials { get; init; }
         public bool HasCourse => !string.IsNullOrWhiteSpace(CourseName);
+        public bool HasGroupMember => !string.IsNullOrWhiteSpace(GroupMemberName);
+        // Hasta que el dominio exponga un tipo personal/grupal, una tarea asociada
+        // a un curso representa la variante colaborativa de la lista.
+        public bool IsGroupTask => HasCourse;
+        public bool IsPersonalTask => !IsGroupTask;
+        public string TimelineTimeText => DueDate?.ToString("hh:mm") ?? "S/F";
+        public string TimelinePeriodText => DueDate.HasValue
+            ? (DueDate.Value.Hour < 12 ? "am" : "pm")
+            : "sin fecha";
+        public string GroupLabel => HasCourse ? "GRUPAL" : "PERSONAL";
         public string StatusText => Status switch
         {
             TaskItemStatus.Pending => "Pendiente",
@@ -160,7 +191,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.Models
         public bool CanComplete => Status != TaskItemStatus.Completed;
         public bool IsCompleted => Status == TaskItemStatus.Completed;
         public bool HasNoSubtasks => !HasSubtasks;
-        public bool CanQuickComplete => !HasSubtasks && !IsCompleted && ActivityType != AcademicActivityType.Deliverable;
+        public bool CanQuickComplete => !IsDesignPreview && !HasSubtasks && !IsCompleted && ActivityType != AcademicActivityType.Deliverable;
         public bool HasDescription => !string.IsNullOrWhiteSpace(Description);
 
         public bool HasDueDate => DueDate.HasValue;

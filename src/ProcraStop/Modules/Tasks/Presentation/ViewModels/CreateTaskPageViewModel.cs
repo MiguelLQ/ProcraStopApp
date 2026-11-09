@@ -151,7 +151,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
         {
             SelectedCourseId = value?.Id == Guid.Empty ? null : value?.Id;
         }
-        public event Action? TaskCreated;
+        public event Func<Task>? TaskCreated;
 
         public CreateTaskPageViewModel(CreateTaskCommandHandler createTaskHandler, GetCoursesQueryHandler getCoursesHandler)
         {
@@ -290,8 +290,9 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
                 Console.WriteLine($"OFFSET FINAL: {SelectedReminderOffset}");
                 Console.WriteLine($"INDEX: {SelectedReminderOffsetIndex}");
 
-                TaskCreated?.Invoke();
                 PendingNotificationService.Set("Tarea creada con exito!");
+                if (TaskCreated is { } taskCreated)
+                    await taskCreated.Invoke();
 
             }
             catch (ArgumentException ex)

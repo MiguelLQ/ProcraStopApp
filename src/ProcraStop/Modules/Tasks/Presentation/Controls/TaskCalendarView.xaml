@@ -25,7 +25,8 @@
 
             <Grid Grid.Row="0"
                   ColumnDefinitions="*,Auto,Auto"
-                  ColumnSpacing="10">
+                  ColumnSpacing="10"
+                  IsVisible="{Binding IsExpanded, Source={x:Reference Root}, x:DataType=controls:TaskCalendarView}">
 
                 <VerticalStackLayout Spacing="2"
                                      VerticalOptions="Center">
@@ -81,8 +82,9 @@
             <!-- editbycodex: contenedor fijo; evita el costo de CollectionView para solo 7 dias. -->
             <HorizontalStackLayout x:Name="WeekHost"
                                    Grid.Row="1"
-                                   HeightRequest="62"
-                                   Spacing="1"
+                                   HeightRequest="70"
+                                   Spacing="3"
+                                   HorizontalOptions="Center"
                                    IsVisible="{Binding IsCompactVisible, Source={x:Reference Root}, x:DataType=controls:TaskCalendarView}" />
 
             <Grid Grid.Row="2"

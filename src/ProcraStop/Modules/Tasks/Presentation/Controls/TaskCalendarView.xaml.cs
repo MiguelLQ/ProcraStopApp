@@ -236,6 +236,7 @@ public partial class TaskCalendarView : ContentView
 
         cell.DayName.Text = day.DayName;
         cell.DayName.IsVisible = cell.ShowDayName;
+        cell.DayName.SetAppThemeColor(Label.TextColorProperty, GetColor("Subtitlecl"), GetColor("Subtitle"));
         cell.DayNumber.Text = day.DayNumber;
         cell.TaskDot.IsVisible = day.HasTasks;
         cell.OverdueDot.IsVisible = day.HasOverdueTasks; // editbycodex: rojo independiente para dias con vencidas.
@@ -250,6 +251,8 @@ public partial class TaskCalendarView : ContentView
             cell.NumberBorder.BackgroundColor = GetColor("primarioS");
             cell.NumberBorder.Opacity = 1;
             cell.DayNumber.TextColor = Colors.White;
+            if (cell.ShowDayName)
+                cell.DayName.TextColor = Colors.White;
             return;
         }
 
@@ -259,6 +262,8 @@ public partial class TaskCalendarView : ContentView
             cell.NumberBorder.BackgroundColor = GetTodayBackgroundColor();
             cell.NumberBorder.Opacity = 1;
             cell.DayNumber.TextColor = GetColor("primarioS");
+            if (cell.ShowDayName)
+                cell.DayName.TextColor = GetColor("primarioS");
             return;
         }
 
@@ -279,22 +284,32 @@ public partial class TaskCalendarView : ContentView
     {
         var root = new VerticalStackLayout
         {
-            WidthRequest = 48,
-            Spacing = 6,
+            WidthRequest = 43,
+            Spacing = 3,
             HorizontalOptions = LayoutOptions.Center
         };
 
         var dayName = CreateDayNameLabel();
-        var numberBorder = CreateNumberBorder(38, 19);
-        var dayNumber = CreateNumberLabel(12);
+        dayName.FontSize = 10;
+        var numberBorder = CreateNumberBorder(43, 16);
+        numberBorder.HeightRequest = 58;
+        var dayNumber = CreateNumberLabel(14);
         var tap = new TapGestureRecognizer();
         var rootTap = new TapGestureRecognizer();
         var indicators = CreateIndicators(out var taskDot, out var overdueDot);
 
-        numberBorder.Content = dayNumber;
+        var dateContent = new VerticalStackLayout
+        {
+            Spacing = 0,
+            HorizontalOptions = LayoutOptions.Center,
+            VerticalOptions = LayoutOptions.Center
+        };
+        dateContent.Children.Add(dayNumber);
+        dateContent.Children.Add(dayName);
+
+        numberBorder.Content = dateContent;
         numberBorder.GestureRecognizers.Add(tap);
         root.GestureRecognizers.Add(rootTap); // editbycodex: mejora respuesta al tocar cualquier parte del dia.
-        root.Children.Add(dayName);
         root.Children.Add(numberBorder);
         root.Children.Add(indicators);
 

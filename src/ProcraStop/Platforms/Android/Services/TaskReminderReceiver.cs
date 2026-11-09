@@ -10,6 +10,8 @@ public sealed class TaskReminderReceiver : BroadcastReceiver
     {
         if (context is null || intent is null ||
             !Guid.TryParse(intent.GetStringExtra("taskId"), out var taskId)) return;
-        AndroidTaskReminderService.Deliver(context, taskId, intent.GetLongExtra("ticks", 0));
+
+        var kind = (AndroidTaskReminderService.ReminderKind)intent.GetIntExtra("kind", 0);
+        AndroidTaskReminderService.Deliver(context, taskId, kind, intent.GetLongExtra("ticks", 0));
     }
 }

@@ -33,6 +33,44 @@ namespace ProcraStop.Application.Tasks.Analytics
                 .Select(g => new { Name = g.Key, Count = g.Count() })
                 .ToArray(); // editbycodex: agrupa cursos una sola vez para etiquetas y valores.
 
+            // D1 EPA: "postergacion al ultimo momento".
+            // Primer avance = primera vez que la tarea pasa a StartedAtUtc.
+            var started = tasks.Where(t => t.StartedAtUtc.HasValue).ToArray();
+            var firstProgressHours = started
+                .Select(t => (t.StartedAtUtc!.Value - t.CreatedAtUtc).TotalHours)
+                .Where(hours => hours >= 0)
+                .ToArray();
+
+            var withPlanAndStart = started
+                .Where(t => t.PlannedStartDate.HasValue)
+                .ToArray();
+
+            // Diferencia en dias entre el inicio real y el inicio previsto.
+            // Positivo = empezo tarde; negativo = empezo antes.
+            var startDelays = withPlanAndStart
+                .Select(t => (t.StartedAtUtc!.Value.ToLocalTime().Date - t.PlannedStartDate!.Value.Date).TotalDays)
+                .ToArray();
+
+            var startedWithDue = started
+                .Where(t => t.DueDate.HasValue)
+                .ToArray();
+
+            var onTimeStarts = withPlanAndStart.Count(t =>
+                t.StartedAtUtc!.Value.ToLocalTime().Date <= t.PlannedStartDate!.Value.Date);
+
+            // Inicio al limite: el primer avance ocurre en las ultimas 24 horas antes del vencimiento
+            // (o directamente despues de vencer).
+            var lastMinuteStarts = startedWithDue.Count(t =>
+                t.StartedAtUtc!.Value.ToLocalTime() >= t.DueDate!.Value.AddHours(-24));
+
+            var overdueStartNotStarted = tasks.Count(t =>
+                t.Status != TaskItemStatus.Completed &&
+                !t.CompletedAtUtc.HasValue &&
+                t.StartedAtUtc is null &&
+                t.PlannedStartDate.HasValue &&
+                t.PlannedStartDate.Value.Date < today);
+
+
             return new TaskAnalyticsDto
             {
                 Total = tasks.Count,
@@ -54,6 +92,22 @@ namespace ProcraStop.Application.Tasks.Analytics
 
                 LowPriority = tasks.Count(t =>
                     t.Priority == TaskPriority.Low),
+
+                AvgHoursToFirstProgress = firstProgressHours.Length == 0
+                    ? null
+                    : firstProgressHours.Average(),
+                AvgStartDelayDays = startDelays.Length == 0
+                    ? null
+                    : startDelays.Average(),
+                OnTimeStartRate = withPlanAndStart.Length == 0
+                    ? 0
+                    : (double)onTimeStarts / withPlanAndStart.Length,
+                LastMinuteStartRate = startedWithDue.Length == 0
+                    ? 0
+                    : (double)lastMinuteStarts / startedWithDue.Length,
+                OverdueStartNotStarted = overdueStartNotStarted,
+                MeasuredStarts = withPlanAndStart.Length,
+                MeasuredDueStarts = startedWithDue.Length,
 
                 ByCourse = courseGroups.ToDictionary(
                     group => group.Name,

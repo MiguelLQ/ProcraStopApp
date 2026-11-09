@@ -77,17 +77,8 @@ public sealed class CreateTaskCommandHandler
         // Persistir
         await _repository.AddAsync(task, cancellationToken);
 
-        // Integración externa (notificaciones)
-        if (task.ReminderDate.HasValue && task.ReminderDate.Value > DateTime.Now)
-        {
-            await _reminderService.ScheduleAsync(
-                task.Id,
-                task.Title,
-                task.Description,
-                task.ReminderDate.Value,
-                task.DueDate,
-                cancellationToken);
-        }
+        // Integración externa: vencimiento + aviso de inicio previsto (EPA D1).
+        await _reminderService.SyncTaskRemindersAsync(task, cancellationToken);
 
 
         return task.Id;
