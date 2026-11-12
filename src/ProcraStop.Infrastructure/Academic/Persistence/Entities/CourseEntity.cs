@@ -11,5 +11,11 @@ namespace ProcraStop.Infrastructure.Academic.Persistence.Entities
         public string? Color { get; set; }
 
         public DateTime CreatedAtUtc { get; set; }
+
+        public int? InterestLevel { get; set; }
+
+        public int? DifficultyLevel { get; set; }
+
+        public DateTime? AppraisedAtUtc { get; set; }
     }
 }

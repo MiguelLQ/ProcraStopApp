@@ -2,7 +2,9 @@ using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Core.Platform;
 using Plugin.LocalNotification;
 using Plugin.LocalNotification.Core.Models;
+using ProcraStop.Diagnostics;
 using ProcraStop.Modules.Tasks.Presentation.ViewModels;
+using ProcraStop.Shared.Services;
 
 namespace ProcraStop.Modules.Tasks.Presentation.Views;
 
@@ -17,19 +19,21 @@ public partial class CreateTaskPage : ContentPage
 
         _viewModel = viewModel;
         BindingContext = _viewModel;
-
-        _viewModel.TaskCreated += OnTaskCreated;
     }
 
     private async Task OnTaskCreated()
     {
-        if (_isReturningToTasks || Shell.Current is not { } shell)
+        if (_isReturningToTasks)
             return;
 
         try
         {
             _isReturningToTasks = true;
-            await shell.GoToAsync("..");
+            await ShellNavigation.GoBackAsync();
+        }
+        catch (Exception ex)
+        {
+            AppCrashLogger.Log(ex, "CreateTaskPage.OnTaskCreated");
         }
         finally
         {
@@ -41,30 +45,60 @@ public partial class CreateTaskPage : ContentPage
     {
         base.OnDisappearing();
 
-        _viewModel.TaskCreated -= OnTaskCreated;
+        try
+        {
+            _viewModel.TaskCreated -= OnTaskCreated;
+        }
+        catch (Exception ex)
+        {
+            AppCrashLogger.Log(ex, "CreateTaskPage.OnDisappearing");
+        }
     }
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        if (BindingContext is CreateTaskPageViewModel vm)
+        try
         {
-            await vm.LoadAsync();
+            // La suscripción se hace aquí (no en el constructor) para que la
+            // página vuelva a recibir el evento si regresa a primer plano.
+            _viewModel.TaskCreated -= OnTaskCreated;
+            _viewModel.TaskCreated += OnTaskCreated;
+
+            if (BindingContext is CreateTaskPageViewModel vm)
+                await vm.LoadAsync();
+        }
+        catch (Exception ex)
+        {
+            AppCrashLogger.Log(ex, "CreateTaskPage.OnAppearing");
         }
         await RequestNotificationPermissionAsync();
-
     }
     public async Task RequestNotificationPermissionAsync()
     {
-        var status = await Permissions.CheckStatusAsync<Permissions.PostNotifications>();
-
-        if (status != PermissionStatus.Granted)
+        try
         {
-            await Permissions.RequestAsync<Permissions.PostNotifications>();
+            var status = await Permissions.CheckStatusAsync<Permissions.PostNotifications>();
+
+            if (status != PermissionStatus.Granted)
+            {
+                await Permissions.RequestAsync<Permissions.PostNotifications>();
+            }
+        }
+        catch (Exception ex)
+        {
+            AppCrashLogger.Log(ex, "CreateTaskPage.RequestNotificationPermission");
         }
     }
     private void OnSubtaskCompleted(object sender, EventArgs e)
     {
-        if (BindingContext is CreateTaskPageViewModel vm)
-            vm.AddSubtaskCommand.Execute(null);
+        try
+        {
+            if (BindingContext is CreateTaskPageViewModel vm)
+                vm.AddSubtaskCommand.Execute(null);
+        }
+        catch (Exception ex)
+        {
+            AppCrashLogger.Log(ex, "CreateTaskPage.OnSubtaskCompleted");
+        }
     }
 }

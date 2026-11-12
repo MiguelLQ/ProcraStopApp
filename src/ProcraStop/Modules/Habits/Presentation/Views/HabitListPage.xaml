@@ -2,6 +2,7 @@
 <base:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                xmlns:base="clr-namespace:ProcraStop.Shared.UI.Layouts"
+               xmlns:components="clr-namespace:ProcraStop.Shared.UI.Components"
                xmlns:models="clr-namespace:ProcraStop.Modules.Habits.Presentation.Models"
                xmlns:viewModels="clr-namespace:ProcraStop.Modules.Habits.Presentation.ViewModels"
                x:Class="ProcraStop.Modules.Habits.Presentation.Views.HabitListPage"
@@ -13,7 +14,7 @@
                BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
 
     <!-- editbycodex: experiencia Hoy, diseñada para registrar sin abandonar la lista. -->
-    <Grid RowDefinitions="Auto,Auto,*" RowSpacing="8">
+    <Grid x:Name="PageRoot" RowDefinitions="Auto,Auto,*" RowSpacing="8">
         <Border Grid.Row="0"
                 BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource shellDark}}"
                 StrokeThickness="0"
@@ -69,7 +70,7 @@
                                         BackgroundColor="Transparent">
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer
-                                            Command="{Binding SelectDateCommand, Source={RelativeSource AncestorType={x:Type viewModels:HabitListViewModel}}}"
+                                            Command="{Binding Path=BindingContext.SelectDateCommand, Source={x:Reference PageRoot}}"
                                             CommandParameter="{Binding .}" />
                                     </Border.GestureRecognizers>
                                     <Border.Triggers>
@@ -141,7 +142,7 @@
                                     <VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="2">
                                         <VerticalStackLayout.GestureRecognizers>
                                             <TapGestureRecognizer
-                                                Command="{Binding OpenHabitCommand, Source={RelativeSource AncestorType={x:Type viewModels:HabitListViewModel}}}"
+                                                Command="{Binding Path=BindingContext.OpenHabitCommand, Source={x:Reference PageRoot}}"
                                                 CommandParameter="{Binding Id}" />
                                         </VerticalStackLayout.GestureRecognizers>
                                         <Label Text="{Binding Name}"
@@ -157,7 +158,7 @@
                                     <!-- editbycodex: check grande y accionable para hábito binario. -->
                                     <Border Grid.RowSpan="2" Grid.Column="1"
                                             IsVisible="{Binding IsBinary}"
-                                            IsEnabled="{Binding CanEditSelectedDate, Source={RelativeSource AncestorType={x:Type viewModels:HabitListViewModel}}}"
+                                            IsEnabled="{Binding Path=BindingContext.CanEditSelectedDate, Source={x:Reference PageRoot}}"
                                             WidthRequest="34" HeightRequest="34"
                                             Padding="0"
                                             Stroke="#4075FF"
@@ -167,7 +168,7 @@
                                             VerticalOptions="Center">
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer
-                                                Command="{Binding ToggleHabitCommand, Source={RelativeSource AncestorType={x:Type viewModels:HabitListViewModel}}}"
+                                                Command="{Binding Path=BindingContext.ToggleHabitCommand, Source={x:Reference PageRoot}}"
                                                 CommandParameter="{Binding .}" />
                                         </Border.GestureRecognizers>
                                         <Border.Triggers>
@@ -186,10 +187,10 @@
                                     <!-- editbycodex: control cuantitativo estable, evita abrir otra página. -->
                                     <HorizontalStackLayout Grid.RowSpan="2" Grid.Column="1"
                                                            IsVisible="{Binding IsQuantitative}"
-                                                       IsEnabled="{Binding CanEditSelectedDate, Source={RelativeSource AncestorType={x:Type viewModels:HabitListViewModel}}}"
+                                                       IsEnabled="{Binding Path=BindingContext.CanEditSelectedDate, Source={x:Reference PageRoot}}"
                                                            Spacing="6" VerticalOptions="Center">
                                         <Button Text="−"
-                                                Command="{Binding DecreaseHabitCommand, Source={RelativeSource AncestorType={x:Type viewModels:HabitListViewModel}}}"
+                                                Command="{Binding Path=BindingContext.DecreaseHabitCommand, Source={x:Reference PageRoot}}"
                                                 CommandParameter="{Binding .}"
                                                 WidthRequest="26" HeightRequest="26" Padding="0"
                                                 CornerRadius="15"
@@ -204,7 +205,7 @@
                                                FontSize="15"
                                                TextColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}" />
                                         <Button Text="+"
-                                                Command="{Binding IncreaseHabitCommand, Source={RelativeSource AncestorType={x:Type viewModels:HabitListViewModel}}}"
+                                                Command="{Binding Path=BindingContext.IncreaseHabitCommand, Source={x:Reference PageRoot}}"
                                                 CommandParameter="{Binding .}"
                                                 WidthRequest="26" HeightRequest="26" Padding="0"
                                                 CornerRadius="15"
@@ -249,6 +250,15 @@
                     ZIndex="10"
                     BackgroundColor="#4075FF"
                     TextColor="White" />
+
+        <!-- El snackbar vive en el XAML para no reparentar el contenido de la
+             página (ver TasksPage.xaml). -->
+        <components:CustomSnackbar x:Name="SnackbarHost"
+                                   Grid.Row="2"
+                                   HorizontalOptions="Fill"
+                                   VerticalOptions="End"
+                                   Margin="0,0,0,40"
+                                   ZIndex="99" />
         </Grid>
     </Grid>
 </base:BasePage>

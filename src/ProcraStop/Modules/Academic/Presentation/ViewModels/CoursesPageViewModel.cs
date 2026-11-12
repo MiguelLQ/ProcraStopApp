@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using ProcraStop.Application.Academic.DTOs;
 using ProcraStop.Application.Academic.Facade;
+using ProcraStop.Modules.Academic.Presentation.Models;
 using ProcraStop.Modules.Tasks.Presentation.Models;
 using System.Collections.ObjectModel;
 
@@ -57,6 +58,15 @@ namespace ProcraStop.Modules.Academic.Presentation.ViewModels
         [ObservableProperty]
         private string? selectedColor;
 
+        // D1 EPA: valoracion opcional por curso (1..5), no se pregunta por tarea.
+        public IReadOnlyList<AppraisalOption> AppraisalOptions { get; } = AppraisalOption.All;
+
+        [ObservableProperty]
+        private AppraisalOption selectedInterest = AppraisalOption.All[0];
+
+        [ObservableProperty]
+        private AppraisalOption selectedDifficulty = AppraisalOption.All[0];
+
         [ObservableProperty]
         private bool isEditing;
         [RelayCommand]
@@ -98,7 +108,9 @@ namespace ProcraStop.Modules.Academic.Presentation.ViewModels
                     Id = SelectedCourse.Id,
                     Name = Name.Trim(),
                     Description = Description,
-                    Color = SelectedColor
+                    Color = SelectedColor,
+                    InterestLevel = SelectedInterest.Value,
+                    DifficultyLevel = SelectedDifficulty.Value
                 };
 
                 await _coursesFacade.UpdateCourseAsync(request);
@@ -107,7 +119,9 @@ namespace ProcraStop.Modules.Academic.Presentation.ViewModels
                     Id = request.Id,
                     Name = request.Name,
                     Description = request.Description,
-                    Color = request.Color
+                    Color = request.Color,
+                    InterestLevel = request.InterestLevel,
+                    DifficultyLevel = request.DifficultyLevel
                 });
             }
             else
@@ -117,7 +131,9 @@ namespace ProcraStop.Modules.Academic.Presentation.ViewModels
                 {
                     Name = Name.Trim(),
                     Description = Description,
-                    Color = SelectedColor
+                    Color = SelectedColor,
+                    InterestLevel = SelectedInterest.Value,
+                    DifficultyLevel = SelectedDifficulty.Value
                 };
 
                 var id = await _coursesFacade.CreateCourseAsync(request);
@@ -126,7 +142,9 @@ namespace ProcraStop.Modules.Academic.Presentation.ViewModels
                     Id = id,
                     Name = request.Name,
                     Description = request.Description,
-                    Color = request.Color
+                    Color = request.Color,
+                    InterestLevel = request.InterestLevel,
+                    DifficultyLevel = request.DifficultyLevel
                 });
             }
 
@@ -145,6 +163,8 @@ namespace ProcraStop.Modules.Academic.Presentation.ViewModels
             Name = course.Name;
             Description = course.Description;
             SelectedColor = course.Color;
+            SelectedInterest = AppraisalOption.Find(course.InterestLevel);
+            SelectedDifficulty = AppraisalOption.Find(course.DifficultyLevel);
 
             IsEditing = true;
         }
@@ -182,6 +202,8 @@ namespace ProcraStop.Modules.Academic.Presentation.ViewModels
             Name = string.Empty;
             Description = null;
             SelectedColor = null;
+            SelectedInterest = AppraisalOption.All[0];
+            SelectedDifficulty = AppraisalOption.All[0];
             SelectedCourse = null;
             IsEditing = false;
         }

@@ -36,7 +36,9 @@ namespace ProcraStop.Application.Academic.Facade
             {
                 Name = request.Name,
                 Description = request.Description,
-                Color = request.Color
+                Color = request.Color,
+                InterestLevel = request.InterestLevel,
+                DifficultyLevel = request.DifficultyLevel
             };
 
             return _createHandler.HandleAsync(command, ct);
@@ -49,7 +51,9 @@ namespace ProcraStop.Application.Academic.Facade
                 Id = request.Id,
                 Name = request.Name,
                 Description = request.Description,
-                Color = request.Color
+                Color = request.Color,
+                InterestLevel = request.InterestLevel,
+                DifficultyLevel = request.DifficultyLevel
             };
 
             return _updateHandler.HandleAsync(command, ct);

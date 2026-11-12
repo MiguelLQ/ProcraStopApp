@@ -18,7 +18,7 @@
         <ScrollView>
             <VerticalStackLayout Padding="16,12,16,28" Spacing="16">
 
-                <stress:StressCheckInView />
+                <stress:StressCheckInView x:Name="StressCheckIn" />
 
                 <Border Style="{StaticResource DashboardHeroCardStyle}">
                     <VerticalStackLayout Spacing="16">

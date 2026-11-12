@@ -13,7 +13,10 @@ namespace ProcraStop.Infrastructure.Academic.Persistence.Mappings
                 Name = course.Name,
                 Description = course.Description,
                 Color = course.Color,
-                CreatedAtUtc = course.CreatedAt
+                CreatedAtUtc = course.CreatedAt,
+                InterestLevel = course.InterestLevel,
+                DifficultyLevel = course.DifficultyLevel,
+                AppraisedAtUtc = course.AppraisedAtUtc
             };
         }
 
@@ -25,7 +28,10 @@ namespace ProcraStop.Infrastructure.Academic.Persistence.Mappings
                 Name = entity.Name,
                 Description = entity.Description,
                 Color = entity.Color,
-                CreatedAt = entity.CreatedAtUtc
+                CreatedAt = entity.CreatedAtUtc,
+                InterestLevel = entity.InterestLevel,
+                DifficultyLevel = entity.DifficultyLevel,
+                AppraisedAtUtc = entity.AppraisedAtUtc
             };
         }
     }

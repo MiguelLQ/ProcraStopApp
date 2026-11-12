@@ -5,6 +5,7 @@ namespace ProcraStop.Infrastructure.StudyTechniques.Persistence.Entities;
 public sealed class StudyTechniqueSessionEntity
 {
     public Guid Id { get; set; }
+    public Guid? TaskId { get; set; }
     public string CourseName { get; set; } = string.Empty;
     public string Topic { get; set; } = string.Empty;
     public StudyTechniqueType Technique { get; set; }

@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using ProcraStop.Application.StudyTechniques.DTOs;
 using ProcraStop.Application.StudyTechniques.Services;
 using ProcraStop.Domain.StudyTechniques.Enums;
 using ProcraStop.Modules.StudyTechniques.Presentation.Models;
@@ -10,10 +11,17 @@ namespace ProcraStop.Modules.StudyTechniques.Presentation.ViewModels;
 public partial class AcademicHelpViewModel : ObservableObject, IQueryAttributable
 {
     private readonly AcademicHelpService _service;
+    private readonly AcademicHelpMetricsService _metricsService;
     private Guid? _taskId;
     private Guid? _courseId;
 
-    public AcademicHelpViewModel(AcademicHelpService service) => _service = service;
+    public AcademicHelpViewModel(
+        AcademicHelpService service,
+        AcademicHelpMetricsService metricsService)
+    {
+        _service = service;
+        _metricsService = metricsService;
+    }
 
     public ObservableCollection<HelpRequestItem> Requests { get; } = new();
     public IReadOnlyList<HelpChannelOption> Channels { get; } = HelpChannelOption.All;
@@ -24,6 +32,15 @@ public partial class AcademicHelpViewModel : ObservableObject, IQueryAttributabl
     [ObservableProperty] private string contactName = string.Empty;
     [ObservableProperty] private string feedback = string.Empty;
     [ObservableProperty] private bool isBusy;
+
+    // D2 EPA: seguimiento visible de los tiempos de ayuda.
+    [ObservableProperty] private bool hasMetrics;
+    [ObservableProperty] private string metricsSummary = string.Empty;
+    [ObservableProperty] private string requestTimeText = "Sin datos";
+    [ObservableProperty] private string resolveTimeText = "Sin datos";
+    [ObservableProperty] private string pendingText = "Sin consultas pendientes";
+    [ObservableProperty] private string followUpText = string.Empty;
+    [ObservableProperty] private bool hasPendingFollowUp;
 
     public bool NeedsContactName => SelectedChannel.Value != HelpChannel.CourseMaterial;
 
@@ -45,10 +62,13 @@ public partial class AcademicHelpViewModel : ObservableObject, IQueryAttributabl
     [RelayCommand]
     public async Task LoadAsync()
     {
+        var now = DateTime.UtcNow;
         var requests = await _service.GetRecentAsync();
         Requests.Clear();
         foreach (var request in requests)
-            Requests.Add(HelpRequestItem.FromDomain(request));
+            Requests.Add(HelpRequestItem.FromDomain(request, now));
+
+        ApplyMetrics(await _metricsService.GetAsync());
     }
 
     [RelayCommand]
@@ -100,5 +120,35 @@ public partial class AcademicHelpViewModel : ObservableObject, IQueryAttributabl
         }
         catch (InvalidOperationException ex) { Feedback = ex.Message; }
         finally { IsBusy = false; }
+    }
+
+    private void ApplyMetrics(AcademicHelpMetricsDto metrics)
+    {
+        HasMetrics = metrics.HasMetrics;
+        MetricsSummary =
+            $"{metrics.Total} consulta(s) · {metrics.Planned} por consultar · " +
+            $"{metrics.Requested} en curso · {metrics.Resolved} resueltas";
+        RequestTimeText = FormatHours(metrics.AverageHoursToRequest);
+        ResolveTimeText = FormatHours(metrics.AverageHoursToResolve);
+        PendingText = metrics.OldestPendingDays.HasValue
+            ? $"Pendientes: {metrics.Planned} · la más antigua hace {metrics.OldestPendingDays} día(s)"
+            : $"Pendientes: {metrics.Planned}";
+        HasPendingFollowUp = metrics.HasPendingFollowUp;
+        FollowUpText = metrics.HasPendingFollowUp
+            ? $"{metrics.PendingFollowUp} consulta(s) llevan más de " +
+              $"{AcademicHelpMetricsDto.FollowUpThresholdDays} días sin realizarse."
+            : string.Empty;
+    }
+
+    private static string FormatHours(double? hours)
+    {
+        if (!hours.HasValue)
+            return "sin datos";
+        if (hours.Value < 1)
+            return "menos de 1 h";
+        if (hours.Value < 48)
+            return $"{hours.Value:0.#} h";
+
+        return $"{hours.Value / 24:0.#} día(s)";
     }
 }

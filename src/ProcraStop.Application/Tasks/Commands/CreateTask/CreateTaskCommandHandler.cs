@@ -25,6 +25,21 @@ public sealed class CreateTaskCommandHandler
         CreateTaskCommand command,
         CancellationToken cancellationToken = default)
     {
+        try
+        {
+            return await HandleAsyncCore(command, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            // Red de seguridad: nunca dejar caer la app al crear una tarea.
+            throw new InvalidOperationException($"No se pudo crear la tarea: {ex.Message}", ex);
+        }
+    }
+
+    private async Task<Guid> HandleAsyncCore(
+        CreateTaskCommand command,
+        CancellationToken cancellationToken = default)
+    {
         // Calcular reminder (esto sí es responsabilidad del handler)
         DateTime? reminderDate = null;
 
@@ -53,10 +68,12 @@ public sealed class CreateTaskCommandHandler
         IReadOnlyList<PlannedStepDto>? milestones = command.Milestones;
         if (command.ActivityType == AcademicActivityType.Exam)
         {
+            if (!command.DueDate.HasValue)
+                throw new InvalidOperationException("El examen necesita fecha límite.");
             milestones = ExamPlanBuilder.Build(
                 command.Subtasks ?? [],
                 command.PlannedStartDate ?? DateTime.Today,
-                command.DueDate!.Value);
+                command.DueDate.Value);
         }
         if (milestones is not null)
         {
@@ -78,7 +95,15 @@ public sealed class CreateTaskCommandHandler
         await _repository.AddAsync(task, cancellationToken);
 
         // Integración externa: vencimiento + aviso de inicio previsto (EPA D1).
-        await _reminderService.SyncTaskRemindersAsync(task, cancellationToken);
+        try
+        {
+            await _reminderService.SyncTaskRemindersAsync(task, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            // No fallar la creación de tarea por un problema de recordatorios.
+            System.Diagnostics.Debug.WriteLine($"[CreateTaskCommandHandler] Recordatorio falló: {ex}");
+        }
 
 
         return task.Id;

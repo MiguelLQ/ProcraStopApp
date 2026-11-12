@@ -1,4 +1,5 @@
 using ProcraStop.Modules.Academic.Presentation.ViewModels;
+using ProcraStop.Shared.UI;
 
 namespace ProcraStop.Modules.Academic.Presentation.Views;
 
@@ -17,6 +18,6 @@ public partial class CoursesPage : ContentPage
     {
         base.OnAppearing();
 
-        await _viewModel.LoadAsync();
+        await SafeUi.RunAsync(_viewModel.LoadAsync, "CoursesPage.OnAppearing");
     }
 }

@@ -8,6 +8,7 @@ public sealed class StudyTechniqueSession
 
     private StudyTechniqueSession(
         Guid id,
+        Guid? taskId,
         string courseName,
         string topic,
         StudyTechniqueType technique,
@@ -25,6 +26,7 @@ public sealed class StudyTechniqueSession
         string? notes)
     {
         Id = id;
+        TaskId = taskId;
         CourseName = Normalize(courseName, "General");
         Topic = Normalize(topic, "Tema libre");
         Technique = technique;
@@ -43,6 +45,8 @@ public sealed class StudyTechniqueSession
     }
 
     public Guid Id { get; private set; }
+    // D2 EPA: examen concreto al que pertenece la sesion (opcional).
+    public Guid? TaskId { get; private set; }
     public string CourseName { get; private set; } = string.Empty;
     public string Topic { get; private set; } = string.Empty;
     public StudyTechniqueType Technique { get; private set; }
@@ -72,10 +76,12 @@ public sealed class StudyTechniqueSession
         int progressPercent,
         int pomodoroCycles,
         AcademicHelpStatus helpStatus,
-        string? notes)
+        string? notes,
+        Guid? taskId = null)
     {
         return new StudyTechniqueSession(
             Guid.NewGuid(),
+            taskId,
             courseName,
             topic,
             technique,
@@ -95,6 +101,7 @@ public sealed class StudyTechniqueSession
 
     public static StudyTechniqueSession Rehydrate(
         Guid id,
+        Guid? taskId,
         string courseName,
         string topic,
         StudyTechniqueType technique,
@@ -113,6 +120,7 @@ public sealed class StudyTechniqueSession
     {
         return new StudyTechniqueSession(
             id,
+            taskId,
             courseName,
             topic,
             technique,

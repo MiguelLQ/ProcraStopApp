@@ -106,7 +106,7 @@ public partial class CreateHabitViewModel : ObservableObject
             });
 
             PendingNotificationService.Set("Hábito creado. Empieza con una acción pequeña.");
-            await Shell.Current.GoToAsync("..");
+            await ShellNavigation.GoToAsync("..");
         }
         catch (Exception)
         {

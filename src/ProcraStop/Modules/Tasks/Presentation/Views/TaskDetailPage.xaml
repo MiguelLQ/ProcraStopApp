@@ -15,7 +15,7 @@
              Title="Detalle de Tarea">
 
     <!-- ROOT -->
-    <Grid RowDefinitions="85,*,Auto">
+    <Grid x:Name="PageRoot" RowDefinitions="85,*,Auto">
 
         <!-- ========================= -->
         <!-- HEADER BACKGROUND -->
@@ -199,7 +199,7 @@
                 </Border>
 
                 <!-- SUBTASKS -->
-                <Label Text="Subtareas"
+                <Label Text="{Binding CurrentTask.SubtasksSectionTitle}"
                        Margin="15,10,15,0"
                        FontSize="15"
                        FontFamily="MontserratSemiBold"
@@ -229,7 +229,7 @@
                                       VerticalOptions="Center">
 
                                     <CheckBox IsChecked="{Binding IsCompleted}"
-                                          Command="{Binding ToggleSubtaskCommand, Source={RelativeSource AncestorType={x:Type viewModels:TaskDetailViewModel}}}"
+                                          Command="{Binding Path=BindingContext.ToggleSubtaskCommand, Source={x:Reference PageRoot}}"
                                           CommandParameter="{Binding .}" />
 
                                     <Label Grid.Column="1"
@@ -301,6 +301,15 @@
             </Grid>
 
         </Border>
+
+        <!-- El snackbar vive en el XAML para no reparentar el contenido de la
+             página (ver TasksPage.xaml). -->
+        <components:CustomSnackbar x:Name="SnackbarHost"
+                                   Grid.Row="1"
+                                   HorizontalOptions="Fill"
+                                   VerticalOptions="End"
+                                   Margin="0,0,0,40"
+                                   ZIndex="99" />
 
     </Grid>
 

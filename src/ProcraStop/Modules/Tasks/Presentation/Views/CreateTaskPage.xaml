@@ -213,7 +213,7 @@
 
                             <!-- HEADER SUBTAREAS -->
                             <Grid ColumnDefinitions="*,Auto" Padding="0,0,0,5">
-                                <Label Text="Hitos o temas (opcional para tareas)"
+                                <Label Text="{Binding SubtaskSectionTitle}"
                                        FontSize="14"
                                        FontFamily="InterSemiBold"
                                        TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" 
@@ -229,11 +229,16 @@
                                         TextColor="White"
                                         Command="{Binding AddSubtaskCommand}" />
                             </Grid>
+                            <Label Text="{Binding SubtaskHelpText}"
+                                   IsVisible="{Binding ShowReadingHelp}"
+                                   FontSize="11"
+                                   FontFamily="InterRegular"
+                                   TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
                             <!-- INPUT -->
                             <Border Padding="12,2"
                                  BackgroundColor="{AppThemeBinding Light={StaticResource EntryClar}, Dark={StaticResource EntryDark}}"
                                  StrokeShape="RoundRectangle 10">
-                                <Entry Placeholder="Ingrese Sub Tarea ..."
+                                <Entry Placeholder="{Binding SubtaskInputPlaceholder}"
                                     Text="{Binding NewSubtaskText}"
                                     BackgroundColor="Transparent"
                                     PlaceholderColor="{AppThemeBinding Light={StaticResource PlaceHolderClar},  Dark={StaticResource PlaceHolderDarck}}"

@@ -15,6 +15,39 @@
             <Label Text="Formula una duda concreta y elige cómo resolverla. Registrar una consulta aquí no envía mensajes a otra persona."
                    FontSize="13" TextColor="{AppThemeBinding Light=#4B5563, Dark=#B8C3D5}" />
 
+            <!-- D2 EPA: tiempos y seguimiento de ayuda -->
+            <Border Padding="16" StrokeShape="RoundRectangle 14"
+                    IsVisible="{Binding HasMetrics}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#171F2B}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Tus tiempos de ayuda" FontSize="17" FontAttributes="Bold" />
+                    <Label Text="{Binding MetricsSummary}" FontSize="12"
+                           TextColor="{AppThemeBinding Light=#4B5563, Dark=#B8C3D5}" />
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Hasta pedir ayuda" FontSize="11"
+                                   TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />
+                            <Label Text="{Binding RequestTimeText}" FontSize="16" FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=#2563EB, Dark=#93C5FD}" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2">
+                            <Label Text="Hasta resolverla" FontSize="11"
+                                   TextColor="{AppThemeBinding Light=#6B7280, Dark=#9CA3AF}" />
+                            <Label Text="{Binding ResolveTimeText}" FontSize="16" FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=#059669, Dark=#34D399}" />
+                        </VerticalStackLayout>
+                    </Grid>
+                    <Label Text="{Binding PendingText}" FontSize="12"
+                           TextColor="{AppThemeBinding Light=#4B5563, Dark=#B8C3D5}" />
+                    <Border IsVisible="{Binding HasPendingFollowUp}"
+                            Padding="10,8" StrokeShape="RoundRectangle 8"
+                            BackgroundColor="{AppThemeBinding Light=#FEF3C7, Dark=#3A2E12}">
+                        <Label Text="{Binding FollowUpText}" FontSize="12"
+                               TextColor="{AppThemeBinding Light=#B45309, Dark=#FBBF24}" />
+                    </Border>
+                </VerticalStackLayout>
+            </Border>
+
             <Border Padding="16" StrokeShape="RoundRectangle 14"
                     BackgroundColor="{AppThemeBinding Light=White, Dark=#171F2B}">
                 <VerticalStackLayout Spacing="10">
@@ -43,6 +76,8 @@
                                 <Label Text="{Binding Question}" FontSize="13" />
                                 <Label Text="{Binding ChannelText}" FontSize="12" />
                                 <Label Text="{Binding StatusText}" FontSize="12" TextColor="#2563EB" />
+                                <Label Text="{Binding StaleText}" IsVisible="{Binding IsStale}"
+                                       FontSize="11" TextColor="{AppThemeBinding Light=#B45309, Dark=#FBBF24}" />
                                 <Label Text="{Binding CreatedText}" FontSize="11" />
                                 <Button Text="Ya consulté" IsVisible="{Binding CanMarkRequested}"
                                         Command="{Binding BindingContext.MarkRequestedCommand, Source={x:Reference PageRoot}}"

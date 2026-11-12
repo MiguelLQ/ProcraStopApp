@@ -5,6 +5,7 @@ using ProcraStop.Application.Tasks.Facade;
 using ProcraStop.Domain.Tasks.Enums;
 using ProcraStop.Modules.StudyTechniques.Presentation.Models;
 using ProcraStop.Modules.StudyTechniques.Presentation.Views;
+using ProcraStop.Shared.Services;
 using System.Collections.ObjectModel;
 
 namespace ProcraStop.Modules.StudyTechniques.Presentation.ViewModels;
@@ -42,11 +43,13 @@ public partial class StudyTechniquesHomeViewModel : ObservableObject
         await LoadRescueTasksAsync();
     }
 
-    [RelayCommand] public Task GoToRecommendAsync() => Shell.Current.GoToAsync(nameof(TechniqueRecommendationPage));
-    [RelayCommand] public Task GoToLibraryAsync() => Shell.Current.GoToAsync(nameof(TechniqueLibraryPage));
-    [RelayCommand] public Task GoToPomodoroAsync() => Shell.Current.GoToAsync(nameof(PomodoroPage));
-    [RelayCommand] public Task GoToHistoryAsync() => Shell.Current.GoToAsync(nameof(StudySessionHistoryPage));
-    [RelayCommand] public Task GoToHelpAsync() => Shell.Current.GoToAsync(nameof(AcademicHelpPage));
+    [RelayCommand] public Task GoToRecommendAsync() => ShellNavigation.GoToAsync(nameof(TechniqueRecommendationPage));
+    // Tabs de Shell: se navega con ruta absoluta (//Route) porque son
+    // ShellContent de la jerarquía y no rutas globales registradas.
+    [RelayCommand] public Task GoToLibraryAsync() => ShellNavigation.GoToAsync("//TechniqueLibraryPage");
+    [RelayCommand] public Task GoToPomodoroAsync() => ShellNavigation.GoToAsync("//PomodoroPage");
+    [RelayCommand] public Task GoToHistoryAsync() => ShellNavigation.GoToAsync(nameof(StudySessionHistoryPage));
+    [RelayCommand] public Task GoToHelpAsync() => ShellNavigation.GoToAsync(nameof(AcademicHelpPage));
 
     [RelayCommand]
     public Task GoToTaskRecommendationAsync(StudyRescueTaskItem task)
@@ -62,7 +65,7 @@ public partial class StudyTechniquesHomeViewModel : ObservableObject
         if (task.EstimatedMinutes.HasValue)
             parameters["minutes"] = task.EstimatedMinutes.Value.ToString();
 
-        return Shell.Current.GoToAsync(nameof(TechniqueRecommendationPage), parameters);
+        return ShellNavigation.GoToAsync(nameof(TechniqueRecommendationPage), parameters);
     }
 
     private async Task LoadRescueTasksAsync()

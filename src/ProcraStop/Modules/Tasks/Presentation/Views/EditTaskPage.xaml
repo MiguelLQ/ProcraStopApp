@@ -115,8 +115,18 @@
                         <!-- SUBTAREAS -->
                         <!-- ===================== -->
 
+                        <Label Text="{Binding SubtaskSectionTitle}"
+                               FontSize="14"
+                               FontFamily="InterSemiBold"
+                               TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                        <Label Text="{Binding SubtaskHelpText}"
+                               IsVisible="{Binding ShowReadingHelp}"
+                               FontSize="11"
+                               FontFamily="InterRegular"
+                               TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+
                         <Grid ColumnDefinitions="*,Auto">
-                            <Entry Placeholder="Nueva subtarea"
+                            <Entry Placeholder="{Binding SubtaskInputPlaceholder}"
                                    Text="{Binding NewSubtaskText}" />
 
                             <Button Grid.Column="1"

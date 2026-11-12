@@ -1,3 +1,4 @@
+using ProcraStop.Application.StudyTechniques.DTOs;
 using ProcraStop.Domain.StudyTechniques.Entities;
 using ProcraStop.Domain.StudyTechniques.Enums;
 
@@ -13,23 +14,37 @@ public sealed class HelpRequestItem
     public string CreatedText { get; init; } = string.Empty;
     public bool CanMarkRequested { get; init; }
     public bool CanResolve { get; init; }
+    public bool IsStale { get; init; }
+    public string StaleText { get; init; } = string.Empty;
 
-    public static HelpRequestItem FromDomain(AcademicHelpRequest request) => new()
+    public static HelpRequestItem FromDomain(AcademicHelpRequest request, DateTime? nowUtc = null)
     {
-        Id = request.Id,
-        Topic = request.Topic,
-        Question = request.Question,
-        ChannelText = HelpChannelOption.All.First(x => x.Value == request.Channel).Name +
-            (request.ContactName is null ? "" : $" · {request.ContactName}"),
-        StatusText = request.Status switch
+        var now = nowUtc ?? DateTime.UtcNow;
+        var isPlanned = request.Status == HelpRequestStatus.Planned;
+        var ageDays = (now - request.CreatedAtUtc).TotalDays;
+        var isStale = isPlanned && ageDays >= AcademicHelpMetricsDto.FollowUpThresholdDays;
+
+        return new HelpRequestItem
         {
-            HelpRequestStatus.Planned => "Por consultar",
-            HelpRequestStatus.Requested => "Consultado, pendiente de resolver",
-            HelpRequestStatus.Resolved => "Resuelto",
-            _ => "Por consultar"
-        },
-        CreatedText = request.CreatedAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm"),
-        CanMarkRequested = request.Status == HelpRequestStatus.Planned,
-        CanResolve = request.Status == HelpRequestStatus.Requested
-    };
+            Id = request.Id,
+            Topic = request.Topic,
+            Question = request.Question,
+            ChannelText = HelpChannelOption.All.First(x => x.Value == request.Channel).Name +
+                (request.ContactName is null ? "" : $" · {request.ContactName}"),
+            StatusText = request.Status switch
+            {
+                HelpRequestStatus.Planned => "Por consultar",
+                HelpRequestStatus.Requested => "Consultado, pendiente de resolver",
+                HelpRequestStatus.Resolved => "Resuelto",
+                _ => "Por consultar"
+            },
+            CreatedText = request.CreatedAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm"),
+            CanMarkRequested = request.Status == HelpRequestStatus.Planned,
+            CanResolve = request.Status == HelpRequestStatus.Requested,
+            IsStale = isStale,
+            StaleText = isStale
+                ? $"Sin realizar desde hace {(int)Math.Floor(ageDays)} día(s)"
+                : string.Empty
+        };
+    }
 }

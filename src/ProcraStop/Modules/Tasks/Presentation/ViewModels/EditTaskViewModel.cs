@@ -9,6 +9,7 @@ using ProcraStop.Application.Tasks.Queries.GetTaskById;
 using ProcraStop.Domain.Tasks.Enums;
 using ProcraStop.Modules.Tasks.Presentation.Models;
 using ProcraStop.Shared.Services;
+using ProcraStop.Shared.UI;
 using System.Collections.ObjectModel;
 
 namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
@@ -41,7 +42,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
                     TaskId = id;
 
                     // 🔥 CARGA AUTOMÁTICA
-                    _ = LoadAsync(id);
+                    _ = SafeUi.RunAsync(() => LoadAsync(id), "EditTaskViewModel.LoadAsync");
                 }
             }
         }
@@ -75,6 +76,15 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
                 SelectedActivityType = value.Value;
         }
         public bool IsDeliverable => SelectedActivityType == AcademicActivityType.Deliverable;
+        public bool IsReading => SelectedActivityType == AcademicActivityType.Reading;
+        public string SubtaskSectionTitle => IsReading
+            ? "Capítulos, secciones o páginas (opcional)"
+            : "Subtareas";
+        public string SubtaskInputPlaceholder => IsReading ? "Ej: Capítulo 3" : "Nueva subtarea";
+        public string SubtaskHelpText => IsReading
+            ? "Marca cada capítulo al terminarlo. El primero cuenta como primer avance."
+            : string.Empty;
+        public bool ShowReadingHelp => IsReading;
 
         [ObservableProperty]
         private bool hasPlannedStart;
@@ -94,6 +104,11 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
         partial void OnSelectedActivityTypeChanged(AcademicActivityType value)
         {
             OnPropertyChanged(nameof(IsDeliverable));
+            OnPropertyChanged(nameof(IsReading));
+            OnPropertyChanged(nameof(SubtaskSectionTitle));
+            OnPropertyChanged(nameof(SubtaskInputPlaceholder));
+            OnPropertyChanged(nameof(SubtaskHelpText));
+            OnPropertyChanged(nameof(ShowReadingHelp));
             if (value != AcademicActivityType.Deliverable)
                 HasPlannedReview = false;
             if (value == AcademicActivityType.Exam)
@@ -373,7 +388,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
 
                 PendingNotificationService.Set("Tarea actualizada");
                 // redirigir atras
-                await Shell.Current.GoToAsync("..");
+                await ShellNavigation.GoToAsync("..");
             }
             catch (ArgumentException ex)
             {

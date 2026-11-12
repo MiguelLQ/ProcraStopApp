@@ -9,6 +9,8 @@ using ProcraStop.Application.Dashboard.Interfaces;
 using ProcraStop.Modules.Dashboard.Presentation.Models;
 using ProcraStop.Modules.Stress.Presentation.Messages;
 using ProcraStop.Core.Decisions.DTOs;
+using ProcraStop.Diagnostics;
+using ProcraStop.Shared.UI;
 using System.Collections.ObjectModel;
 namespace ProcraStop.Modules.Dashboard.Presentation.ViewModels
 {
@@ -25,7 +27,16 @@ namespace ProcraStop.Modules.Dashboard.Presentation.ViewModels
             _maintenance = maintenance;
             WeakReferenceMessenger.Default.Register<StressCheckInSubmittedMessage>(
                 this,
-                async (_, _) => await LoadAsync());
+                OnStressCheckInSubmitted);
+        }
+
+        // El messenger invoca manejadores void; una lambda async void dejaba
+        // cualquier excepción sin observar.
+        private async void OnStressCheckInSubmitted(
+            object recipient,
+            StressCheckInSubmittedMessage message)
+        {
+            await SafeUi.RunAsync(LoadAsync, "DashboardViewModel.StressCheckInSubmitted");
         }
 
         // =========================
@@ -93,6 +104,18 @@ namespace ProcraStop.Modules.Dashboard.Presentation.ViewModels
         [RelayCommand]
         public async Task LoadAsync()
         {
+            try
+            {
+                await LoadCoreAsync();
+            }
+            catch (Exception exception)
+            {
+                AppCrashLogger.Log(exception, "DashboardViewModel.LoadAsync");
+            }
+        }
+
+        private async Task LoadCoreAsync()
+        {
             var data = await _handler.Handle(new GetDashboardDecisionQuery());
 
             if (data is null) return;
@@ -142,7 +165,7 @@ namespace ProcraStop.Modules.Dashboard.Presentation.ViewModels
             }
             catch (Exception exception)
             {
-                Console.WriteLine($"[DashboardMaintenance] {exception}");
+                AppCrashLogger.Log(exception, "DashboardViewModel.RecordLatestState");
             }
         }
 

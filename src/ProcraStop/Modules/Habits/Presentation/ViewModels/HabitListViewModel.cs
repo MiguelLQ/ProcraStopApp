@@ -110,13 +110,13 @@ public partial class HabitListViewModel : ObservableObject
     [RelayCommand]
     private async Task OpenHabit(Guid habitId)
     {
-        await Shell.Current.GoToAsync($"habit-track?habitId={habitId}");
+        await ShellNavigation.GoToAsync($"habit-track?habitId={habitId}");
     }
 
     [RelayCommand]
     private async Task GoToCreate()
     {
-        await Shell.Current.GoToAsync(nameof(CreateHabitPage));
+        await ShellNavigation.GoToAsync(nameof(CreateHabitPage));
     }
 
     private async Task SaveValue(HabitItemViewModel habit, int value)

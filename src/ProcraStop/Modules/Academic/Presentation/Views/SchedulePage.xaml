@@ -11,7 +11,7 @@
              Shell.TitleColor="{AppThemeBinding Light={StaticResource Titlecl}, Dark={StaticResource Title}}"
              BackgroundColor="{AppThemeBinding Light=#F4F6F9, Dark={StaticResource DarkBackground}}">
 
-    <RefreshView Command="{Binding LoadCommand}"
+    <RefreshView x:Name="PageRoot" Command="{Binding LoadCommand}"
                  IsRefreshing="{Binding IsBusy, Mode=OneWay}">
         <ScrollView>
             <VerticalStackLayout Padding="16,12,16,28" Spacing="14">
@@ -57,7 +57,7 @@
                                             BackgroundColor="#223148">
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer
-                                                Command="{Binding SelectDayCommand, Source={RelativeSource AncestorType={x:Type viewModels:SchedulePageViewModel}}}"
+                                                Command="{Binding Path=BindingContext.SelectDayCommand, Source={x:Reference PageRoot}}"
                                                 CommandParameter="{Binding .}" />
                                         </Border.GestureRecognizers>
                                         <Border.Triggers>
@@ -152,7 +152,7 @@
                                                         Padding="10,0"
                                                         BackgroundColor="{AppThemeBinding Light=#EEF2FF, Dark=#20334F}"
                                                         TextColor="#4075FF"
-                                                        Command="{Binding EditCommand, Source={RelativeSource AncestorType={x:Type viewModels:SchedulePageViewModel}}}"
+                                                        Command="{Binding Path=BindingContext.EditCommand, Source={x:Reference PageRoot}}"
                                                         CommandParameter="{Binding .}" />
                                                 <Button Text="Eliminar"
                                                         FontSize="11"
@@ -160,7 +160,7 @@
                                                         Padding="10,0"
                                                         BackgroundColor="#EF4444"
                                                         TextColor="White"
-                                                        Command="{Binding DeleteCommand, Source={RelativeSource AncestorType={x:Type viewModels:SchedulePageViewModel}}}"
+                                                        Command="{Binding Path=BindingContext.DeleteCommand, Source={x:Reference PageRoot}}"
                                                         CommandParameter="{Binding .}" />
                                             </HorizontalStackLayout>
                                         </Grid>

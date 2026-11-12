@@ -19,6 +19,10 @@ namespace ProcraStop
     {
         public static MauiApp CreateMauiApp()
         {
+            // Debe instalarse antes de crear cualquier vista: captura las
+            // excepciones de async void y de tareas no observadas en un log.
+            AppCrashLogger.Install();
+
             var startupStartedAt = System.Diagnostics.Stopwatch.GetTimestamp();
             var builder = MauiApp.CreateBuilder();
             builder

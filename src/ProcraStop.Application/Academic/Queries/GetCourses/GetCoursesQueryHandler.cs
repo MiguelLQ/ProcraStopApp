@@ -26,7 +26,9 @@ namespace ProcraStop.Application.Academic.Queries.GetCourses
                     Id = c.Id,
                     Name = c.Name,
                     Description = c.Description,
-                    Color = c.Color
+                    Color = c.Color,
+                    InterestLevel = c.InterestLevel,
+                    DifficultyLevel = c.DifficultyLevel
                 })
                 .ToList();
         }

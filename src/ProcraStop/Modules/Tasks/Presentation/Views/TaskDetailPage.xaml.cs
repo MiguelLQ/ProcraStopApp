@@ -1,6 +1,8 @@
 using ProcraStop.Modules.Tasks.Presentation.ViewModels;
 using ProcraStop.Shared.Services;
+using ProcraStop.Shared.UI;
 using ProcraStop.Shared.UI.Layouts;
+
 namespace ProcraStop.Modules.Tasks.Presentation.Views;
 
 public partial class TaskDetailPage : BasePage
@@ -10,30 +12,33 @@ public partial class TaskDetailPage : BasePage
         InitializeComponent();
         BindingContext = vm;
 
-        InitializeSnackbar(snackbarService); //  CLAVE
+        InitializeSnackbar(snackbarService, SnackbarHost); // CLAVE
     }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
 
-        // recargar datos (lo que ya tenías)
-        if (BindingContext is TaskDetailViewModel vm && vm.CurrentTaskId != Guid.Empty)
+        await SafeUi.RunAsync(async () =>
         {
-            vm.SetTaskId(vm.CurrentTaskId);
-        }
-
-        // consumir snackbar pendiente
-        var (msg, type) = PendingNotificationService.Consume();
-
-        if (!string.IsNullOrWhiteSpace(msg))
-        {
-            await Task.Delay(300);
-
-            await MainThread.InvokeOnMainThreadAsync(async () =>
+            // Recargar datos de la tarea actual.
+            if (BindingContext is TaskDetailViewModel vm && vm.CurrentTaskId != Guid.Empty)
             {
-                await Snackbar.ShowAsync(msg, type);
-            });
-        }
+                vm.SetTaskId(vm.CurrentTaskId);
+            }
+
+            // Consumir snackbar pendiente.
+            var (msg, type) = PendingNotificationService.Consume();
+
+            if (!string.IsNullOrWhiteSpace(msg))
+            {
+                await Task.Delay(300);
+
+                await MainThread.InvokeOnMainThreadAsync(async () =>
+                {
+                    await ShowSnackbarAsync(msg, type);
+                });
+            }
+        }, "TaskDetailPage.OnAppearing");
     }
 }

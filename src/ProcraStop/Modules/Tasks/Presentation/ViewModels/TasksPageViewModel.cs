@@ -4,6 +4,7 @@ using ProcraStop.Application.Tasks.Commands.CompleteTask;
 using ProcraStop.Application.Tasks.DTOs; // editbycodex: contratos ligeros para lista y resumen diario.
 using ProcraStop.Application.Tasks.Queries.GetTasks;
 using ProcraStop.Application.Tasks.Queries.GetTaskDaySummaries;
+using ProcraStop.Diagnostics;
 using ProcraStop.Domain.Tasks.Enums;
 using ProcraStop.Modules.Tasks.Presentation.Models;
 using ProcraStop.Shared.Services;
@@ -150,7 +151,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             try
             {
                 _isNavigating = true;
-                await Shell.Current.GoToAsync($"task-detail?taskId={taskId}");
+                await ShellNavigation.GoToAsync($"task-detail?taskId={taskId}");
             }
             finally
             {
@@ -295,6 +296,10 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             }
             catch (OperationCanceledException)
             {
+            }
+            catch (Exception exception)
+            {
+                AppCrashLogger.Log(exception, "TasksPageViewModel.BackgroundQuery");
             }
         }
 
@@ -551,6 +556,10 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             }
             catch (OperationCanceledException)
             {
+            }
+            catch (Exception exception)
+            {
+                AppCrashLogger.Log(exception, "TasksPageViewModel.BackgroundQuery");
             }
         }
 

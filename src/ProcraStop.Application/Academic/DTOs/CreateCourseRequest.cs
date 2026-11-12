@@ -9,5 +9,7 @@ namespace ProcraStop.Application.Academic.DTOs
         public string? Description { get; init; }
 
         public string? Color { get; init; }
+        public int? InterestLevel { get; init; }
+        public int? DifficultyLevel { get; init; }
     }
 }

@@ -1,4 +1,5 @@
 using ProcraStop.Modules.Tasks.Presentation.ViewModels;
+using ProcraStop.Shared.UI;
 
 namespace ProcraStop.Modules.Tasks.Presentation.Views;
 
@@ -15,6 +16,6 @@ public partial class TaskAnalyticsPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        await _vm.LoadAsync();
+        await SafeUi.RunAsync(_vm.LoadAsync, "TaskAnalyticsPage.OnAppearing");
     }
 }

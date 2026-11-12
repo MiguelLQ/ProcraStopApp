@@ -30,6 +30,8 @@ namespace ProcraStop.Modules.Tasks.Presentation.Models
         public DateTime? ReviewedAtUtc { get; set; }
         public bool IsDeliverable => ActivityType == AcademicActivityType.Deliverable;
         public bool IsExam => ActivityType == AcademicActivityType.Exam;
+        public bool IsReading => ActivityType == AcademicActivityType.Reading;
+        public string SubtasksSectionTitle => IsReading ? "Capítulos o secciones" : "Subtareas";
         public bool CanStart => StartedAtUtc is null && Status != TaskItemStatus.Completed;
         public bool CanReview => IsDeliverable && ReviewedAtUtc is null && Subtasks.All(x => x.IsCompleted);
         public string ActivityTypeText => ActivityType switch
@@ -95,7 +97,9 @@ namespace ProcraStop.Modules.Tasks.Presentation.Models
         public string ProgressText =>
             Subtasks.Count == 0
                 ? "Sin subtareas"
-                : $"{Subtasks.Count(s => s.IsCompleted)}/{Subtasks.Count} completadas";
+                : IsReading
+                    ? $"{Subtasks.Count(s => s.IsCompleted)}/{Subtasks.Count} capítulos completados"
+                    : $"{Subtasks.Count(s => s.IsCompleted)}/{Subtasks.Count} completadas";
         public string ProgressColorHex =>
             Progress switch
             {

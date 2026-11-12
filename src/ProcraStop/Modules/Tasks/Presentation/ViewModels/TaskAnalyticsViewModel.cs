@@ -3,6 +3,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ProcraStop.Application.Tasks.Analytics;
+using ProcraStop.Modules.Tasks.Presentation.Models;
+using System.Collections.ObjectModel;
 
 namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
 {
@@ -50,6 +52,12 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
         [ObservableProperty] private bool hasStartMetrics;
         [ObservableProperty] private bool hasOverdueStarts;
 
+        // D1 EPA: desglose por curso y lecturas.
+        [ObservableProperty] private ObservableCollection<CourseMetricItemModel> courseMetrics = new();
+        [ObservableProperty] private ObservableCollection<CourseMetricItemModel> readingMetrics = new();
+        [ObservableProperty] private bool hasCourseMetrics;
+        [ObservableProperty] private bool hasReadingMetrics;
+
         [RelayCommand]
         public async Task LoadAsync()
         {
@@ -90,6 +98,13 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
                 MeasuredDueStarts = data.MeasuredDueStarts;
                 OverdueStartNotStarted = data.OverdueStartNotStarted;
                 HasStartMetrics = data.MeasuredStarts > 0 || data.MeasuredDueStarts > 0;
+
+                CourseMetrics = new ObservableCollection<CourseMetricItemModel>(
+                    data.CourseMetrics.Select(metric => CourseMetricItemModel.FromDto(metric, readingsOnly: false)));
+                ReadingMetrics = new ObservableCollection<CourseMetricItemModel>(
+                    data.ReadingMetrics.Select(metric => CourseMetricItemModel.FromDto(metric, readingsOnly: true)));
+                HasCourseMetrics = CourseMetrics.Count > 0;
+                HasReadingMetrics = ReadingMetrics.Count > 0;
                 HasOverdueStarts = data.OverdueStartNotStarted > 0;
 
                 WeeklyValues = data.WeeklyCompleted;

@@ -1,58 +1,31 @@
-using Microsoft.Maui.Layouts;
+using ProcraStop.Diagnostics;
 using ProcraStop.Shared.Services;
 using ProcraStop.Shared.UI.Components;
 
 namespace ProcraStop.Shared.UI.Layouts
 {
+    /// <summary>
+    /// Base de las páginas que muestran el snackbar de confirmación.
+    ///
+    /// IMPORTANTE: el control <see cref="CustomSnackbar"/> se declara en el
+    /// XAML de cada página (no se inyecta en runtime). Antes se envolvía el
+    /// contenido de la página en un <see cref="AbsoluteLayout"/> desde
+    /// <c>OnHandlerChanged</c>, lo que obligaba a hacer <c>Content = null</c>:
+    /// al desconectar el contenido de la página se destruía el handler de los
+    /// <c>CollectionView</c> y MAUI volvía a inflar sus plantillas mientras
+    /// estaban desconectadas, con el <c>BindingContext</c> heredado en
+    /// <c>null</c>. En ese momento los bindings compilados con
+    /// <c>Source={RelativeSource AncestorType=...}</c> se aplicaban con
+    /// <c>source == null</c> y MAUI lanzaba
+    /// <c>NullReferenceException</c> al entrar y salir de las pantallas.
+    /// </summary>
     public class BasePage : ContentPage
     {
-        protected ISnackbarService? SnackbarService;
-        protected readonly CustomSnackbar Snackbar;
+        protected ISnackbarService? SnackbarService { get; private set; }
+
+        protected CustomSnackbar? Snackbar { get; private set; }
+
         private bool _isSnackbarSubscribed; // editbycodex: controla el ciclo de vida sin listeners duplicados.
-
-        public BasePage()
-        {
-            Snackbar = new CustomSnackbar
-            {
-                VerticalOptions = LayoutOptions.End,
-                HorizontalOptions = LayoutOptions.Fill,
-                Margin = new Thickness(0, 0, 0, 0),
-                IsVisible = false,
-                ZIndex = 99
-            };
-        }
-
-        // Se llama cuando la Page ya tiene handler nativo asignado
-        protected override void OnHandlerChanged()
-        {
-            base.OnHandlerChanged();
-
-            if (Handler is null) return;
-
-            if (Content is View pageContent && !(Content is AbsoluteLayout al && al.Children.Contains(Snackbar)))
-            {
-                // Envuelve el contenido en un AbsoluteLayout
-                var wrapper = new AbsoluteLayout();
-
-                // Quita el contenido actual
-                Content = null;
-
-                // Contenido ocupa todo el espacio
-                AbsoluteLayout.SetLayoutBounds(pageContent, new Rect(0, 0, 1, 1));
-                AbsoluteLayout.SetLayoutFlags(pageContent, AbsoluteLayoutFlags.All);
-                wrapper.Add(pageContent);
-
-                // Snackbar flotante abajo, sin afectar el layout
-                AbsoluteLayout.SetLayoutBounds(Snackbar, new Rect(0, 1, 1, AbsoluteLayout.AutoSize));
-                AbsoluteLayout.SetLayoutFlags(Snackbar, AbsoluteLayoutFlags.PositionProportional | AbsoluteLayoutFlags.WidthProportional);
-                Snackbar.Margin = new Thickness(0, 0, 0, 40);
-                wrapper.Add(Snackbar);
-
-                Content = wrapper;
-
-                Console.WriteLine($"[BasePage] Wrapper AbsoluteLayout creado. Handler={Snackbar.Handler is not null}");
-            }
-        }
 
         protected override void OnAppearing()
         {
@@ -60,16 +33,26 @@ namespace ProcraStop.Shared.UI.Layouts
             SubscribeSnackbar();
         }
 
-        protected void InitializeSnackbar(ISnackbarService snackbarService)
+        /// <summary>
+        /// Registra el servicio de snackbar y el control declarado en el XAML.
+        /// </summary>
+        protected void InitializeSnackbar(ISnackbarService snackbarService, CustomSnackbar snackbar)
         {
             SnackbarService = snackbarService;
+            Snackbar = snackbar;
             SubscribeSnackbar();
-            Console.WriteLine($"[BasePage] Snackbar suscrito OK");
         }
+
+        /// <summary>
+        /// Muestra un mensaje en el snackbar de la página. Si la página no
+        /// declara el control, la operación se ignora sin lanzar excepción.
+        /// </summary>
+        protected Task ShowSnackbarAsync(string message, SnackbarType type)
+            => Snackbar is null ? Task.CompletedTask : Snackbar.ShowAsync(message, type);
 
         private void SubscribeSnackbar()
         {
-            if (SnackbarService is null || _isSnackbarSubscribed)
+            if (SnackbarService is null || Snackbar is null || _isSnackbarSubscribed)
                 return;
 
             SnackbarService.OnShowRequested += Snackbar.ShowAsync;
@@ -79,7 +62,12 @@ namespace ProcraStop.Shared.UI.Layouts
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            if (SnackbarService is not null)
+
+            // Evita que una animación de snackbar siga viva cuando el handler
+            // nativo ya se desconectó.
+            Snackbar?.HideNow();
+
+            if (SnackbarService is not null && Snackbar is not null)
             {
                 SnackbarService.OnShowRequested -= Snackbar.ShowAsync;
                 _isSnackbarSubscribed = false;

@@ -15,11 +15,11 @@ ProcraStop ya es un **MVP funcional con una base de ingeniería por encima del p
 | Dimensión | Nota | Comentario |
 |---|---:|---|
 | Arquitectura de software | 7/10 | Buenas capas y módulos; hay deuda de validación, migraciones, observabilidad y limpieza. |
-| Modelo de dominio | 7/10 | `StudyTask` y `Habit` son ricos; `Course` es anémico y falta el dominio de investigación. |
+| Modelo de dominio | 7/10 | `StudyTask` y `Habit` son ricos; `Course` ya incorpora valoración opcional de interés/dificultad, pero sigue siendo simple. Falta el dominio de investigación. |
 | Persistencia | 5/10 | EF Core + SQLite con índices, pero `EnsureCreated()`, sin migraciones, sin cifrado y sin multiperfil. |
 | Motor de reglas | 6/10 | Buena idea y buena estructura; falta determinismo, persistencia de decisiones y pruebas. |
 | UI/UX | 6/10 | Buena base visual; la arquitectura de información, onboarding y accesibilidad están incompletos. |
-| Pruebas y CI | 4/10 | 22 pruebas que pasan, pero el motor y las métricas críticas no están cubiertos; no hay CI. |
+| Pruebas y CI | 4/10 | 47 pruebas que pasan; ya hay cobertura de métricas D1 por curso/lecturas, tiempos de ayuda académica (D2), preparación de exámenes y simulacros, pero el motor y otras métricas críticas siguen sin cubrir; no hay CI. |
 | Seguridad y privacidad | 3/10 | Sin consentimiento, sin participante, sin cifrado, sin borrado/exportación de datos. |
 | Preparación para la tesis | 3/10 | No existe módulo EPA, ni pretest/postest, ni exportación, ni registro de eventos de uso. |
 
@@ -46,16 +46,16 @@ ProcraStop ya es un **MVP funcional con una base de ingeniería por encima del p
 - Módulos de aplicación con CQRS "ligero": comandos, consultas, handlers, DTOs, repositorios y fachadas.
 - Registro por módulos (`AddTasksModule`, `AddHabitsModule`, etc.), lo cual facilita explicar la arquitectura en la tesis.
 - EF Core con SQLite, `IDbContextFactory`, índices explícitos y un interceptor de rendimiento (`DatabasePerformanceInterceptor`).
-- Pruebas de dominio y de base de datos: **22 pruebas, todas pasan** (`dotnet test`).
+- Pruebas de dominio, de base de datos, de analítica D1 por curso/lecturas, de métricas de ayuda académica, de cobertura de exámenes y de simulacros: **47 pruebas, todas pasan** (`dotnet test`).
 - Trazador de rendimiento de arranque/navegación (`PerformanceTracer`).
 
 ### 2.2 Funcionalidad ya implementada
 
-- **Tareas**: creación, edición, subtareas/hitos, fecha límite, recordatorio, inicio previsto, primer paso, revisión previa a entrega, archivo, estados, prioridad, esfuerzo estimado, curso, tipo de actividad (`Task`, `Reading`, `Exam`, `Deliverable`).
-- **Académico**: cursos y horario de clases con día, hora, aula, docente y minutos de aviso.
+- **Tareas**: creación, edición, subtareas/hitos, fecha límite, recordatorio, inicio previsto, primer paso, revisión previa a entrega, archivo, estados, prioridad, esfuerzo estimado, curso, tipo de actividad (`Task`, `Reading`, `Exam`, `Deliverable`). En lecturas, las subtareas representan capítulos/secciones y el primer capítulo completado marca el primer avance.
+- **Académico**: cursos y horario de clases con día, hora, aula, docente y minutos de aviso. Cada curso admite una valoración opcional de interés y dificultad percibida (1–5).
 - **Hábitos**: creación, seguimiento diario, metas, reglas de completitud, peso, analítica, ranking de disciplina y reglas de decisión.
 - **Estrés**: check-in, historial, analítica y reglas de decisión.
-- **Técnicas de estudio**: catálogo, recomendador basado en reglas, Pomodoro, sesiones, historial, solicitudes de ayuda académica y biblioteca de técnicas.
+- **Técnicas de estudio**: catálogo, recomendador basado en reglas, Pomodoro, sesiones, historial, solicitudes de ayuda académica y biblioteca de técnicas. La ayuda académica muestra tiempo medio hasta pedir ayuda, tiempo hasta resolver y consultas estancadas. Las sesiones pueden vincularse a un examen concreto y muestran cobertura de temas y anticipación media.
 - **Dashboard**: señales, balance, tendencias, snapshots, insights y decisión principal.
 - **Motor de reglas**: señales unificadas, reglas por módulo, memoria de decisiones con cooldown, proyección a dashboard y explicaciones (`Message`, `Reason`, `SuggestedAction`).
 - **UI**: tema claro/oscuro, estilos centralizados, iconografía Fluent, gráficos SkiaSharp, estados vacíos en varias listas, navegación Shell con flyout y tabs.
@@ -185,16 +185,16 @@ Leyenda: ✅ cubierto · 🟡 parcial · 🔴 ausente.
 
 | Indicador | Módulo actual | Cobertura | Qué falta |
 |---|---|---|---|
-| Postergación de tareas al último momento | Tareas + analítica + motor | 🟡 | Métrica de "tiempo hasta el primer avance": `StartedAtUtc - CreatedAtUtc`, `StartedAtUtc - PlannedStartDate`, `CompletedAtUtc - DueDate`. Aviso cuando llega `PlannedStartDate` y no se inició. Razón de postergación. |
-| Postergación de trabajos de cursos no preferidos | Tareas + Cursos + motor | 🟡 | Preferencia/aversión por curso. Hoy `Course` solo tiene nombre, descripción y color. Agregar `PreferenceLevel` (1–5) o `AversionLevel`. Regla "estás evitando el curso X". |
-| Postergación de lecturas de cursos no preferidos | `ActivityType.Reading` + Tareas | 🔴 | Flujo de lectura: páginas/minutos, sesión de lectura, verificación de comprensión, recordatorio de lectura, vínculo con curso no preferido. |
+| Postergación de tareas al último momento | Tareas + analítica + motor | ✅ | Implementado: primer avance, retraso vs inicio previsto, % de inicios puntuales, % de inicios en las últimas 24 h, aviso de inicio y señal en la lista. Falta registrar el motivo de postergación. |
+| Postergación de trabajos de cursos no preferidos | Tareas + Cursos + analítica | ✅/🟡 | Implementado con preferencia híbrida: interés y dificultad opcionales (1–5) por curso + métricas conductuales de inicio por curso. Falta una regla del motor que compare cursos y emita «estás evitando el curso X». |
+| Postergación de lecturas de cursos no preferidos | `ActivityType.Reading` + subtareas + analítica | 🟡 | Implementado: capítulos/secciones como subtareas, primer capítulo completado = primer avance y métricas de lecturas por curso. Falta registrar páginas/minutos por sesión y verificación de comprensión. |
 
 ### D2 — Autorregulación académica
 
 | Indicador | Módulo actual | Cobertura | Qué falta |
 |---|---|---|---|
-| Preparación para exámenes | Examen + `ExamPlanBuilder` + técnicas | 🟡 | Vínculo entre la tarea de examen y las sesiones de estudio. Hoy `StudyTechniqueSession` solo guarda `CourseName` y `Topic`, no `TaskId`. Falta puntaje de simulacro, cobertura por tema y repaso espaciado. |
-| Búsqueda de ayuda académica | `AcademicHelpRequest` + pantalla de ayuda | ✅/🟡 | Ya hay estados y fechas. Falta recordatorio de seguimiento, tiempo hasta pedir ayuda, tiempo hasta resolver y vínculo con la recomendación que la originó. |
+| Preparación para exámenes | Examen + `ExamPlanBuilder` + técnicas | ✅ | Implementado: `StudyTechniqueSession.TaskId`, selección de examen y tema al guardar la sesión, cobertura de temas, anticipación media y registro de simulacros con puntaje, errores y evolución. Falta repaso espaciado y cobertura por subtema más fina. |
+| Búsqueda de ayuda académica | `AcademicHelpRequest` + pantalla de ayuda | ✅ | Implementado: estados, tiempo medio hasta pedir ayuda (`CreatedAtUtc` → `RequestedAtUtc`), tiempo hasta resolver (`RequestedAtUtc` → `ResolvedAtUtc`), consultas pendientes y señal de estancamiento a partir de 2 días. Falta notificación push de seguimiento y vínculo explícito con la recomendación que la originó. |
 | Asistencia a clases | Horario (`ClassSchedule`) | 🔴 | No hay registro de asistencia. `ReminderMinutesBefore` se guarda pero **no se usa para programar ninguna notificación**. Falta marcar presente/ausente/tarde/justificado y calcular tasa de asistencia. |
 | Realización oportuna de tareas | Tareas + analítica | 🟡 | Hay `Completed`, `Overdue` y tasa de finalización, pero no una métrica explícita de "a tiempo" (`CompletedAtUtc <= DueDate`), ni tendencia de puntualidad, ni motivo de entrega tardía. |
 | Mejora de hábitos de estudio | Hábitos + analítica + ranking | ✅ | Bien cubierto. Falta plantillas de hábitos de estudio y vínculo explícito con metas académicas. |
@@ -207,11 +207,11 @@ Leyenda: ✅ cubierto · 🟡 parcial · 🔴 ausente.
 
 1. **Asistencia a clases** (indicador hoy ausente y con datos ya modelados).
 2. **Motivación y recompensas** (indicador completamente ausente).
-3. **Flujo de lectura** (indicador ausente).
-4. **Preferencia/aversión por curso** (habilita D1 completo).
+3. **Regla de evitación por curso** (completar D1 comparando cursos; la valoración y las métricas ya existen).
+4. **Flujo de lectura ampliado** (páginas/minutos por sesión y verificación de comprensión).
 5. **Revisión/repaso espaciado** (indicador parcial).
 6. **Pomodoro persistente + metas de estudio** (indicador parcial).
-7. **Examen vinculado a sesiones y simulacros** (indicador parcial).
+7. **Repaso espaciado y cobertura por subtema más fina** (el vínculo sesión↔examen, la cobertura de temas y el puntaje de simulacro ya están implementados).
 
 ---
 
@@ -230,7 +230,7 @@ Leyenda: ✅ cubierto · 🟡 parcial · 🔴 ausente.
 
 | Hallazgo | Evidencia | Riesgo | Recomendación |
 |---|---|---|---|
-| `EnsureCreated()` y cambio manual de nombre de BD (`procra-v3.db`) | `PersistenceDependencyInjection.cs`, `MauiProgram.cs` | Pérdida de datos y esquemas inconsistentes | Migraciones EF Core versionadas + `Migrate()` + pruebas de actualización. |
+| `EnsureCreated()` y cambio manual de nombre de BD (`procra-v3.db`) | `PersistenceDependencyInjection.cs`, `MauiProgram.cs` | Pérdida de datos y esquemas inconsistentes | Migraciones EF Core versionadas + `Migrate()` + pruebas de actualización. Hay un upgrade mínimo con `PRAGMA table_info` + `ALTER TABLE ADD COLUMN` para las columnas nuevas de `Courses` y `StudyTechniqueSessions`, más `CREATE TABLE IF NOT EXISTS` para `ExamSimulations`, pero no sustituye a migraciones. |
 | `ProcraStop.Shared` vacío y sin uso | `src/ProcraStop.Shared` | Ruido arquitectónico | Eliminarlo o mover allí contratos realmente compartidos. |
 | `TasksFacade` con `NotImplementedException` | `Application/Tasks/Facade/TasksFacade.cs` | Fachada engañosa; riesgo de fallo en runtime | Implementar o eliminar; si no se usa, borrar. |
 | `GetFocusTasksHandler` completamente comentado | `Application/Tasks/Queries/GetFocusTasks` | Código muerto | Eliminar o implementar. |
@@ -259,14 +259,13 @@ Leyenda: ✅ cubierto · 🟡 parcial · 🔴 ausente.
 
 ### 5.4 Pruebas y CI
 
-- 22 pruebas que pasan, pero se concentran en dominio y base de datos.
+- 47 pruebas que pasan. Cubren dominio, base de datos, métricas D1 por curso/lecturas, métricas D2 de ayuda académica, cobertura de exámenes y simulacros.
 - Sin pruebas de:
   - `DecisionEngine` y sus reglas.
   - `StudyRecommendationEngine`.
   - `HabitMetricsService`, `StressMetricsService`, `TrendEngine`.
-  - `TaskAnalyticsService` y métricas de puntualidad.
+  - Métricas de puntualidad distintas de D1 y ViewModels críticos.
   - Exportación y serialización.
-  - ViewModels críticos.
 - No hay pipeline de CI (`.github/workflows` ausente).
 - `dotnet test` reporta una vulnerabilidad de severidad alta en `SQLitePCLRaw.lib.e_sqlite3` 2.1.11 (`GHSA-2m69-gcr7-jv3q`). Actualizar el paquete.
 - No hay `Directory.Build.props`, `.editorconfig`, análisis estático ni cobertura mínima.
@@ -505,9 +504,9 @@ El motor es una buena decisión. Para que sea defendible en la tesis:
 9. Asistencia a clases: registro y notificaciones usando `ReminderMinutesBefore`.
 10. Motivación y recompensas: metas semanales, insignias, rachas, celebración de logros.
 11. Pomodoro persistente + vínculo con tarea/curso + metas de minutos.
-12. Preferencia/aversión por curso + regla de evitación.
-13. Flujo de lectura: sesiones, páginas/minutos, comprensión.
-14. Examen vinculado a sesiones + simulacro con puntaje + repaso espaciado.
+12. Preferencia/aversión por curso + regla de evitación. _(Valoración y métricas por curso ya implementadas; falta la regla del motor.)_
+13. Flujo de lectura: sesiones, páginas/minutos, comprensión. _(Capítulos/secciones y métricas de inicio ya implementados; falta el detalle por sesión.)_
+14. Examen vinculado a sesiones + simulacro con puntaje + repaso espaciado. _(Vínculo, cobertura y puntaje de simulacro ya implementados; falta repaso espaciado.)_
 15. Revisión/repaso de tareas completadas + checklist.
 16. Entrega anticipada: `SubmittedAtUtc`, clasificación on-time/early/late.
 17. Intenciones de implementación: "Si… entonces…", cuándo/dónde/cómo.
@@ -549,10 +548,10 @@ El motor es una buena decisión. Para que sea defendible en la tesis:
 | Dimensión | Indicador | Módulo(s) | Dato que se registra | Métrica conductual | Instrumento |
 |---|---|---|---|---|---|
 | D1 | Postergación al último momento | Tareas | `CreatedAtUtc`, `PlannedStartDate`, `StartedAtUtc`, `CompletedAtUtc`, `DueDate` | ✅ Implementado: tiempo medio hasta el primer avance, retraso medio vs inicio previsto, % de inicios puntuales, % de inicios en las últimas 24 h y aviso de tareas con inicio vencido sin empezar | EPA ítems 1, 6, 7 |
-| D1 | Cursos no preferidos | Tareas + Cursos | `CourseId`, `PreferenceLevel`, tiempos | Brecha de retraso por curso, tareas evitadas | EPA ítems 1, 6, 7 |
-| D1 | Lecturas no preferidas | Tareas + Lecturas | `ActivityType.Reading`, sesiones, páginas | % de lecturas iniciadas a tiempo | EPA ítems 1, 6, 7 |
-| D2 | Preparación de exámenes | Exámenes + Estudio | Plan, sesiones, simulacros | Cobertura de temas, puntaje de simulacro, días de anticipación | EPA ítems 2, 8, 9, 10 |
-| D2 | Búsqueda de ayuda | Ayuda académica | `CreatedAtUtc`, `RequestedAtUtc`, `ResolvedAtUtc`, canal | Tiempo hasta pedir ayuda, tasa de resolución | EPA ítems 3, 4 |
+| D1 | Cursos no preferidos | Tareas + Cursos + analítica | `CourseId`, `InterestLevel`, `DifficultyLevel`, `AppraisedAtUtc`, tiempos de inicio | ✅/🟡 Implementado: valoración híbrida opcional (interés/dificultad) + retraso medio, % de inicio puntual, % al límite y tareas sin iniciar por curso | EPA ítems 1, 6, 7 |
+| D1 | Lecturas no preferidas | Tareas + Lecturas + analítica | `ActivityType.Reading`, subtareas de capítulos/secciones, tiempos de inicio | 🟡 Implementado: primer capítulo completado = primer avance; métricas de inicio de lecturas por curso. Falta páginas/minutos y comprensión | EPA ítems 1, 6, 7 |
+| D2 | Preparación de exámenes | Exámenes + Estudio | `TaskId` en sesión, temas del examen, `ExamSimulations`, `StartedAtUtc`, `DueDate` | ✅ Implementado: sesiones vinculadas al examen, cobertura de temas, sesiones/minutos, anticipación media y simulacros con puntaje/errores/evolución | EPA ítems 2, 8, 9, 10 |
+| D2 | Búsqueda de ayuda | Ayuda académica | `CreatedAtUtc`, `RequestedAtUtc`, `ResolvedAtUtc`, canal | ✅ Implementado: tiempo medio hasta pedir ayuda, tiempo medio hasta resolver, pendientes y consultas estancadas (≥2 días) | EPA ítems 3, 4 |
 | D2 | Asistencia a clases | Horario + Asistencia | `AttendanceRecord` | % de asistencia, tardanzas, faltas justificadas | EPA ítem 4 |
 | D2 | Tareas oportunas | Tareas | `CompletedAtUtc`, `DueDate` | % on-time, días de anticipación/retraso | EPA ítems 5, 11 |
 | D2 | Hábitos de estudio | Hábitos | `HabitLog` | Consistencia, racha, tasa de fallo | EPA ítems 8, 9 |
@@ -568,6 +567,36 @@ El motor es una buena decisión. Para que sea defendible en la tesis:
 - **Inicio al último momento:** % de tareas cuyo primer avance ocurre en las últimas 24 h antes de `DueDate` (o después del vencimiento).
 - **Aviso de inicio:** cada tarea puede tener dos notificaciones independientes (vencimiento e inicio previsto). El aviso de inicio se programa a las 08:00 de `PlannedStartDate` o, si esa fecha ya pasó, unos minutos después de guardar la tarea. Se cancela al iniciar, completar o archivar.
 - **Señal en la lista:** las tareas con fecha de inicio vencida y sin empezar muestran «Debías empezar hace X día(s)».
+- **Cursos no preferidos (preferencia híbrida):** cada curso puede valorarse opcionalmente con interés y dificultad percibida (1–5). La valoración es contexto declarado y no sustituye a la conducta; la analítica muestra, por curso, retraso medio vs inicio previsto, % de inicio puntual, % de inicio al límite y tareas sin iniciar. Se exige un mínimo de 3 inicios medidos para mostrar métricas.
+- **Lecturas por curso:** las lecturas usan subtareas como capítulos, secciones o páginas. El primer capítulo completado cuenta como primer avance y alimenta las mismas métricas de inicio, separadas de las tareas generales.
+- **Sin circularidad:** la preferencia declarada es una variable de contexto independiente; la procrastinación observada sigue siendo la conducta registrada por la app, no la valoración del curso.
+
+### 11.2. Cobertura D2 de ayuda académica implementada
+
+- **Tiempo hasta pedir ayuda:** media de `RequestedAtUtc - CreatedAtUtc` sobre las consultas que ya se realizaron.
+- **Tiempo hasta resolver:** media de `ResolvedAtUtc - RequestedAtUtc` sobre las consultas resueltas.
+- **Consulta estancada:** una consulta en estado “Por consultar” durante 2 días o más se marca visualmente y cuenta en el resumen.
+- **Resumen visible:** total, pendientes, en curso, resueltas, tiempo medio hasta pedir ayuda y tiempo medio hasta resolver.
+- **Sin cambio de esquema:** se reutilizan los timestamps existentes; no se agregaron columnas ni entidades.
+
+### 11.3. Cobertura D2 de preparación de exámenes implementada
+
+- **Vínculo sesión → examen:** `StudyTechniqueSession.TaskId` opcional, con selector de examen del curso y tema al guardar la sesión.
+- **Temas del examen:** se extraen de las subtareas «Estudiar: X»; los pasos genéricos de recordar y simulacro no cuentan como temas.
+- **Cobertura:** temas con al menos una sesión vinculada / total de temas; se muestran los pendientes y el siguiente tema sugerido.
+- **Anticipación:** diferencia en días entre la fecha de la sesión y la fecha del examen; se muestra la media.
+- **Volumen:** número de sesiones vinculadas y minutos completados.
+- **Simulacros:** ver §11.4.
+
+### 11.4. Registro de simulacros de examen implementado
+
+- **Entidad de historial:** cada simulacro se guarda como `ExamSimulation` vinculado al examen mediante `ExamTaskId`; no se sobrescribe el intento anterior.
+- **Puntaje:** entero validado entre 0 y 100.
+- **Errores:** texto opcional de hasta 1000 caracteres; los espacios en blanco se normalizan a `null`.
+- **Evolución:** el resumen muestra número de intentos, primer puntaje, último puntaje, mejor puntaje, mejora en puntos y últimos errores.
+- **UI:** tarjeta «Simulacro del examen» con campo de puntaje, errores y botón de guardado; se actualiza al cambiar de examen y después de guardar.
+- **Esquema:** nueva tabla `ExamSimulations`; `EnsureCreated` no la agrega a bases existentes, por lo que se crea manualmente con `CREATE TABLE IF NOT EXISTS` al iniciar.
+- **Pendiente:** repaso espaciado y cobertura por subtema más fina.
 
 
 ---
@@ -581,6 +610,10 @@ El motor es una buena decisión. Para que sea defendible en la tesis:
 - `src/ProcraStop.Application/Decisions/DecisionContextBuilder.cs`
 - `src/ProcraStop.Application/Dashboard/Services/DashboardProjectionService.cs`
 - `src/ProcraStop.Domain/Tasks/Entities/StudyTask.cs`
+- `src/ProcraStop.Domain/Academic/Entities/Course.cs`
+- `src/ProcraStop.Application/Tasks/Analytics/TaskAnalyticsService.cs`
+- `src/ProcraStop.Application/Tasks/Analytics/CourseProcrastinationMetricDto.cs`
+- `src/ProcraStop.Infrastructure/Tasks/Services/TaskReadService.cs`
 - `src/ProcraStop.Domain/Habits/Entities/Habit.cs`
 - `src/ProcraStop.Domain/StudyTechniques/Entities/StudyTechniqueSession.cs`
 - `src/ProcraStop.Infrastructure/DBContext/AppDbContext.cs`
@@ -588,6 +621,12 @@ El motor es una buena decisión. Para que sea defendible en la tesis:
 - `src/ProcraStop.Infrastructure/Tasks/Services/TaskReminderService.cs`
 - `src/ProcraStop/Platforms/Android/Services/AndroidTaskReminderService.cs`
 - `src/ProcraStop.Application/StudyTechniques/Services/StudyRecommendationEngine.cs`
+- `src/ProcraStop.Application/StudyTechniques/Services/AcademicHelpMetricsService.cs`
+- `src/ProcraStop.Application/StudyTechniques/Services/ExamPreparationService.cs`
+- `src/ProcraStop.Application/StudyTechniques/Services/ExamSimulationService.cs`
+- `src/ProcraStop.Domain/StudyTechniques/Entities/ExamSimulation.cs`
+- `src/ProcraStop/Modules/StudyTechniques/Presentation/ViewModels/AcademicHelpViewModel.cs`
+- `src/ProcraStop/Modules/StudyTechniques/Presentation/ViewModels/StudyTechniquesViewModel.cs`
 - `src/ProcraStop.Application/StudyTechniques/Services/StudyDashboardService.cs`
 - `src/ProcraStop/Modules/StudyTechniques/Presentation/ViewModels/PomodoroViewModel.cs`
 - `tests/ProcraStop.UnitTests/*`

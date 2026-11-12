@@ -10,6 +10,7 @@ public static class StudyTechniqueSessionMapper
         return new StudyTechniqueSessionEntity
         {
             Id = session.Id,
+            TaskId = session.TaskId,
             CourseName = session.CourseName,
             Topic = session.Topic,
             Technique = session.Technique,
@@ -32,6 +33,7 @@ public static class StudyTechniqueSessionMapper
     {
         return StudyTechniqueSession.Rehydrate(
             entity.Id,
+            entity.TaskId,
             entity.CourseName,
             entity.Topic,
             entity.Technique,

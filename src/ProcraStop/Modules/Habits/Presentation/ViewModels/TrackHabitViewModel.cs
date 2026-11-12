@@ -6,6 +6,7 @@ using ProcraStop.Application.Habits.Queries.GetHabitById;
 using ProcraStop.Application.Habits.Queries.GetHabitLogByDate;
 using ProcraStop.Domain.Habits.Enums;
 using ProcraStop.Shared.Services;
+using ProcraStop.Shared.UI;
 using ProcraStop.Shared.UI.Components;
 
 namespace ProcraStop.Modules.Habits.Presentation.ViewModels;
@@ -49,7 +50,7 @@ public partial class TrackHabitViewModel : ObservableObject
     partial void OnHabitIdRawChanged(string? value)
     {
         if (Guid.TryParse(value, out var id))
-            _ = Load(id);
+            _ = SafeUi.RunAsync(() => Load(id), "TrackHabitViewModel.Load");
     }
 
     partial void OnValueChanged(int value) => UpdateProgress();
@@ -103,7 +104,7 @@ public partial class TrackHabitViewModel : ObservableObject
                 Value = finalValue
             });
             PendingNotificationService.Set("Progreso del hábito actualizado.");
-            await Shell.Current.GoToAsync("..");
+            await ShellNavigation.GoToAsync("..");
         }
         finally
         {
@@ -114,7 +115,10 @@ public partial class TrackHabitViewModel : ObservableObject
     [RelayCommand]
     private async Task Pause()
     {
-        var confirmed = await Shell.Current.DisplayAlertAsync(
+        if (Shell.Current is not { } shell)
+            return;
+
+        var confirmed = await shell.DisplayAlertAsync(
             "Pausar hábito",
             "Dejará de aparecer en tu rutina, pero conservará su historial.",
             "Pausar",
@@ -126,7 +130,7 @@ public partial class TrackHabitViewModel : ObservableObject
             new DeactivateHabitCommand { HabitId = _currentHabitId },
             CancellationToken.None);
         PendingNotificationService.Set("Hábito pausado.", SnackbarType.Info);
-        await Shell.Current.GoToAsync("..");
+        await ShellNavigation.GoToAsync("..");
     }
 
     private void UpdateProgress()

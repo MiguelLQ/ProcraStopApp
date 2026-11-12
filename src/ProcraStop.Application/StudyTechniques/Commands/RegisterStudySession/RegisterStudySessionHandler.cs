@@ -27,7 +27,8 @@ public sealed class RegisterStudySessionHandler
             command.ProgressPercent,
             command.PomodoroCycles,
             command.HelpStatus,
-            command.Notes);
+            command.Notes,
+            command.TaskId);
 
         await _repository.AddAsync(session, ct);
     }

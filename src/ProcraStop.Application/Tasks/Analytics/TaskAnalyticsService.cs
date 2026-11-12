@@ -70,6 +70,9 @@ namespace ProcraStop.Application.Tasks.Analytics
                 t.PlannedStartDate.HasValue &&
                 t.PlannedStartDate.Value.Date < today);
 
+            var readings = tasks
+                .Where(t => t.ActivityType == AcademicActivityType.Reading)
+                .ToArray();
 
             return new TaskAnalyticsDto
             {
@@ -108,6 +111,8 @@ namespace ProcraStop.Application.Tasks.Analytics
                 OverdueStartNotStarted = overdueStartNotStarted,
                 MeasuredStarts = withPlanAndStart.Length,
                 MeasuredDueStarts = startedWithDue.Length,
+                CourseMetrics = BuildCourseMetrics(tasks, today),
+                ReadingMetrics = BuildCourseMetrics(readings, today),
 
                 ByCourse = courseGroups.ToDictionary(
                     group => group.Name,
@@ -148,6 +153,68 @@ namespace ProcraStop.Application.Tasks.Analytics
                 CourseLabels = courseGroups.Select(g => g.Name).ToArray(),
                 CourseValues = courseGroups.Select(g => (double)g.Count).ToArray()
             };
+        }
+
+        private static IReadOnlyList<CourseProcrastinationMetricDto> BuildCourseMetrics(
+            IReadOnlyList<TaskAnalyticsSourceItemDto> tasks,
+            DateTime today)
+        {
+            return tasks
+                .GroupBy(t => t.CourseId)
+                .Select(group =>
+                {
+                    var items = group.ToArray();
+                    var first = items[0];
+                    var started = items.Where(t => t.StartedAtUtc.HasValue).ToArray();
+                    var withPlan = started.Where(t => t.PlannedStartDate.HasValue).ToArray();
+                    var startedWithDue = started.Where(t => t.DueDate.HasValue).ToArray();
+                    var completedWithDue = items
+                        .Where(t => t.CompletedAtUtc.HasValue && t.DueDate.HasValue)
+                        .ToArray();
+
+                    var delays = withPlan
+                        .Select(t => (t.StartedAtUtc!.Value.ToLocalTime().Date - t.PlannedStartDate!.Value.Date).TotalDays)
+                        .ToArray();
+                    var leadTimes = startedWithDue
+                        .Select(t => (t.DueDate!.Value - t.StartedAtUtc!.Value.ToLocalTime()).TotalDays)
+                        .ToArray();
+                    var completionMargins = completedWithDue
+                        .Select(t => (t.DueDate!.Value - t.CompletedAtUtc!.Value.ToLocalTime()).TotalDays)
+                        .ToArray();
+
+                    return new CourseProcrastinationMetricDto
+                    {
+                        CourseId = group.Key,
+                        CourseName = string.IsNullOrWhiteSpace(first.CourseName) ? "Sin curso" : first.CourseName!,
+                        InterestLevel = first.CourseInterestLevel,
+                        DifficultyLevel = first.CourseDifficultyLevel,
+                        TotalTasks = items.Length,
+                        TotalReadings = items.Count(t => t.ActivityType == AcademicActivityType.Reading),
+                        MeasuredStarts = withPlan.Length,
+                        MeasuredDueStarts = startedWithDue.Length,
+                        AvgStartDelayDays = delays.Length == 0 ? null : delays.Average(),
+                        OnTimeStartRate = withPlan.Length == 0
+                            ? 0
+                            : (double)withPlan.Count(t =>
+                                t.StartedAtUtc!.Value.ToLocalTime().Date <= t.PlannedStartDate!.Value.Date) / withPlan.Length,
+                        LastMinuteStartRate = startedWithDue.Length == 0
+                            ? 0
+                            : (double)startedWithDue.Count(t =>
+                                t.StartedAtUtc!.Value.ToLocalTime() >= t.DueDate!.Value.AddHours(-24)) / startedWithDue.Length,
+                        OverdueStartNotStarted = items.Count(t =>
+                            t.Status != TaskItemStatus.Completed &&
+                            !t.CompletedAtUtc.HasValue &&
+                            t.StartedAtUtc is null &&
+                            t.PlannedStartDate.HasValue &&
+                            t.PlannedStartDate.Value.Date < today),
+                        AvgLeadTimeDays = leadTimes.Length == 0 ? null : leadTimes.Average(),
+                        AvgCompletionMarginDays = completionMargins.Length == 0 ? null : completionMargins.Average()
+                    };
+                })
+                .OrderByDescending(metric => metric.HasEnoughData)
+                .ThenByDescending(metric => metric.AvgStartDelayDays ?? double.MinValue)
+                .ThenBy(metric => metric.CourseName)
+                .ToArray();
         }
     }
 }

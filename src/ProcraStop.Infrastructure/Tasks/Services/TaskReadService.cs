@@ -286,8 +286,12 @@ namespace ProcraStop.Infraestructure.Tasks.Services
                     StartedAtUtc = x.StartedAtUtc,
                     Priority = (TaskPriority)x.Priority,
                     Status = (TaskItemStatus)x.Status,
+                    ActivityType = (AcademicActivityType)x.ActivityType,
                     EstimatedMinutes = x.EstimatedMinutes,
-                    CourseName = x.Course != null ? x.Course.Name : null
+                    CourseId = x.CourseId,
+                    CourseName = x.Course != null ? x.Course.Name : null,
+                    CourseInterestLevel = x.Course != null ? x.Course.InterestLevel : null,
+                    CourseDifficultyLevel = x.Course != null ? x.Course.DifficultyLevel : null
                 })
                 .ToListAsync(ct);
         }

@@ -1,7 +1,6 @@
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using ProcraStop.Modules.Academic.Presentation.Views;
-using ProcraStop.Modules.Dashboard.Presentation.Views;
 using ProcraStop.Modules.Habits.Presentation.Views;
 using ProcraStop.Modules.StudyTechniques.Presentation.Views;
 using ProcraStop.Modules.Tasks.Presentation.Views;
@@ -20,26 +19,20 @@ namespace ProcraStop
         {
             _performance = performance;
             InitializeComponent();
-            // registrar ruta 
-            Routing.RegisterRoute("task-detail", typeof(TaskDetailPage));
-            Routing.RegisterRoute(nameof(CreateTaskPage), typeof(CreateTaskPage));
-            Routing.RegisterRoute(nameof(CoursesPage), typeof(CoursesPage));
-            
-            Routing.RegisterRoute("edit-task", typeof(EditTaskPage));
-            Routing.RegisterRoute(nameof(TaskAnalyticsPage), typeof(TaskAnalyticsPage));
-            Routing.RegisterRoute(nameof(DashboardView), typeof(DashboardView));
-            Routing.RegisterRoute(nameof(SchedulePage), typeof(SchedulePage));
-            Routing.RegisterRoute(nameof(StudyTechniquesPage), typeof(StudyTechniquesPage));
-            Routing.RegisterRoute(nameof(PomodoroPage), typeof(PomodoroPage));
-            Routing.RegisterRoute(nameof(TechniqueRecommendationPage), typeof(TechniqueRecommendationPage));
-            Routing.RegisterRoute(nameof(TechniqueLibraryPage), typeof(TechniqueLibraryPage));
-            Routing.RegisterRoute(nameof(StudySessionHistoryPage), typeof(StudySessionHistoryPage));
-            Routing.RegisterRoute(nameof(AcademicHelpPage), typeof(AcademicHelpPage));
-            Routing.RegisterRoute(nameof(CreateHabitPage), typeof(CreateHabitPage));
-            Routing.RegisterRoute(nameof(HabitListPage), typeof(HabitListPage));
-            Routing.RegisterRoute(nameof(HabitAnalyticsPage), typeof(HabitAnalyticsPage));
-            Routing.RegisterRoute(nameof(HabitDisciplineRankingPage), typeof(HabitDisciplineRankingPage));
-            Routing.RegisterRoute("habit-track", typeof(TrackHabitPage));
+
+            // Solo se registran rutas para páginas que NO forman parte de la
+            // jerarquía de Shell (ShellContent/Tab/FlyoutItem). Registrar una
+            // página que ya es ShellContent con el mismo nombre produce
+            // "Ambiguous routes matched for: ..." al navegar.
+            RegisterRoute("task-detail", typeof(TaskDetailPage));
+            RegisterRoute(nameof(CreateTaskPage), typeof(CreateTaskPage));
+            RegisterRoute("edit-task", typeof(EditTaskPage));
+            RegisterRoute(nameof(TechniqueRecommendationPage), typeof(TechniqueRecommendationPage));
+            RegisterRoute(nameof(StudySessionHistoryPage), typeof(StudySessionHistoryPage));
+            RegisterRoute(nameof(AcademicHelpPage), typeof(AcademicHelpPage));
+            RegisterRoute(nameof(CreateHabitPage), typeof(CreateHabitPage));
+            RegisterRoute("habit-track", typeof(TrackHabitPage));
+
             var currentTheme = Microsoft.Maui.Controls.Application.Current!.RequestedTheme;
             ThemeSegmentedControl.SelectedIndex = currentTheme == AppTheme.Light ? 0 : 1;
             Navigating += OnShellNavigating;
@@ -48,8 +41,26 @@ namespace ProcraStop
 
         private void OnShellNavigating(object? sender, ShellNavigatingEventArgs e)
         {
-            _navigationStartedAt = _performance.GetTimestamp();
+            // Una excepción dentro de Navigating/Navigated rompe el pipeline de
+            // navegación: los toques siguientes dejan de responder.
+            try
+            {
+                _navigationStartedAt = _performance.GetTimestamp();
+            }
+            catch (Exception exception)
+            {
+                AppCrashLogger.Log(exception, "AppShell.OnShellNavigating");
+            }
         }
+
+        // Registro idempotente: UnRegisterRoute evita excepciones si la ruta
+        // ya existe (por ejemplo, al recrear AppShell en hot restart).
+        private static void RegisterRoute(string route, Type type)
+        {
+            Routing.UnRegisterRoute(route);
+            Routing.RegisterRoute(route, type);
+        }
+
         public static async Task DisplaySnackbarAsync(string message)
         {
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
@@ -83,27 +94,44 @@ namespace ProcraStop
 
         private void SfSegmentedControl_SelectionChanged(object? sender, Syncfusion.Maui.Toolkit.SegmentedControl.SelectionChangedEventArgs e)
         {
-            Microsoft.Maui.Controls.Application.Current!.UserAppTheme = e.NewIndex == 0 ? AppTheme.Light : AppTheme.Dark;
+            try
+            {
+                if (Microsoft.Maui.Controls.Application.Current is not { } currentApplication)
+                    return;
+
+                currentApplication.UserAppTheme = e.NewIndex == 0 ? AppTheme.Light : AppTheme.Dark;
 #if ANDROID
-            if (Microsoft.Maui.ApplicationModel.Platform.CurrentActivity is { } activity)
-                ProcraStop.Platforms.Android.Services.AndroidStatusBarService.ApplyThemeStatusBar(activity);
+                if (Microsoft.Maui.ApplicationModel.Platform.CurrentActivity is { } activity)
+                    ProcraStop.Platforms.Android.Services.AndroidStatusBarService.ApplyThemeStatusBar(activity);
 #endif
+            }
+            catch (Exception exception)
+            {
+                AppCrashLogger.Log(exception, "AppShell.ThemeSelectionChanged");
+            }
         }
 
         private void OnShellNavigated(object? sender, ShellNavigatedEventArgs e)
         {
+            try
+            {
 #if ANDROID
-            if (Microsoft.Maui.ApplicationModel.Platform.CurrentActivity is { } activity)
-                ProcraStop.Platforms.Android.Services.AndroidStatusBarService.ApplyThemeStatusBar(activity);
+                if (Microsoft.Maui.ApplicationModel.Platform.CurrentActivity is { } activity)
+                    ProcraStop.Platforms.Android.Services.AndroidStatusBarService.ApplyThemeStatusBar(activity);
 #endif
 
-            if (_navigationStartedAt == 0)
-                return;
+                if (_navigationStartedAt == 0)
+                    return;
 
-            var route = e.Current?.Location?.OriginalString ?? "unknown";
-            var startedAt = _navigationStartedAt;
-            _performance.LogElapsed("Navigation", route, startedAt);
-            LogFirstRender(CurrentPage, route, startedAt);
+                var route = e.Current?.Location?.OriginalString ?? "unknown";
+                var startedAt = _navigationStartedAt;
+                _performance.LogElapsed("Navigation", route, startedAt);
+                LogFirstRender(CurrentPage, route, startedAt);
+            }
+            catch (Exception exception)
+            {
+                AppCrashLogger.Log(exception, "AppShell.OnShellNavigated");
+            }
         }
 
         private void LogFirstRender(Page? page, string route, long startedAt)

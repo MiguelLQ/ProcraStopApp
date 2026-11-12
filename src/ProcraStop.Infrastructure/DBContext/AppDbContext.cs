@@ -31,6 +31,7 @@ namespace ProcraStop.Infrastructure.DBContext
         // streess
         public DbSet<StressRecordEntity> StressRecords => Set<StressRecordEntity>();
         public DbSet<StudyTechniqueSessionEntity> StudyTechniqueSessions => Set<StudyTechniqueSessionEntity>();
+        public DbSet<ExamSimulationEntity> ExamSimulations => Set<ExamSimulationEntity>();
         public DbSet<AcademicHelpRequestEntity> AcademicHelpRequests => Set<AcademicHelpRequestEntity>();
         // memoria del sistema
         public DbSet<SystemSnapshotEntity> SystemSnapshots => Set<SystemSnapshotEntity>();
@@ -105,6 +106,10 @@ namespace ProcraStop.Infrastructure.DBContext
 
                 entity.Property(x => x.Color)
                     .HasMaxLength(20);
+
+                entity.Property(x => x.InterestLevel);
+                entity.Property(x => x.DifficultyLevel);
+                entity.Property(x => x.AppraisedAtUtc);
 
                 entity.Property(x => x.CreatedAtUtc)
                     .IsRequired();
@@ -222,6 +227,7 @@ namespace ProcraStop.Infrastructure.DBContext
                 entity.ToTable("StudyTechniqueSessions");
 
                 entity.HasKey(x => x.Id);
+                entity.Property(x => x.TaskId);
                 entity.Property(x => x.CourseName).IsRequired().HasMaxLength(150);
                 entity.Property(x => x.Topic).IsRequired().HasMaxLength(200);
                 entity.Property(x => x.Technique).IsRequired();
@@ -237,6 +243,17 @@ namespace ProcraStop.Infrastructure.DBContext
                 entity.Property(x => x.StartedAtUtc).IsRequired();
                 entity.Property(x => x.Notes).HasMaxLength(1000);
                 entity.HasIndex(x => x.StartedAtUtc);
+                entity.HasIndex(x => x.TaskId);
+            });
+            modelBuilder.Entity<ExamSimulationEntity>(entity =>
+            {
+                entity.ToTable("ExamSimulations");
+                entity.HasKey(x => x.Id);
+                entity.Property(x => x.ExamTaskId).IsRequired();
+                entity.Property(x => x.Score).IsRequired();
+                entity.Property(x => x.Errors).HasMaxLength(1000);
+                entity.Property(x => x.TakenAtUtc).IsRequired();
+                entity.HasIndex(x => new { x.ExamTaskId, x.TakenAtUtc });
             });
             modelBuilder.Entity<AcademicHelpRequestEntity>(entity =>
             {

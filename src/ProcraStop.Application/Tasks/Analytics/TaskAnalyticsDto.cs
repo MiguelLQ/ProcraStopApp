@@ -23,6 +23,12 @@ namespace ProcraStop.Application.Tasks.Analytics
         public int MeasuredStarts { get; set; }
         public int MeasuredDueStarts { get; set; }
 
+        // D1 EPA: corte por curso y por lecturas de curso.
+        public IReadOnlyList<CourseProcrastinationMetricDto> CourseMetrics { get; set; }
+            = Array.Empty<CourseProcrastinationMetricDto>();
+        public IReadOnlyList<CourseProcrastinationMetricDto> ReadingMetrics { get; set; }
+            = Array.Empty<CourseProcrastinationMetricDto>();
+
         public Dictionary<string, int> ByCourse { get; set; } = new();
 
         public double AvgEffort { get; set; }

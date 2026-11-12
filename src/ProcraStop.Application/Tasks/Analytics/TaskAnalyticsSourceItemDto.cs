@@ -12,7 +12,11 @@ namespace ProcraStop.Application.Tasks.Analytics
         public DateTime? StartedAtUtc { get; init; }
         public TaskPriority Priority { get; init; }
         public TaskItemStatus Status { get; init; }
+        public AcademicActivityType ActivityType { get; init; }
         public int? EstimatedMinutes { get; init; }
+        public Guid? CourseId { get; init; }
         public string? CourseName { get; init; }
+        public int? CourseInterestLevel { get; init; }
+        public int? CourseDifficultyLevel { get; init; }
     }
 }

@@ -13,6 +13,7 @@ namespace ProcraStop
         {
             _performance = performance;
             _appStartedAt = performance.GetTimestamp();
+            NavigationSmokeTest.Detect();
             InitializeComponent();
         }
         protected override Window CreateWindow(IActivationState? activationState)
@@ -24,9 +25,26 @@ namespace ProcraStop
                 shell.Loaded -= loaded;
                 Dispatcher.Dispatch(() =>
                     _performance.LogElapsed("Render", "First application frame", _appStartedAt));
+
+                // Diagnóstico opt-in: recorre todas las rutas y escribe el
+                // resultado paso a paso en procrastop-crash.log.
+                if (NavigationSmokeTest.Enabled)
+                    _ = RunNavigationSmokeTestAsync();
             };
             shell.Loaded += loaded;
             return new Window(shell);
+        }
+
+        private static async Task RunNavigationSmokeTestAsync()
+        {
+            try
+            {
+                await NavigationSmokeTest.RunAsync();
+            }
+            catch (Exception exception)
+            {
+                AppCrashLogger.Log(exception, "App.NavigationSmokeTest");
+            }
         }
     }
 }

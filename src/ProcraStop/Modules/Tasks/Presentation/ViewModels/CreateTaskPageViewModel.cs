@@ -29,6 +29,17 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             => SelectedActivityType = value.Value;
         public bool IsExam => SelectedActivityType == AcademicActivityType.Exam;
         public bool IsDeliverable => SelectedActivityType == AcademicActivityType.Deliverable;
+        public bool IsReading => SelectedActivityType == AcademicActivityType.Reading;
+        public string SubtaskSectionTitle => IsReading
+            ? "Capítulos, secciones o páginas (opcional)"
+            : IsExam ? "Hitos o temas del examen"
+            : IsDeliverable ? "Hitos del entregable"
+            : "Hitos o temas (opcional para tareas)";
+        public string SubtaskInputPlaceholder => IsReading ? "Ej: Capítulo 3" : "Ingrese Sub Tarea ...";
+        public string SubtaskHelpText => IsReading
+            ? "Marca cada capítulo al terminarlo. El primero cuenta como primer avance."
+            : string.Empty;
+        public bool ShowReadingHelp => IsReading;
 
         [ObservableProperty]
         private bool hasPlannedStart;
@@ -55,6 +66,11 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
         {
             OnPropertyChanged(nameof(IsExam));
             OnPropertyChanged(nameof(IsDeliverable));
+            OnPropertyChanged(nameof(IsReading));
+            OnPropertyChanged(nameof(SubtaskSectionTitle));
+            OnPropertyChanged(nameof(SubtaskInputPlaceholder));
+            OnPropertyChanged(nameof(SubtaskHelpText));
+            OnPropertyChanged(nameof(ShowReadingHelp));
             if (value != AcademicActivityType.Deliverable)
                 HasPlannedReview = false;
             if (value == AcademicActivityType.Exam)
@@ -274,7 +290,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
                     ReminderDate = null, // se ignora en backend
                     EstimatedMinutes = estimatedMinutes,
                     Priority = SelectedPriority,
-                    CourseId = selectedCourseId,
+                    CourseId = SelectedCourseId,
                     ActivityType = SelectedActivityType,
                     PlannedStartDate = HasPlannedStart ? SelectedPlannedStartDate.Date : null,
                     FirstStep = FirstStep,
@@ -302,6 +318,11 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             catch (InvalidOperationException ex)
             {
                 ValidationMessage = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                // Red de seguridad: nunca dejar caer la app al guardar.
+                ValidationMessage = $"No se pudo guardar: {ex.Message}";
             }
             finally
             {
@@ -333,21 +354,29 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
         }
         public async Task LoadAsync()
         {
-            var list = (await _getCoursesHandler.HandleAsync(
-                new GetCoursesQuery()))
-                .ToList();
-            //Insertamos opción "Sin curso"
-            list.Insert(0, new CourseDto
+            try
             {
-                Id = Guid.Empty,
-                Name = "Sin curso",
-                Color = null
-            });
+                var list = (await _getCoursesHandler.HandleAsync(
+                    new GetCoursesQuery()))
+                    .ToList();
+                //Insertamos opción "Sin curso"
+                list.Insert(0, new CourseDto
+                {
+                    Id = Guid.Empty,
+                    Name = "Sin curso",
+                    Color = null
+                });
 
-            Courses = list;
+                Courses = list;
 
-            //default seleccionado
-            SelectedCourse = Courses.FirstOrDefault();
+                //default seleccionado
+                SelectedCourse = Courses.FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                ValidationMessage = $"No se pudieron cargar los cursos: {ex.Message}";
+                System.Diagnostics.Debug.WriteLine($"[CreateTaskPageViewModel] LoadAsync falló: {ex}");
+            }
         }
     }
 }

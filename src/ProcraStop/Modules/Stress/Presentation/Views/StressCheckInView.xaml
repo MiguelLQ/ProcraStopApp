@@ -5,6 +5,7 @@
              xmlns:viewModels="clr-namespace:ProcraStop.Modules.Stress.Presentation.ViewModel"
              x:Class="ProcraStop.Modules.Stress.Presentation.Views.StressCheckInView"
              x:DataType="viewModels:StressCheckInViewModel"
+             x:Name="PageRoot"
              IsVisible="{Binding IsVisible}">
     <VerticalStackLayout Spacing="16" Padding="16">
 
@@ -54,7 +55,7 @@
 
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer
-                                Command="{Binding SelectCommand, Source={RelativeSource AncestorType={x:Type viewModels:StressCheckInViewModel}}}"
+                                Command="{Binding Path=BindingContext.SelectCommand, Source={x:Reference PageRoot}}"
                                 CommandParameter="{Binding Value}" />
                         </Border.GestureRecognizers>
 

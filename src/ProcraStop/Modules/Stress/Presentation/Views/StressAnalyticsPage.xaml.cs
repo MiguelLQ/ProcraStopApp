@@ -1,4 +1,5 @@
 using ProcraStop.Modules.Stress.Presentation.ViewModel;
+using ProcraStop.Shared.UI;
 
 namespace ProcraStop.Modules.Stress.Presentation.Views;
 
@@ -16,6 +17,6 @@ public partial class StressAnalyticsPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        await _vm.LoadAsync();
+        await SafeUi.RunAsync(_vm.LoadAsync, "StressAnalyticsPage.OnAppearing");
     }
 }

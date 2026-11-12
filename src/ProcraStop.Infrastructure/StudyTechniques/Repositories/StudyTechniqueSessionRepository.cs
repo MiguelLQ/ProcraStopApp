@@ -34,4 +34,16 @@ public sealed class StudyTechniqueSessionRepository : IStudyTechniqueSessionRepo
 
         return entities.Select(StudyTechniqueSessionMapper.ToDomain).ToArray();
     }
+
+    public async Task<IReadOnlyList<StudyTechniqueSession>> GetByTaskIdAsync(Guid taskId, CancellationToken ct)
+    {
+        await using var context = await _dbContextFactory.CreateDbContextAsync(ct);
+        var entities = await context.StudyTechniqueSessions
+            .AsNoTracking()
+            .Where(x => x.TaskId == taskId)
+            .OrderByDescending(x => x.StartedAtUtc)
+            .ToListAsync(ct);
+
+        return entities.Select(StudyTechniqueSessionMapper.ToDomain).ToArray();
+    }
 }

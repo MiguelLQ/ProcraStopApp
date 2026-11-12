@@ -10,6 +10,7 @@ public static class DependencyInjection
     {
         services.AddScoped<IStudyTechniqueSessionRepository, StudyTechniqueSessionRepository>();
         services.AddScoped<IAcademicHelpRepository, AcademicHelpRepository>();
+        services.AddScoped<IExamSimulationRepository, ExamSimulationRepository>();
 
         return services;
     }

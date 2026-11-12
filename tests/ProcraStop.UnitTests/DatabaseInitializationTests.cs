@@ -35,6 +35,7 @@ public sealed class DatabaseInitializationTests
         Assert.Contains("HabitLogs", tables);
         Assert.Contains("StressRecords", tables);
         Assert.Contains("StudyTechniqueSessions", tables);
+        Assert.Contains("ExamSimulations", tables);
         Assert.Contains("AcademicHelpRequests", tables);
         Assert.Contains("SystemSnapshots", tables);
     }

@@ -1,4 +1,5 @@
 using ProcraStop.Modules.Academic.Presentation.ViewModels;
+using ProcraStop.Shared.UI;
 
 namespace ProcraStop.Modules.Academic.Presentation.Views;
 
@@ -16,6 +17,6 @@ public partial class SchedulePage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        await _vm.LoadAsync();
+        await SafeUi.RunAsync(_vm.LoadAsync, "SchedulePage.OnAppearing");
     }
 }

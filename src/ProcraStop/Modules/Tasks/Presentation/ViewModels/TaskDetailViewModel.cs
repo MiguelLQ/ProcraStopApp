@@ -9,6 +9,7 @@ using ProcraStop.Application.Tasks.Queries.GetTaskById;
 using ProcraStop.Domain.Tasks.Enums;
 using ProcraStop.Modules.Tasks.Presentation.Models;
 using ProcraStop.Shared.Services;
+using ProcraStop.Shared.UI;
 using ProcraStop.Shared.UI.Components;
 using ProcraStop.Modules.StudyTechniques.Presentation.Views;
 using System.Collections.ObjectModel;
@@ -105,7 +106,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
 
             if (Guid.TryParse(value, out var guid))
             {
-                _ = LoadAsync(guid);
+                _ = SafeUi.RunAsync(() => LoadAsync(guid), "TaskDetailViewModel.LoadAsync");
             }
             else
             {
@@ -186,7 +187,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             var parameters = new Dictionary<string, object> { ["topic"] = CurrentTask.Title };
             if (CurrentTask.CourseId.HasValue)
                 parameters["courseId"] = CurrentTask.CourseId.Value.ToString();
-            return Shell.Current.GoToAsync(nameof(TechniqueRecommendationPage), parameters);
+            return ShellNavigation.GoToAsync(nameof(TechniqueRecommendationPage), parameters);
         }
 
         [RelayCommand]
@@ -200,7 +201,7 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             };
             if (CurrentTask.CourseId.HasValue)
                 parameters["courseId"] = CurrentTask.CourseId.Value.ToString();
-            return Shell.Current.GoToAsync(nameof(AcademicHelpPage), parameters);
+            return ShellNavigation.GoToAsync(nameof(AcademicHelpPage), parameters);
         }
         // tareas sin subtareas
         [RelayCommand]
@@ -230,7 +231,10 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
         {
             if (CurrentTask is null) return;
 
-            bool confirm = await Shell.Current.DisplayAlertAsync(
+            if (Shell.Current is not { } shell)
+                return;
+
+            bool confirm = await shell.DisplayAlertAsync(
                 "Eliminar tarea",
                 "¿Estás seguro de eliminar esta tarea?",
                 "Eliminar", "Cancelar");
@@ -245,19 +249,19 @@ namespace ProcraStop.Modules.Tasks.Presentation.ViewModels
             // Success (default)
             PendingNotificationService.Set("La tarea fue eliminada!", SnackbarType.Info);
 
-            await Shell.Current.GoToAsync("..");
+            await ShellNavigation.GoToAsync("..");
         }
         // Explicit method to allow pages to pass the id without depending on generated properties
         public void SetTaskId(Guid id)
         {
-            _ = LoadAsync(id);
+            _ = SafeUi.RunAsync(() => LoadAsync(id), "TaskDetailViewModel.SetTaskId");
         }
         [RelayCommand]
         private async Task GoToEdit()
         {
             if (CurrentTask is null) return;
 
-            await Shell.Current.GoToAsync($"edit-task?taskId={CurrentTask.Id}");
+            await ShellNavigation.GoToAsync($"edit-task?taskId={CurrentTask.Id}");
         }
     }
 }

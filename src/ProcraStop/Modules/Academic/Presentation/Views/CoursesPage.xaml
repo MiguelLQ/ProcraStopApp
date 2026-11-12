@@ -98,6 +98,37 @@
                     </Border>
                 </VerticalStackLayout>
 
+                <!-- D1 EPA: valoración opcional del curso -->
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,0,0,8">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Interés (opcional)"
+                               FontFamily="OpenSansRegular"
+                               FontSize="12"
+                               CharacterSpacing="0.5"
+                               TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                        <Picker Title="Sin valorar"
+                                ItemsSource="{Binding AppraisalOptions}"
+                                ItemDisplayBinding="{Binding Label}"
+                                SelectedItem="{Binding SelectedInterest}" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1" Spacing="4">
+                        <Label Text="Dificultad percibida (opcional)"
+                               FontFamily="OpenSansRegular"
+                               FontSize="12"
+                               CharacterSpacing="0.5"
+                               TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+                        <Picker Title="Sin valorar"
+                                ItemsSource="{Binding AppraisalOptions}"
+                                ItemDisplayBinding="{Binding Label}"
+                                SelectedItem="{Binding SelectedDifficulty}" />
+                    </VerticalStackLayout>
+                </Grid>
+                <Label Text="Opcional: sirve para comparar la postergación entre cursos sin asumir que 'gustar' es lo mismo que 'postergar'."
+                       FontFamily="OpenSansRegular"
+                       FontSize="11"
+                       Margin="0,0,0,8"
+                       TextColor="{AppThemeBinding Light={StaticResource Subtitlecl}, Dark={StaticResource Subtitle}}" />
+
                 <!-- TU SELECTOR (NO TOCADO) -->
                 <Label Text="Selecciona un color de etiqueta"
                        FontFamily="OpenSansRegular"
@@ -128,7 +159,7 @@
 
                                 <Grid.GestureRecognizers>
                                     <TapGestureRecognizer 
-                                Command="{Binding SelectColorCommand, Source={RelativeSource AncestorType={x:Type viewModels:CoursesPageViewModel}}}"
+                                Command="{Binding Path=BindingContext.SelectColorCommand, Source={x:Reference PageRoot}}"
                                 CommandParameter="{Binding}" />
                                 </Grid.GestureRecognizers>
 
@@ -220,6 +251,19 @@
                                        TextColor="{StaticResource Gray500}"
                                        LineBreakMode="TailTruncation" />
 
+                                <HorizontalStackLayout Spacing="8" IsVisible="{Binding HasAppraisal}">
+                                    <Label Text="{Binding InterestLevel, StringFormat='Interés {0}/5'}"
+                                           IsVisible="{Binding HasInterest}"
+                                           FontSize="11"
+                                           FontFamily="OpenSansRegular"
+                                           TextColor="{AppThemeBinding Light=#2563EB, Dark=#93C5FD}" />
+                                    <Label Text="{Binding DifficultyLevel, StringFormat='Dificultad {0}/5'}"
+                                           IsVisible="{Binding HasDifficulty}"
+                                           FontSize="11"
+                                           FontFamily="OpenSansRegular"
+                                           TextColor="{AppThemeBinding Light=#B45309, Dark=#FBBF24}" />
+                                </HorizontalStackLayout>
+
                             </VerticalStackLayout>
 
                             <!-- BOTONES -->
@@ -231,8 +275,8 @@
                                 <Button Text="Editar"
                                     FontSize="12"
                                     HeightRequest="2"
-                                    Command="{Binding EditCommand,
-                                              Source={RelativeSource AncestorType={x:Type viewModels:CoursesPageViewModel}}}"
+                                    Command="{Binding Path=BindingContext.EditCommand,
+                                              Source={x:Reference PageRoot}}"
                                     CommandParameter="{Binding}" />
 
                                 <Button Text="Eliminar"
@@ -240,8 +284,8 @@
                                     HeightRequest="2"
                                     BackgroundColor="#EF4444"
                                     TextColor="White"
-                                    Command="{Binding DeleteCommand,
-                                              Source={RelativeSource AncestorType={x:Type viewModels:CoursesPageViewModel}}}"
+                                    Command="{Binding Path=BindingContext.DeleteCommand,
+                                              Source={x:Reference PageRoot}}"
                                     CommandParameter="{Binding}" />
 
                             </HorizontalStackLayout>

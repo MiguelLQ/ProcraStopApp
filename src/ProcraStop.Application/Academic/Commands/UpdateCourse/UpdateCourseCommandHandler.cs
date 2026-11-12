@@ -25,6 +25,7 @@ namespace ProcraStop.Application.Academic.Commands.UpdateCourse
                 course.Name = command.Name;
                 course.Description = command.Description;
                 course.Color = command.Color;
+                course.SetAppraisal(command.InterestLevel, command.DifficultyLevel);
 
                 await _repository.UpdateAsync(course, ct);
         }

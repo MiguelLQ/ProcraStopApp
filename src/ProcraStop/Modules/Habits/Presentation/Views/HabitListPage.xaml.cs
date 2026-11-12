@@ -13,17 +13,20 @@ public partial class HabitListPage : BasePage
 	{
 		InitializeComponent();
         BindingContext = vm;
-        InitializeSnackbar(snackbarService); // editbycodex: feedback consistente con Tasks.
+        InitializeSnackbar(snackbarService, SnackbarHost); // editbycodex: feedback consistente con Tasks.
     }
     protected override async void OnAppearing()
     {
         base.OnAppearing();
 
-        if (BindingContext is HabitListViewModel vm)
-            await vm.Load();
+        await SafeUi.RunAsync(async () =>
+        {
+            if (BindingContext is HabitListViewModel vm)
+                await vm.Load();
 
-        var (message, type) = PendingNotificationService.Consume();
-        if (!string.IsNullOrWhiteSpace(message))
-            await Snackbar.ShowAsync(message, type); // editbycodex: confirma crear, editar o pausar al volver a Hoy.
+            var (message, type) = PendingNotificationService.Consume();
+            if (!string.IsNullOrWhiteSpace(message))
+                await ShowSnackbarAsync(message, type); // editbycodex: confirma crear, editar o pausar al volver a Hoy.
+        }, "HabitListPage.OnAppearing");
     }
 }

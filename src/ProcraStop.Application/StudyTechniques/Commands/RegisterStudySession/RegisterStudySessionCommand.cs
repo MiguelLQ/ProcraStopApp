@@ -4,6 +4,7 @@ namespace ProcraStop.Application.StudyTechniques.Commands.RegisterStudySession;
 
 public sealed class RegisterStudySessionCommand
 {
+    public Guid? TaskId { get; init; }
     public string CourseName { get; init; } = string.Empty;
     public string Topic { get; init; } = string.Empty;
     public StudyTechniqueType Technique { get; init; }

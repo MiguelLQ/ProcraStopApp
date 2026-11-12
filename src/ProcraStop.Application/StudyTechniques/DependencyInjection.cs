@@ -13,6 +13,9 @@ public static class DependencyInjection
         services.AddScoped<StudyDashboardService>();
         services.AddScoped<RegisterStudySessionHandler>();
         services.AddScoped<AcademicHelpService>();
+        services.AddScoped<AcademicHelpMetricsService>();
+        services.AddScoped<ExamPreparationService>();
+        services.AddScoped<ExamSimulationService>();
 
         return services;
     }

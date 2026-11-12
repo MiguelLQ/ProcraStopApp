@@ -8,7 +8,7 @@
              Title="Nuevo hábito"
              Shell.BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource shellDark}}"
              BackgroundColor="{AppThemeBinding Light=#F4F6F9, Dark=#0D131C}">
-    <ScrollView>
+    <ScrollView x:Name="PageRoot">
         <VerticalStackLayout Padding="16,12,16,28" Spacing="18">
             <!-- editbycodex: formulario progresivo; oculta parámetros internos del motor. -->
             <VerticalStackLayout Spacing="4">
@@ -89,7 +89,7 @@
                                         BackgroundColor="Transparent">
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer
-                                            Command="{Binding ToggleDayCommand, Source={RelativeSource AncestorType={x:Type viewModels:CreateHabitViewModel}}}"
+                                            Command="{Binding Path=BindingContext.ToggleDayCommand, Source={x:Reference PageRoot}}"
                                             CommandParameter="{Binding .}" />
                                     </Border.GestureRecognizers>
                                     <Border.Triggers>

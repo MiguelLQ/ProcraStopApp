@@ -4,6 +4,7 @@
                xmlns:f="clr-namespace:Fonts"
                xmlns:models="clr-namespace:ProcraStop.Modules.Tasks.Presentation.Models"
                xmlns:controls="clr-namespace:ProcraStop.Modules.Tasks.Presentation.Controls"
+               xmlns:components="clr-namespace:ProcraStop.Shared.UI.Components"
                xmlns:viewModels="clr-namespace:ProcraStop.Modules.Tasks.Presentation.ViewModels"
                xmlns:base="clr-namespace:ProcraStop.Shared.UI.Layouts"
                x:Class="ProcraStop.Modules.Tasks.Presentation.Views.TasksPage"
@@ -22,7 +23,7 @@
                      Command="{Binding ToggleCalendarCommand}" />
     </base:BasePage.ToolbarItems>
 
-    <Grid RowDefinitions="Auto,Auto,Auto,*" RowSpacing="8" Padding="0,6,0,0">
+    <Grid x:Name="PageRoot" RowDefinitions="Auto,Auto,Auto,*" RowSpacing="8" Padding="0,6,0,0">
         <Grid Grid.Row="0" Margin="18,0" ColumnDefinitions="*,Auto">
             <VerticalStackLayout Spacing="1">
                 <Label Text="Agenda del día"
@@ -68,7 +69,7 @@
                             StrokeThickness="0" StrokeShape="RoundRectangle 17"
                             BackgroundColor="{AppThemeBinding Light=#F1F3F7, Dark=#333847}">
                         <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding ChangeFilterCommand, Source={RelativeSource AncestorType={x:Type viewModels:TasksPageViewModel}}}"
+                            <TapGestureRecognizer Command="{Binding Path=BindingContext.ChangeFilterCommand, Source={x:Reference PageRoot}}"
                                                   CommandParameter="{Binding Filter}" />
                         </Border.GestureRecognizers>
                         <Border.Triggers>
@@ -146,7 +147,7 @@
                                     <!-- Esta zona abre el detalle; queda separada del check para evitar doble navegación. -->
                                     <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
                                         <Grid.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding OpenDetailCommand, Source={RelativeSource AncestorType={x:Type viewModels:TasksPageViewModel}}}"
+                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.OpenDetailCommand, Source={x:Reference PageRoot}}"
                                                                   CommandParameter="{Binding Id}" />
                                         </Grid.GestureRecognizers>
                                         <HorizontalStackLayout Spacing="6">
@@ -205,7 +206,7 @@
                                     <Grid Grid.Column="1" IsVisible="{Binding HasNoSubtasks}"
                                           WidthRequest="36" HeightRequest="36" VerticalOptions="Start">
                                         <Grid.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding CompleteFromListCommand, Source={RelativeSource AncestorType={x:Type viewModels:TasksPageViewModel}}}"
+                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.CompleteFromListCommand, Source={x:Reference PageRoot}}"
                                                                   CommandParameter="{Binding Id}" />
                                         </Grid.GestureRecognizers>
                                         <CheckBox IsChecked="{Binding IsCompleted, Mode=OneWay}"
@@ -283,5 +284,16 @@
                 </HorizontalStackLayout>
             </Grid>
         </Grid>
+
+        <!-- El snackbar vive en el XAML: envolver el contenido en runtime
+             desconectaba los CollectionView y MAUI reinflaba sus plantillas
+             con BindingContext nulo (NullReferenceException en bindings
+             compilados con RelativeSource). -->
+        <components:CustomSnackbar x:Name="SnackbarHost"
+                                   Grid.Row="3"
+                                   HorizontalOptions="Fill"
+                                   VerticalOptions="End"
+                                   Margin="0,0,0,40"
+                                   ZIndex="99" />
     </Grid>
 </base:BasePage>

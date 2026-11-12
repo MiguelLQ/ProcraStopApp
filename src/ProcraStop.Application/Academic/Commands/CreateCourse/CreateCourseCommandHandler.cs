@@ -26,6 +26,8 @@ namespace ProcraStop.Application.Academic.Commands.CreateCourse
                 CreatedAt = DateTime.UtcNow
             };
 
+            course.SetAppraisal(command.InterestLevel, command.DifficultyLevel);
+
             await _repository.AddAsync(course, ct);
 
             return course.Id;

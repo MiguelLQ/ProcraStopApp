@@ -1,4 +1,5 @@
 using ProcraStop.Modules.Habits.Presentation.ViewModels;
+using ProcraStop.Shared.UI;
 
 namespace ProcraStop.Modules.Habits.Presentation.Views;
 
@@ -16,6 +17,6 @@ public partial class HabitDisciplineRankingPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        await _vm.LoadAsync();
+        await SafeUi.RunAsync(_vm.LoadAsync, "HabitDisciplineRankingPage.OnAppearing");
     }
 }

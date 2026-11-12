@@ -22,9 +22,66 @@
                     <Label Text="El curso sale de tus cursos registrados. El tema ayuda a guardar historial por lección."
                            Style="{StaticResource RecDetailStyle}" />
                     <Picker ItemsSource="{Binding Courses}" SelectedItem="{Binding SelectedCourse}" ItemDisplayBinding="{Binding Name}" Title="Curso registrado" />
+                    <Picker ItemsSource="{Binding Exams}"
+                            SelectedItem="{Binding SelectedExam}"
+                            ItemDisplayBinding="{Binding Title}"
+                            Title="Examen (opcional)"
+                            IsVisible="{Binding HasExams}" />
+                    <Picker ItemsSource="{Binding ExamTopics}"
+                            SelectedItem="{Binding SelectedExamTopic}"
+                            Title="Tema del examen (opcional)"
+                            IsVisible="{Binding HasExamTopics}" />
+                    <Button Text="Quitar vínculo con examen"
+                            Command="{Binding ClearExamCommand}"
+                            IsVisible="{Binding HasSelectedExam}"
+                            BackgroundColor="Transparent"
+                            TextColor="{AppThemeBinding Light=#DC2626, Dark=#F87171}"
+                            FontSize="11"
+                            Padding="0"
+                            HorizontalOptions="Start" />
                     <Border Style="{StaticResource RecInputStyle}">
                         <Entry Text="{Binding Topic}" Placeholder="Tema o lección" BackgroundColor="Transparent" />
                     </Border>
+                    <Label Text="Si eliges un examen, la sesión queda vinculada y actualiza su cobertura."
+                           Style="{StaticResource RecDetailStyle}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border IsVisible="{Binding HasExamCoverage}" Style="{StaticResource RecCardStyle}">
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Cobertura del examen" Style="{StaticResource RecTitleStyle}" />
+                    <Label Text="{Binding ExamCoverageText}"
+                           FontFamily="MontserratSemiBold"
+                           FontSize="16"
+                           TextColor="{AppThemeBinding Light=#059669, Dark=#34D399}" />
+                    <Label Text="{Binding ExamCoverageDetail}" Style="{StaticResource RecDetailStyle}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border IsVisible="{Binding HasSelectedExam}" Style="{StaticResource RecCardStyle}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Simulacro del examen" Style="{StaticResource RecTitleStyle}" />
+                    <Label Text="{Binding ExamSimulationText}"
+                           FontFamily="MontserratSemiBold"
+                           FontSize="15"
+                           TextColor="{AppThemeBinding Light=#2563EB, Dark=#8DB3FF}" />
+                    <Border Style="{StaticResource RecInputStyle}">
+                        <Entry Text="{Binding SimulationScoreText}"
+                               Placeholder="Puntaje del simulacro (0-100)"
+                               Keyboard="Numeric"
+                               BackgroundColor="Transparent" />
+                    </Border>
+                    <Border Style="{StaticResource RecInputStyle}">
+                        <Editor Text="{Binding SimulationErrors}"
+                                Placeholder="Errores o temas que fallaron"
+                                AutoSize="TextChanges"
+                                MinimumHeightRequest="60"
+                                BackgroundColor="Transparent" />
+                    </Border>
+                    <Button Text="Guardar simulacro"
+                            Command="{Binding SaveSimulationCommand}"
+                            Style="{StaticResource RecPrimaryButtonStyle}" />
+                    <Label Text="{Binding SimulationMessage}" Style="{StaticResource RecDetailStyle}" />
                 </VerticalStackLayout>
             </Border>
 
