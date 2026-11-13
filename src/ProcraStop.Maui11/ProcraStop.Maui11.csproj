@@ -45,8 +45,13 @@
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
 
-		<!-- Splash Screen -->
-		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
+		<!-- Splash Screen: SOLO splash nativo (rápido, sin pantalla in-app).
+		     El SVG es únicamente el monograma "P." centrado (el nombre y la
+		     versión van por windowSplashScreenBrandingImage, ver
+		     Platforms/Android/Resources/values/styles.xml). Color/DarkColor
+		     pintan el fondo del splash nativo de Android
+		     (maui_splash_color → values / values-night). -->
+		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#4075FF" DarkColor="#222631" BaseSize="128,128" />
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Override de Maui.SplashTheme (los recursos de la app tienen
+     precedencia sobre los de la librería MAUI). Copia EXACTA de la
+     definición de la librería (verify: obj/.../lp/*/jl/res/values/
+     styles.xml) + windowSplashScreenBrandingImage (API 31+, docs
+     oficiales de splash screen): muestra splash_branding.png (200x80dp,
+     drawable-xxhdpi) en la PARTE INFERIOR del splash nativo.
+     No se inventan APIs: maui_splash, maui_splash_color, maui_splash
+     y el parent Maui.MainTheme.NoActionBar existen en la librería MAUI;
+     windowSplashScreenBrandingImage es attr público de la plataforma. -->
+<resources>
+    <style name="Maui.SplashTheme" parent="Maui.MainTheme.NoActionBar">
+        <item name="maui_splash">true</item>
+        <!-- Android ≤11: fondo full-bleed con degradado (en 12+ el
+             sistema lo ignora y usa windowSplashScreenBackground). -->
+        <item name="android:windowBackground">@drawable/splash_bg_pre31</item>
+        <!-- Android 12+ -->
+        <item name="android:windowSplashScreenBackground">@color/maui_splash_color</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/maui_splash</item>
+        <item name="android:windowSplashScreenBrandingImage">@drawable/splash_branding</item>
+    </style>
+</resources>

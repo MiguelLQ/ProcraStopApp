@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fondo full-bleed del splash nativo para Android ≤11 (API ≤30): en
+     esas versiones windowBackground SÍ se dibuja. En Android 12+ el
+     sistema lo ignora y aplica su splash (color único + ícono +
+     branding image) — restricción oficial de la plataforma.
+     Estilo Grial: degradado tonal del Primary + highlight radial suave.
+     Los tonos son variantes del token PrimaryLight (#4075FF) del Design
+     System, justificadas aquí porque un degradado exige dos paradas. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Degradado vertical del Primary -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient android:type="linear"
+                      android:angle="270"
+                      android:startColor="#4C86FF"
+                      android:endColor="#3564E8" />
+        </shape>
+    </item>
+    <!-- Forma suave: highlight radial arriba a la derecha -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient android:type="radial"
+                      android:gradientRadius="480dp"
+                      android:centerX="0.82"
+                      android:centerY="0.08"
+                      android:startColor="#26FFFFFF"
+                      android:endColor="#00FFFFFF" />
+        </shape>
+    </item>
+    <!-- Segunda forma: sombra radial abajo a la izquierda -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient android:type="radial"
+                      android:gradientRadius="420dp"
+                      android:centerX="0.08"
+                      android:centerY="0.95"
+                      android:startColor="#1A103F8F"
+                      android:endColor="#00103F8F" />
+        </shape>
+    </item>
+    <!-- Ícono centrado (mismo PNG que genera el resizetizer del splash.svg) -->
+    <item android:gravity="center">
+        <bitmap android:src="@drawable/splash" android:mipMap="true" />
+    </item>
+    <!-- Nombre + tagline + versión (paridad con Android 12+) -->
+    <item android:gravity="bottom|center_horizontal" android:bottom="56dp"
+          android:drawable="@drawable/splash_branding" />
+</layer-list>
