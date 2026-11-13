@@ -1,9 +1,16 @@
-﻿<Application xmlns:local="clr-namespace:ProcraStop.Maui11"
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- Orden de merge: los tokens (Spacing/Shapes) preceden a los estilos que
+     los consumen con StaticResource. -->
+<Application xmlns:local="clr-namespace:ProcraStop.Maui11"
              x:Class="ProcraStop.Maui11.App">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
+                <ResourceDictionary Source="Resources/Styles/Typography.xaml" />
+                <ResourceDictionary Source="Resources/Styles/Spacing.xaml" />
+                <ResourceDictionary Source="Resources/Styles/Shapes.xaml" />
+                <ResourceDictionary Source="Resources/Styles/Controls.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

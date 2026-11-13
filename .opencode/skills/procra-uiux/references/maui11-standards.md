@@ -238,8 +238,49 @@ suscripción (`Messenger`, eventos de servicio) se desuscribe en
 ## 8. Checklist de compilación y verificación
 
 1. `dotnet build src/ProcraStop.Maui11/ProcraStop.Maui11.csproj -f
-   net11.0-android` (o el target de trabajo) — **0 errores**.
+   net11.0-android` (o el target de trabajo) — **0 errores, 0
+   advertencias propias** (el ruido WMC1509 de WinUI en Windows no cuenta;
+   ver §9: puede compilarse con VS abierto gracias a `Directory.Build.props`).
 2. Probar en Light y Dark.
 3. Recorrer la pantalla con la checklist de `quality-checklist.md`.
 4. Si tocó navegación: smoke de rutas (ver `shell-navigation.md` §6).
 5. No declarar terminado lo no compilado/probado.
+
+## 9. Workflow CLI / Visual Studio (artifacts layout) **[P]**
+
+**Problema histórico:** VS y la CLI compartían `obj\`/`bin\`; el build Android
+de CLI fallaba con `XALNS7019 / UnauthorizedAccessException` (archivos
+bloqueados por devenv) siempre que VS estuviera abierto. Un intento con
+`-p:BaseIntermediateOutputPath=obj_cli\` produjo 40× CS0579: al mover el
+intermedio, los `DefaultItemExcludes` dejan de excluir el `obj\` viejo y los
+generados por VS (`.AssemblyInfo.cs` de otros TFMs) se compilan como fuentes.
+
+**Solución definitiva (activa):** `src/ProcraStop.Maui11/Directory.Build.props`
+fija `ArtifactsPath=...\artifacts_cli` cuando `BuildingInsideVisualStudio !=
+'true'`. Con eso el SDK .NET 11 activa el *artifacts output layout*
+(`UseArtifactsOutput` + `UseArtifactsIntermediateOutput`): bin y obj viven en
+`artifacts_cli\` y el SDK **excluye automáticamente `bin/**` y `obj/**`** de los
+globs (validado: build Android CLI con devenv abierto → 0 errores).
+
+**CRÍTICO — exclusión simétrica:** en el MISMO `Directory.Build.props`,
+`artifacts_cli\**` se añade a `DefaultItemExcludes` SIEMPRE (también en VS).
+Sin esto, los generados de los builds CLI (`App.g.cs`, `XamlTypeInfo.g.cs`,
+`AssemblyInfo.cs`, resizetizer `FluentUI.cs`) se filtran como fuentes en el
+build de VS y producen ~70 errores CS0101/CS0234/CS0579/CS0759/MAUIX2000
+(bug real ocurrido, reproducido con MSBuild.exe + `BuildingInsideVisualStudio`
+y corregido). Es seguro definirlo ahí: el SDK **concatena** este valor sobre
+sus defaults en `Microsoft.NET.Sdk.DefaultItems.targets`.
+
+Reglas:
+- **VS**: usa siempre `obj\`/`bin\` del proyecto — no tocar. F5 y despliegue
+  al móvil desde VS funcionan igual que siempre.
+- **CLI**: build directo sin flags extra — `Directory.Build.props` lo enruta a
+  `artifacts_cli\` solo. NUNCA pasar `-p:BaseIntermediateOutputPath` ni
+  `-p:OutputPath` a mano (causa los CS0579).
+- Salidas CLI: `src/ProcraStop.Maui11/artifacts_cli/bin/<Project>/debug_<tfm>/`
+  (exe de Windows y APK incluidos). El exe de prueba de Windows ya NO está en
+  `bin\Debug\...win-x64\` sino en `artifacts_cli\...\ProcraStop.Maui11.exe`.
+- Si `artifacts_cli\` queda en estado corrupto: borrarlo y reconstruir; no
+  afecta a VS.
+- NO agregar un `Directory.Build.props` a nivel de repo (afectaría a la app
+  .NET 10 de `src/ProcraStop`); el de Maui11 solo aplica a Maui11.

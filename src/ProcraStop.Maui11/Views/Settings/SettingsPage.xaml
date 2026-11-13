@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:ProcraStop.Maui11.ViewModels.Settings"
+             xmlns:components="clr-namespace:ProcraStop.Maui11.Components.Buttons"
+             xmlns:sheets="clr-namespace:ProcraStop.Maui11.Components.Sheets"
+             x:Class="ProcraStop.Maui11.Views.Settings.SettingsPage"
+             x:DataType="vm:SettingsPageViewModel"
+             x:Name="PageRoot"
+             Title="Ajustes">
+
+    <Grid RowDefinitions="Auto,*" RowSpacing="{StaticResource SpacingXL}">
+
+        <VerticalStackLayout Grid.Row="0" Spacing="{StaticResource SpacingXS}">
+            <Label Style="{StaticResource HeadlineLargeStyle}" Text="Ajustes" />
+            <Label Style="{StaticResource BodySmallStyle}" Text="Personaliza ProcraStop a tu ritmo." />
+        </VerticalStackLayout>
+
+        <Border Grid.Row="1"
+                Style="{StaticResource PSCardStyle}"
+                VerticalOptions="Center">
+            <VerticalStackLayout Spacing="{StaticResource SpacingS}">
+                <Label Style="{StaticResource TitleMediumStyle}" Text="Ajustes en construcción" />
+                <Label Style="{StaticResource BodyMediumStyle}"
+                       Text="Aquí podrás elegir el tema (claro/oscuro/sistema), recordatorios y gestión de datos." />
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- FAB flotante inferior derecho "+" (abre el Bottom Sheet de agregar) -->
+        <components:PSFab Grid.Row="1"
+                          HorizontalOptions="End"
+                          VerticalOptions="End"
+                          Margin="0,0,0,12"
+                          Command="{Binding OpenAddSheetCommand}"
+                          SemanticProperties.Description="Agregar elemento" />
+
+        <!-- Bottom Sheet "Agregar" embebido (último hijo = capa superior).
+             IsOpen vive en AddSheetViewModel; el overlay lo lee de su
+             BindingContext (ver PSAddSheet.xaml). -->
+        <sheets:PSAddSheet Grid.RowSpan="2"
+                           BindingContext="{Binding AddSheet}" />
+    </Grid>
+</ContentPage>

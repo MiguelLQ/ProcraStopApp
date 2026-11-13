@@ -1,11 +1,150 @@
-<Shell
-    x:Class="ProcraStop.Maui11.AppShell"
-    xmlns:local="clr-namespace:ProcraStop.Maui11"
-    Title="ProcraStop.Maui11">
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Navegación ProcraStop (skill procra-uiux → references/shell-navigation.md):
+     · Sección única con 4 Tabs (Inicio/Dashboard · Tareas · Hábitos ·
+       Ajustes): barra inferior siempre visible y los MISMOS tabs listados
+       en el sidebar (FlyoutDisplayOptions=AsMultipleItems).
+     · Rutas únicas: solo ShellContent (jamás duplicadas). -->
+<Shell x:Class="ProcraStop.Maui11.AppShell"
+       xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:fonts="clr-namespace:ProcraStop.Maui11.Resources.Fonts"
+       xmlns:dashboard="clr-namespace:ProcraStop.Maui11.Views.Dashboard"
+       xmlns:tasks="clr-namespace:ProcraStop.Maui11.Views.Tasks"
+       xmlns:habits="clr-namespace:ProcraStop.Maui11.Views.Habits"
+       xmlns:settings="clr-namespace:ProcraStop.Maui11.Views.Settings"
+       Title="ProcraStop"
+       FlyoutBehavior="Flyout"
+       FlyoutIsPresented="False"
+       FlyoutBackgroundColor="{AppThemeBinding Light={StaticResource SurfaceContainerLight}, Dark={StaticResource SurfaceContainerDark}}">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    <Shell.Resources>
+        <ResourceDictionary>
+            <!-- Iconos FluentUI (glyphs verificados en Resources/Fonts/FluentUI.cs) -->
+            <FontImageSource x:Key="IconDashboard"
+                             FontFamily="FluentUI"
+                             Glyph="{x:Static fonts:FluentUI.home_24_regular}"
+                             Size="24"
+                             Color="{AppThemeBinding Light={StaticResource TextTertiaryLight}, Dark={StaticResource TextTertiaryDark}}" />
+            <FontImageSource x:Key="IconTasks"
+                             FontFamily="FluentUI"
+                             Glyph="{x:Static fonts:FluentUI.task_list_ltr_24_regular}"
+                             Size="24"
+                             Color="{AppThemeBinding Light={StaticResource TextTertiaryLight}, Dark={StaticResource TextTertiaryDark}}" />
+            <FontImageSource x:Key="IconHabits"
+                             FontFamily="FluentUI"
+                             Glyph="{x:Static fonts:FluentUI.arrow_repeat_all_24_regular}"
+                             Size="24"
+                             Color="{AppThemeBinding Light={StaticResource TextTertiaryLight}, Dark={StaticResource TextTertiaryDark}}" />
+            <FontImageSource x:Key="IconSettings"
+                             FontFamily="FluentUI"
+                             Glyph="{x:Static fonts:FluentUI.settings_24_regular}"
+                             Size="24"
+                             Color="{AppThemeBinding Light={StaticResource TextTertiaryLight}, Dark={StaticResource TextTertiaryDark}}" />
+        </ResourceDictionary>
+    </Shell.Resources>
 
+    <!-- ===== Sidebar: header de usuario ===== -->
+    <Shell.FlyoutHeader>
+        <Grid ColumnDefinitions="Auto,*"
+              ColumnSpacing="{StaticResource SpacingM}"
+              Padding="20,24,20,16">
+            <Border Grid.Column="0"
+                    WidthRequest="52" HeightRequest="52"
+                    Padding="0" StrokeThickness="0"
+                    StrokeShape="RoundRectangle 26"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryDark}}">
+                <Label Text="{x:Static fonts:FluentUI.person_24_regular}"
+                       FontFamily="FluentUI" FontSize="24"
+                       TextColor="{StaticResource OnPrimary}"
+                       HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+            </Border>
+            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                <Label Text="Mi espacio"
+                       FontFamily="MontserratSemiBold" FontSize="17"
+                       TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" />
+                <Label Text="Bienestar y foco, a tu ritmo"
+                       FontFamily="InterRegular" FontSize="12"
+                       TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" />
+            </VerticalStackLayout>
+        </Grid>
+    </Shell.FlyoutHeader>
+
+    <!-- Plantilla de items del sidebar: fila con icono + título, estado
+         Selected con PrimaryContainer (Material 3). Sin x:DataType a
+         propósito: el origen son tipos internos de Shell (ShellItem), no
+         modelos del dominio. -->
+    <Shell.ItemTemplate>
+        <DataTemplate>
+            <Grid ColumnDefinitions="48,*"
+                  Padding="16,10"
+                  Margin="12,2"
+                  ColumnSpacing="{StaticResource SpacingM}"
+                  BackgroundColor="Transparent">
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="CommonStates">
+                            <VisualState x:Name="Normal" />
+                            <VisualState x:Name="Selected">
+                                <VisualState.Setters>
+                                    <Setter Property="BackgroundColor">
+                                        <Setter.Value>
+                                            <AppThemeBinding Light="{StaticResource PrimaryContainerLight}" Dark="{StaticResource PrimaryContainerDark}" />
+                                        </Setter.Value>
+                                    </Setter>
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </VisualStateManager.VisualStateGroups>
+
+                <Image Grid.Column="0"
+                       Source="{Binding Icon}"
+                       WidthRequest="24" HeightRequest="24"
+                       HorizontalOptions="Start"
+                       VerticalOptions="Center" />
+                <Label Grid.Column="1"
+                       Text="{Binding Title}"
+                       FontFamily="MontserratSemiBold"
+                       FontSize="15"
+                       TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}"
+                       VerticalOptions="Center" />
+            </Grid>
+        </DataTemplate>
+    </Shell.ItemTemplate>
+
+    <!-- ===== Sidebar: footer ===== -->
+    <Shell.FlyoutFooter>
+        <Label Text="ProcraStop · v1.0 (Maui11)"
+               FontFamily="ManropeRegular" FontSize="11"
+               TextColor="{AppThemeBinding Light={StaticResource TextDisabledLight}, Dark={StaticResource TextDisabledDark}}"
+               Margin="20,0,20,24" />
+    </Shell.FlyoutFooter>
+
+    <!-- ===== Secciones: TabBar de 4 tabs (restaurado).
+         Sidebar: SOLO Ajustes es visible en el Flyout; las demás secciones
+         ocultan su entrada del menú lateral con Shell.FlyoutItemIsVisible
+         pero conservan su tab en el TabBar inferior. ===== -->
+    <!-- ===== TabBar inferior explícito: Inicio/Dashboard · Tareas · Hábitos ·
+         Ajustes (barra siempre visible en Android). FlyoutDisplayOptions=
+         AsMultipleItems: cada Tab aparece TAMBIÉN como item del sidebar,
+         apuntando a la MISMA sección — el sidebar lista todos los menús
+         principales y Ajustes ya no es "otra pantalla aparte" (es el tab). -->
+    <!-- ===== Sección única: los 4 Tabs alimentan la barra inferior Y el
+         sidebar (FlyoutDisplayOptions=AsMultipleItems es el patrón Shell
+         para tabs en ambos sitios). Cada entrada del sidebar navega a su
+         tab — Ajustes no es "otra pantalla aparte". ===== -->
+    <FlyoutItem Shell.FlyoutDisplayOptions="AsMultipleItems">
+        <Tab Title="Inicio" Icon="{StaticResource IconDashboard}">
+            <ShellContent ContentTemplate="{DataTemplate dashboard:DashboardPage}" Route="DashboardPage" />
+        </Tab>
+        <Tab Title="Tareas" Icon="{StaticResource IconTasks}">
+            <ShellContent ContentTemplate="{DataTemplate tasks:TasksPage}" Route="TasksPage" />
+        </Tab>
+        <Tab Title="Hábitos" Icon="{StaticResource IconHabits}">
+            <ShellContent ContentTemplate="{DataTemplate habits:HabitsPage}" Route="HabitsPage" />
+        </Tab>
+        <Tab Title="Ajustes" Icon="{StaticResource IconSettings}">
+            <ShellContent ContentTemplate="{DataTemplate settings:SettingsPage}" Route="SettingsPage" />
+        </Tab>
+    </FlyoutItem>
 </Shell>

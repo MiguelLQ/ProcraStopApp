@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Bottom Sheet "Agregar" embebido (catálogo: PSBottomSheet, patrón
+     in-page overlay). A diferencia de una página modal, vive DENTRO de la
+     página: el panel ocupa el 100% del ancho en todas las plataformas
+     (sin insets del contenedor modal de Android) y el anfitrión controla
+     la apertura vía IsOpen (BindingContext = AddSheetViewModel).
+     Al abrirse oculta TabBar/NavBar de la página anfitriona para el
+     efecto modal completo (scrim cubre toda la pantalla). -->
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:fonts="clr-namespace:ProcraStop.Maui11.Resources.Fonts"
+             xmlns:vm="clr-namespace:ProcraStop.Maui11.ViewModels.Common"
+             x:Class="ProcraStop.Maui11.Components.Sheets.PSAddSheet"
+             x:DataType="vm:AddSheetViewModel"
+             IsVisible="False">
+
+    <Grid RowDefinitions="*,Auto">
+
+        <!-- Scrim: tap fuera cierra el sheet -->
+        <BoxView x:Name="Scrim"
+                 Grid.RowSpan="2"
+                 Opacity="0"
+                 Color="{AppThemeBinding Light={StaticResource ModalScrimLight}, Dark={StaticResource ModalScrimDark}}">
+            <BoxView.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding CloseSheetCommand}" />
+            </BoxView.GestureRecognizers>
+        </BoxView>
+
+        <!-- Panel del sheet: full width, radio superior 24 (RadiusXL) -->
+        <Border x:Name="SheetPanel"
+                Grid.Row="1"
+                TranslationY="460"
+                BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceContainerHighLight}, Dark={StaticResource SurfaceContainerHighDark}}"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 24,24,0,0"
+                Padding="20,12,20,32">
+            <VerticalStackLayout Spacing="{StaticResource SpacingL}">
+
+                <!-- Handle de arrastre -->
+                <BoxView WidthRequest="40" HeightRequest="4"
+                         CornerRadius="2"
+                         Color="{AppThemeBinding Light={StaticResource OutlineLight}, Dark={StaticResource OutlineDark}}"
+                         HorizontalOptions="Center" />
+
+                <!-- Título + cerrar -->
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Grid.Column="0"
+                           Style="{StaticResource TitleLargeStyle}"
+                           Text="Agregar"
+                           VerticalOptions="Center" />
+                    <Border Grid.Column="1"
+                            Style="{StaticResource PSIconButtonStyle}"
+                            SemanticProperties.Description="Cerrar">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding CloseSheetCommand}" />
+                        </Border.GestureRecognizers>
+                        <Label Text="{x:Static fonts:FluentUI.dismiss_24_regular}"
+                               FontFamily="FluentUI" FontSize="20"
+                               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"
+                               HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                    </Border>
+                </Grid>
+
+                <!-- Acciones rápidas (2×2) -->
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto"
+                      ColumnSpacing="{StaticResource SpacingM}"
+                      RowSpacing="{StaticResource SpacingM}">
+
+                    <!-- Nueva tarea -->
+                    <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource PSCardStyle}" Margin="0">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding AddTaskCommand}" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout Spacing="{StaticResource SpacingXS}">
+                            <Border Style="{StaticResource PSIconButtonStyle}"
+                                    HorizontalOptions="Start"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryContainerLight}, Dark={StaticResource PrimaryContainerDark}}">
+                                <Label Text="{x:Static fonts:FluentUI.task_list_add_24_regular}"
+                                       FontFamily="FluentUI" FontSize="20"
+                                       TextColor="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryDark}}"
+                                       HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                            </Border>
+                            <Label Style="{StaticResource BodyMediumStyle}" Text="Nueva tarea" />
+                            <Label Style="{StaticResource LabelSmallStyle}" Text="Planifica tu día" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Nuevo hábito -->
+                    <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource PSCardStyle}" Margin="0">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding AddHabitCommand}" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout Spacing="{StaticResource SpacingXS}">
+                            <Border Style="{StaticResource PSIconButtonStyle}"
+                                    HorizontalOptions="Start"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryContainerLight}, Dark={StaticResource PrimaryContainerDark}}">
+                                <Label Text="{x:Static fonts:FluentUI.target_24_regular}"
+                                       FontFamily="FluentUI" FontSize="20"
+                                       TextColor="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryDark}}"
+                                       HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                            </Border>
+                            <Label Style="{StaticResource BodyMediumStyle}" Text="Nuevo hábito" />
+                            <Label Style="{StaticResource LabelSmallStyle}" Text="Construye disciplina" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Check-in de estrés -->
+                    <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource PSCardStyle}" Margin="0">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding CheckInStressCommand}" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout Spacing="{StaticResource SpacingXS}">
+                            <Border Style="{StaticResource PSIconButtonStyle}"
+                                    HorizontalOptions="Start"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryContainerLight}, Dark={StaticResource PrimaryContainerDark}}">
+                                <Label Text="{x:Static fonts:FluentUI.heart_pulse_24_regular}"
+                                       FontFamily="FluentUI" FontSize="20"
+                                       TextColor="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryDark}}"
+                                       HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                            </Border>
+                            <Label Style="{StaticResource BodyMediumStyle}" Text="Check-in de estrés" />
+                            <Label Style="{StaticResource LabelSmallStyle}" Text="¿Cómo te sientes?" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Sesión de estudio -->
+                    <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource PSCardStyle}" Margin="0">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding StartStudySessionCommand}" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout Spacing="{StaticResource SpacingXS}">
+                            <Border Style="{StaticResource PSIconButtonStyle}"
+                                    HorizontalOptions="Start"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryContainerLight}, Dark={StaticResource PrimaryContainerDark}}">
+                                <Label Text="{x:Static fonts:FluentUI.timer_24_regular}"
+                                       FontFamily="FluentUI" FontSize="20"
+                                       TextColor="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryDark}}"
+                                       HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                            </Border>
+                            <Label Style="{StaticResource BodyMediumStyle}" Text="Sesión de estudio" />
+                            <Label Style="{StaticResource LabelSmallStyle}" Text="Foco con temporizador" />
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+            </VerticalStackLayout>
+        </Border>
+    </Grid>
+</ContentView>

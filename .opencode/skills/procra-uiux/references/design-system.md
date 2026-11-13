@@ -53,21 +53,32 @@ decorativos.
 ### 2.2 Reglas de implementación
 
 ```xml
-<!-- Colors.xaml: definición por tema con AppThemeBinding -->
+<!-- Colors.xaml: dos claves por token, una por tema.
+     Nota: Color NO admite AppThemeBinding como contenido (XAMLC:
+     "Cannot set the content of Color"), por eso el patrón es par de
+     claves + AppThemeBinding en el consumidor (igual que la app .NET 10). -->
 <Color x:Key="SurfaceLight">#F1F3F8</Color>
 <Color x:Key="SurfaceDark">#222631</Color>
-<Color x:Key="Surface">  <!-- consumidores usan {DynamicResource Surface} -->
-  <AppThemeBinding Light="{StaticResource SurfaceLight}"
-                   Dark="{StaticResource SurfaceDark}" />
-</Color>
+
+<!-- Consumidor (página o Setter): -->
+<Setter Property="BackgroundColor">
+    <Setter.Value>
+        <AppThemeBinding Light="{StaticResource SurfaceLight}"
+                         Dark="{StaticResource SurfaceDark}" />
+    </Setter.Value>
+</Setter>
 ```
 
-- Páginas y controles consumen con `{DynamicResource Token}` (responde a
-  cambio de tema en caliente) o `{AppThemeBinding}` cuando el valor es local
-  a ese elemento.
+- Los estilos implícitos y con clave ya unen los pares Light/Dark con
+  `AppThemeBinding` (`Styles.xaml`, `Typography.xaml`, `Controls.xaml`): las
+  páginas casi nunca necesitan el par explícito — usan los estilos.
+- Cuando una página necesita un token fuera de estilo, usa
+  `AppThemeBinding` inline con las claves `XLight`/`XDark`.
+- `DynamicResource` queda reservado para valores intercambiables en runtime
+  (tema manual); el look por defecto vive en estilos con `AppThemeBinding`.
 - `{StaticResource}` solo para colores que NO cambian con el tema
-  (`Primary` base, iconos blancos sobre botón primario).
-- Los brushes (`PrimaryBrush`, etc.) se derivan de los colores, no al revés.
+  (`OnPrimary`, iconos blancos sobre botón primario).
+- Los brushes se derivan de los colores, no al revés.
 - **Prohibido**: `BackgroundColor="#4075FF"` en una página. Si el color no
   existe como token, primero se añade el token.
 - Color dinámico de Android (Material You): los controles **nativos** bajo

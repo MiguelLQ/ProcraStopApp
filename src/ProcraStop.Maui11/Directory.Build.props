@@ -1,0 +1,31 @@
+<Project>
+
+  <!-- ============================================================
+       Separación CLI / Visual Studio (evita locks del obj\ de Android).
+       Regla (skill procra-uiux → maui11-standards.md §9):
+         · Visual Studio  → usa obj\ y bin\ del proyecto (sin cambios).
+         · CLI (dotnet)   → usa artifacts_cli\ (bin + obj dentro), NUNCA
+                            disputa archivos con VS, aunque esté abierto.
+       El SDK .NET 11 activa el "artifacts output layout" al ver
+       ArtifactsPath (y mueve también el intermedio con
+       UseArtifactsIntermediateOutput=true). Los globs dejan de incluir
+       bin\** y obj\** automáticamente, así que los generados por VS
+       jamás se compilan como fuentes (causa raíz de los CS0579 previos).
+       IMPORTANTE: la exclusión es SIMÉTRICA — artifacts_cli\** también
+       se excluye en builds de VS. Sin esto, los generados de los builds
+       CLI (App.g.cs, XamlTypeInfo.g.cs, AssemblyInfo, resizetizer) se
+       filtran como fuentes en VS y producen ~70 errores CS0101/CS0234/
+       CS0579 (bug real ocurrido y corregido). El SDK concatena este
+       valor sobre sus propios defaults (DefaultItems.targets), por lo
+       que definirlo aquí es seguro.
+       ============================================================ -->
+  <PropertyGroup>
+    <DefaultItemExcludes Condition="'$(DefaultItemExcludes)' == ''">artifacts_cli\**</DefaultItemExcludes>
+    <DefaultItemExcludes Condition="'$(DefaultItemExcludes)' != ''">$(DefaultItemExcludes);artifacts_cli\**</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(BuildingInsideVisualStudio)' != 'true'">
+    <ArtifactsPath>$(MSBuildThisFileDirectory)artifacts_cli</ArtifactsPath>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:ProcraStop.Maui11.ViewModels.Dashboard"
+             xmlns:components="clr-namespace:ProcraStop.Maui11.Components.Buttons"
+             xmlns:sheets="clr-namespace:ProcraStop.Maui11.Components.Sheets"
+             x:Class="ProcraStop.Maui11.Views.Dashboard.DashboardPage"
+             x:DataType="vm:DashboardViewModel"
+             x:Name="PageRoot"
+             Title="Inicio">
+
+    <Grid RowDefinitions="Auto,*" RowSpacing="{StaticResource SpacingXL}">
+
+        <!-- Saludo contextual (ux-guidelines §2) -->
+        <VerticalStackLayout Grid.Row="0" Spacing="{StaticResource SpacingXS}">
+            <Label Style="{StaticResource HeadlineLargeStyle}" Text="{Binding Greeting}" />
+            <Label Style="{StaticResource BodySmallStyle}" Text="Tu día, con calma y foco." />
+        </VerticalStackLayout>
+
+        <!-- Placeholder de resumen del día (será la hero card del Design System) -->
+        <Border Grid.Row="1"
+                Style="{StaticResource PSCardStyle}"
+                VerticalOptions="Center">
+            <VerticalStackLayout Spacing="{StaticResource SpacingS}">
+                <Label Style="{StaticResource TitleMediumStyle}" Text="Panel en construcción" />
+                <Label Style="{StaticResource BodyMediumStyle}"
+                       Text="Aquí vivirá tu resumen del día: próxima tarea, progreso y check-in de estrés." />
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- FAB flotante inferior derecho "+" (abre el Bottom Sheet de agregar) -->
+        <components:PSFab Grid.Row="1"
+                          HorizontalOptions="End"
+                          VerticalOptions="End"
+                          Margin="0,0,0,12"
+                          Command="{Binding OpenAddSheetCommand}"
+                          SemanticProperties.Description="Agregar tarea o hábito" />
+
+        <!-- Bottom Sheet "Agregar" embebido (último hijo = capa superior).
+             IsOpen vive en AddSheetViewModel; el overlay lo lee de su
+             BindingContext (ver PSAddSheet.xaml). -->
+        <sheets:PSAddSheet Grid.RowSpan="2"
+                           BindingContext="{Binding AddSheet}" />
+    </Grid>
+</ContentPage>

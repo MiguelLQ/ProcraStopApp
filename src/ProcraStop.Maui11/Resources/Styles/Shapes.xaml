@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Design System ProcraStop · escala de radios.
+     Fuente: skill procra-uiux → references/design-system.md §5.
+     inputs 8 · botones/chips 14 · cards 18 · sheets 24 · avatares full.
+     Nota técnica: CornerRadius (typed) para StrokeShape; x:Double para
+     Button.CornerRadius (evita conversión frágil de tipos en Setters). -->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <x:Double x:Key="RadiusS">8</x:Double>
+    <x:Double x:Key="RadiusM">14</x:Double>
+    <x:Double x:Key="RadiusL">18</x:Double>
+    <x:Double x:Key="RadiusXL">24</x:Double>
+    <x:Double x:Key="RadiusFull">999</x:Double>
+</ResourceDictionary>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Design System ProcraStop · escala tipográfica.
+     Fuente: skill procra-uiux → references/design-system.md §3.
+     Montserrat = títulos · Inter = cuerpo · Manrope = datos/labels. -->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- Display / Headline / Title (Montserrat) -->
+    <Style x:Key="DisplayLargeStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="MontserratSemiBold" />
+        <Setter Property="FontSize" Value="34" />
+        <Setter Property="TextColor">
+            <Setter.Value>
+                <AppThemeBinding Light="{StaticResource TextPrimaryLight}" Dark="{StaticResource TextPrimaryDark}" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="HeadlineLargeStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="MontserratSemiBold" />
+        <Setter Property="FontSize" Value="24" />
+        <Setter Property="TextColor">
+            <Setter.Value>
+                <AppThemeBinding Light="{StaticResource TextPrimaryLight}" Dark="{StaticResource TextPrimaryDark}" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="TitleLargeStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="MontserratSemiBold" />
+        <Setter Property="FontSize" Value="21" />
+        <Setter Property="TextColor">
+            <Setter.Value>
+                <AppThemeBinding Light="{StaticResource TextPrimaryLight}" Dark="{StaticResource TextPrimaryDark}" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="TitleMediumStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="MontserratSemiBold" />
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="TextColor">
+            <Setter.Value>
+                <AppThemeBinding Light="{StaticResource TextPrimaryLight}" Dark="{StaticResource TextPrimaryDark}" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Body (Inter) -->
+    <Style x:Key="BodyLargeStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="InterRegular" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="TextColor">
+            <Setter.Value>
+                <AppThemeBinding Light="{StaticResource TextPrimaryLight}" Dark="{StaticResource TextPrimaryDark}" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="BodyMediumStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="InterRegular" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="TextColor">
+            <Setter.Value>
+                <AppThemeBinding Light="{StaticResource TextPrimaryLight}" Dark="{StaticResource TextPrimaryDark}" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="BodySmallStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="InterRegular" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="TextColor">
+            <Setter.Value>
+                <AppThemeBinding Light="{StaticResource TextSecondaryLight}" Dark="{StaticResource TextSecondaryDark}" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Label (Manrope) -->
+    <Style x:Key="LabelLargeStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="InterRegular" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="TextColor">
+            <Setter.Value>
+                <AppThemeBinding Light="{StaticResource TextPrimaryLight}" Dark="{StaticResource TextPrimaryDark}" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="LabelMediumStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="ManropeRegular" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="TextColor">
+            <Setter.Value>
+                <AppThemeBinding Light="{StaticResource TextSecondaryLight}" Dark="{StaticResource TextSecondaryDark}" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="LabelSmallStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="ManropeRegular" />
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="TextColor">
+            <Setter.Value>
+                <AppThemeBinding Light="{StaticResource TextSecondaryLight}" Dark="{StaticResource TextSecondaryDark}" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:ProcraStop.Maui11.ViewModels.Habits"
+             xmlns:components="clr-namespace:ProcraStop.Maui11.Components.Buttons"
+             xmlns:sheets="clr-namespace:ProcraStop.Maui11.Components.Sheets"
+             x:Class="ProcraStop.Maui11.Views.Habits.HabitsPage"
+             x:DataType="vm:HabitsPageViewModel"
+             x:Name="PageRoot"
+             Title="Hábitos">
+
+    <Grid RowDefinitions="Auto,*" RowSpacing="{StaticResource SpacingXL}">
+
+        <VerticalStackLayout Grid.Row="0" Spacing="{StaticResource SpacingXS}">
+            <Label Style="{StaticResource HeadlineLargeStyle}" Text="Hábitos" />
+            <Label Style="{StaticResource BodySmallStyle}" Text="Construye disciplina día a día." />
+        </VerticalStackLayout>
+
+        <Border Grid.Row="1"
+                Style="{StaticResource PSCardStyle}"
+                VerticalOptions="Center">
+            <VerticalStackLayout Spacing="{StaticResource SpacingS}">
+                <Label Style="{StaticResource TitleMediumStyle}" Text="Lista de hábitos en construcción" />
+                <Label Style="{StaticResource BodyMediumStyle}"
+                       Text="Aquí verás tus hábitos con streaks, calendario semanal y progreso del día." />
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- FAB flotante inferior derecho "+" (abre el Bottom Sheet de agregar) -->
+        <components:PSFab Grid.Row="1"
+                          HorizontalOptions="End"
+                          VerticalOptions="End"
+                          Margin="0,0,0,12"
+                          Command="{Binding OpenAddSheetCommand}"
+                          SemanticProperties.Description="Agregar hábito" />
+
+        <!-- Bottom Sheet "Agregar" embebido (último hijo = capa superior).
+             IsOpen vive en AddSheetViewModel; el overlay lo lee de su
+             BindingContext (ver PSAddSheet.xaml). -->
+        <sheets:PSAddSheet Grid.RowSpan="2"
+                           BindingContext="{Binding AddSheet}" />
+    </Grid>
+</ContentPage>

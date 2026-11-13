@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- FAB de acción (catálogo: Components.md §2 PSFab → sustituye al vetado
+     PSBottomNavigation). Botón circular primario 56×56 con glyph FluentUI. -->
+<Border xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:fonts="clr-namespace:ProcraStop.Maui11.Resources.Fonts"
+        x:Class="ProcraStop.Maui11.Components.Buttons.PSFab"
+        Style="{StaticResource PSFabStyle}">
+    <Border.GestureRecognizers>
+        <TapGestureRecognizer Tapped="OnFabTapped" />
+    </Border.GestureRecognizers>
+    <Label x:Name="GlyphLabel"
+           Text="{x:Static fonts:FluentUI.add_24_regular}"
+           FontFamily="FluentUI"
+           FontSize="24"
+           TextColor="{StaticResource OnPrimary}"
+           HorizontalTextAlignment="Center"
+           VerticalTextAlignment="Center" />
+</Border>
