@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Estado de carga (catálogo §2 P0): skeleton discreto — nunca pantalla
+     en blanco. Barras estáticas (el shimmer se evalúa como mejora; sin
+     bucles de animación para evitar fugas de ciclo de vida). -->
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:self="clr-namespace:ProcraStop.Maui11.Components.Indicators"
+             x:Class="ProcraStop.Maui11.Components.Indicators.PSLoadingState"
+             x:Name="Root"
+             x:DataType="self:PSLoadingState">
+    <VerticalStackLayout Spacing="{StaticResource SpacingM}"
+                         Padding="{StaticResource CardPadding}">
+        <!-- Skeleton card -->
+        <Border StrokeThickness="0" StrokeShape="RoundRectangle 18"
+                Padding="{StaticResource CardPadding}"
+                BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceContainerLight}, Dark={StaticResource SurfaceContainerDark}}">
+            <VerticalStackLayout Spacing="{StaticResource SpacingM}">
+                <Border HeightRequest="14" StrokeThickness="0" StrokeShape="RoundRectangle 7"
+                        HorizontalOptions="Start" WidthRequest="120"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource OutlineLight}, Dark={StaticResource OutlineDark}}" />
+                <Border HeightRequest="14" StrokeThickness="0" StrokeShape="RoundRectangle 7"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource OutlineLight}, Dark={StaticResource OutlineDark}}" />
+                <Border HeightRequest="14" StrokeThickness="0" StrokeShape="RoundRectangle 7"
+                        HorizontalOptions="Start" WidthRequest="180"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource OutlineLight}, Dark={StaticResource OutlineDark}}" />
+            </VerticalStackLayout>
+        </Border>
+        <!-- Skeleton card secundaria -->
+        <Border StrokeThickness="0" StrokeShape="RoundRectangle 18"
+                Padding="{StaticResource CardPadding}"
+                BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceContainerLight}, Dark={StaticResource SurfaceContainerDark}}">
+            <VerticalStackLayout Spacing="{StaticResource SpacingM}">
+                <Border HeightRequest="14" StrokeThickness="0" StrokeShape="RoundRectangle 7"
+                        HorizontalOptions="Start" WidthRequest="90"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource OutlineLight}, Dark={StaticResource OutlineDark}}" />
+                <Border HeightRequest="14" StrokeThickness="0" StrokeShape="RoundRectangle 7"
+                        HorizontalOptions="Start" WidthRequest="220"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource OutlineLight}, Dark={StaticResource OutlineDark}}" />
+            </VerticalStackLayout>
+        </Border>
+        <Label Text="{Binding Message, Source={x:Reference Root}}"
+               FontFamily="ManropeRegular" FontSize="12"
+               IsVisible="{Binding HasMessage, Source={x:Reference Root}}"
+               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"
+               HorizontalTextAlignment="Center" />
+    </VerticalStackLayout>
+</ContentView>

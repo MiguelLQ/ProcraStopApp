@@ -12,13 +12,14 @@
     <Grid RowDefinitions="Auto,*" RowSpacing="{StaticResource SpacingXL}">
 
         <!-- Saludo contextual (ux-guidelines §2) -->
-        <VerticalStackLayout Grid.Row="0" Spacing="{StaticResource SpacingXS}">
+        <VerticalStackLayout Grid.Row="0" Spacing="{StaticResource SpacingXS}" Margin="15,0,15,0">
             <Label Style="{StaticResource HeadlineLargeStyle}" Text="{Binding Greeting}" />
             <Label Style="{StaticResource BodySmallStyle}" Text="Tu día, con calma y foco." />
         </VerticalStackLayout>
 
         <!-- Placeholder de resumen del día (será la hero card del Design System) -->
         <Border Grid.Row="1"
+                Margin="15,0,15,0"
                 Style="{StaticResource PSCardStyle}"
                 VerticalOptions="Center">
             <VerticalStackLayout Spacing="{StaticResource SpacingS}">
@@ -32,7 +33,7 @@
         <components:PSFab Grid.Row="1"
                           HorizontalOptions="End"
                           VerticalOptions="End"
-                          Margin="0,0,0,12"
+                          Margin="0,0,10,5"
                           Command="{Binding OpenAddSheetCommand}"
                           SemanticProperties.Description="Agregar tarea o hábito" />
 

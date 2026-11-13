@@ -12,8 +12,8 @@
     <Color x:Key="PrimaryLight">#4075FF</Color>
     <Color x:Key="PrimaryDark">#6590FF</Color>
     <Color x:Key="OnPrimary">#FFFFFF</Color>
-    <Color x:Key="PrimaryContainerLight">#D9E3FF</Color>
-    <Color x:Key="PrimaryContainerDark">#1F2845</Color>
+    <Color x:Key="PrimaryContainerLight">#F0F2FA</Color>
+    <Color x:Key="PrimaryContainerDark">#1E232E</Color>
     <Color x:Key="OnPrimaryContainerLight">#1F2845</Color>
     <Color x:Key="OnPrimaryContainerDark">#D9E2FF</Color>
 
@@ -46,12 +46,31 @@
     <Color x:Key="SuccessContainerDark">#1E3328</Color>
     <Color x:Key="WarningLight">#F59E0B</Color>
     <Color x:Key="WarningDark">#FBBF24</Color>
+    <Color x:Key="WarningContainerLight">#FAEDD7</Color>
+    <Color x:Key="WarningContainerDark">#352B14</Color>
+    <Color x:Key="OnWarningContainerLight">#8A5A06</Color>
+    <Color x:Key="OnWarningContainerDark">#FBBF24</Color>
     <Color x:Key="ErrorLight">#E5484D</Color>
     <Color x:Key="ErrorDark">#FF6B6E</Color>
     <Color x:Key="ErrorContainerLight">#FDE8E9</Color>
     <Color x:Key="ErrorContainerDark">#3A1F22</Color>
     <Color x:Key="InfoLight">#4075FF</Color>
     <Color x:Key="InfoDark">#6590FF</Color>
+
+    <!-- Degradados (estilo Grial): el inicio usa el token Primary y la
+         segunda parada es una derivación tonal del mismo (justificada:
+         un degradado exige dos paradas). Brushes consumibles con
+         {AppThemeBinding Light=..., Dark=...}. -->
+    <Color x:Key="PrimaryDeepLight">#2F5FE0</Color>
+    <Color x:Key="PrimaryDeepDark">#3D5BC7</Color>
+    <LinearGradientBrush x:Key="PrimaryGradientLight" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="{StaticResource PrimaryLight}" Offset="0.0" />
+        <GradientStop Color="{StaticResource PrimaryDeepLight}" Offset="1.0" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="PrimaryGradientDark" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="{StaticResource PrimaryDark}" Offset="0.0" />
+        <GradientStop Color="{StaticResource PrimaryDeepDark}" Offset="1.0" />
+    </LinearGradientBrush>
 
     <!-- Capas flotantes -->
     <Color x:Key="ScrimLight">#14000000</Color>

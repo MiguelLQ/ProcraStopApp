@@ -12,9 +12,12 @@
        xmlns:tasks="clr-namespace:ProcraStop.Maui11.Views.Tasks"
        xmlns:habits="clr-namespace:ProcraStop.Maui11.Views.Habits"
        xmlns:settings="clr-namespace:ProcraStop.Maui11.Views.Settings"
+       xmlns:ds="clr-namespace:ProcraStop.Maui11.Views.DesignSystem"
        Title="ProcraStop"
        FlyoutBehavior="Flyout"
        FlyoutIsPresented="False"
+       FlyoutWidth="300"
+       FlyoutHeaderBehavior="CollapseOnScroll"
        FlyoutBackgroundColor="{AppThemeBinding Light={StaticResource SurfaceContainerLight}, Dark={StaticResource SurfaceContainerDark}}">
 
     <Shell.Resources>
@@ -40,45 +43,54 @@
                              Glyph="{x:Static fonts:FluentUI.settings_24_regular}"
                              Size="24"
                              Color="{AppThemeBinding Light={StaticResource TextTertiaryLight}, Dark={StaticResource TextTertiaryDark}}" />
+            <FontImageSource x:Key="IconDesign"
+                             FontFamily="FluentUI"
+                             Glyph="{x:Static fonts:FluentUI.paint_brush_24_regular}"
+                             Size="24"
+                             Color="{AppThemeBinding Light={StaticResource TextTertiaryLight}, Dark={StaticResource TextTertiaryDark}}" />
         </ResourceDictionary>
     </Shell.Resources>
 
-    <!-- ===== Sidebar: header de usuario ===== -->
+    <!-- ===== Sidebar: identidad de marca ===== -->
     <Shell.FlyoutHeader>
-        <Grid ColumnDefinitions="Auto,*"
-              ColumnSpacing="{StaticResource SpacingM}"
-              Padding="20,24,20,16">
-            <Border Grid.Column="0"
-                    WidthRequest="52" HeightRequest="52"
+        <VerticalStackLayout Padding="20,32,20,10"
+                             Spacing="{StaticResource SpacingXL}">
+            <Border WidthRequest="58"
+                    HeightRequest="58"
+                    HorizontalOptions="Start"
                     Padding="0" StrokeThickness="0"
-                    StrokeShape="RoundRectangle 26"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryDark}}">
-                <Label Text="{x:Static fonts:FluentUI.person_24_regular}"
-                       FontFamily="FluentUI" FontSize="24"
-                       TextColor="{StaticResource OnPrimary}"
-                       HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                    BackgroundColor="{StaticResource PrimaryLight}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <Label Text="P"
+                       FontFamily="MontserratSemiBold"
+                       FontSize="40"
+                       TextColor="{AppThemeBinding Light={StaticResource SurfaceContainerLight}, Dark={StaticResource SurfaceContainerDark}}"
+                       HorizontalTextAlignment="Center"
+                       VerticalTextAlignment="Center" />
             </Border>
-            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
-                <Label Text="Mi espacio"
-                       FontFamily="MontserratSemiBold" FontSize="17"
-                       TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" />
-                <Label Text="Bienestar y foco, a tu ritmo"
-                       FontFamily="InterRegular" FontSize="12"
+            <VerticalStackLayout Spacing="{StaticResource SpacingXS}">
+                <Label Text="ProcraStop"
+                       Style="{StaticResource DisplayLargeStyle}"
+                       SemanticProperties.HeadingLevel="Level1" />
+                <Label Text="Enfócate. Avanza. A tu ritmo."
+                       Style="{StaticResource BodyLargeStyle}"
                        TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" />
             </VerticalStackLayout>
-        </Grid>
+        </VerticalStackLayout>
     </Shell.FlyoutHeader>
 
-    <!-- Plantilla de items del sidebar: fila con icono + título, estado
-         Selected con PrimaryContainer (Material 3). Sin x:DataType a
-         propósito: el origen son tipos internos de Shell (ShellItem), no
-         modelos del dominio. -->
+    <!-- Plantilla de items del sidebar: Shell expone Title y FlyoutIcon en
+         este BindingContext. Usar FlyoutIcon (no Icon) evita filas vacías
+         para ShellContent que solo participa en el flyout. -->
     <Shell.ItemTemplate>
         <DataTemplate>
-            <Grid ColumnDefinitions="48,*"
-                  Padding="16,10"
-                  Margin="12,2"
-                  ColumnSpacing="{StaticResource SpacingM}"
+            <Grid HeightRequest="45"
+                  ColumnDefinitions="48,*"
+                  Padding="5,8"
+                  Margin="16,2"
+                  ColumnSpacing="{StaticResource SpacingS}"
                   BackgroundColor="Transparent">
                 <VisualStateManager.VisualStateGroups>
                     <VisualStateGroupList>
@@ -98,15 +110,14 @@
                 </VisualStateManager.VisualStateGroups>
 
                 <Image Grid.Column="0"
-                       Source="{Binding Icon}"
+                       Source="{Binding FlyoutIcon}"
                        WidthRequest="24" HeightRequest="24"
-                       HorizontalOptions="Start"
+                       HorizontalOptions="Center"
                        VerticalOptions="Center" />
                 <Label Grid.Column="1"
                        Text="{Binding Title}"
-                       FontFamily="MontserratSemiBold"
-                       FontSize="15"
-                       TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}"
+                       Style="{StaticResource TitleMediumStyle}"
+                       LineBreakMode="TailTruncation"
                        VerticalOptions="Center" />
             </Grid>
         </DataTemplate>
@@ -133,18 +144,38 @@
          sidebar (FlyoutDisplayOptions=AsMultipleItems es el patrón Shell
          para tabs en ambos sitios). Cada entrada del sidebar navega a su
          tab — Ajustes no es "otra pantalla aparte". ===== -->
-    <FlyoutItem Shell.FlyoutDisplayOptions="AsMultipleItems">
-        <Tab Title="Inicio" Icon="{StaticResource IconDashboard}">
+    <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
+        <Tab Title="Inicio"
+             Icon="{StaticResource IconDashboard}"
+             FlyoutIcon="{StaticResource IconDashboard}">
             <ShellContent ContentTemplate="{DataTemplate dashboard:DashboardPage}" Route="DashboardPage" />
         </Tab>
-        <Tab Title="Tareas" Icon="{StaticResource IconTasks}">
+        <Tab Title="Tareas"
+             Icon="{StaticResource IconTasks}"
+             FlyoutIcon="{StaticResource IconTasks}">
             <ShellContent ContentTemplate="{DataTemplate tasks:TasksPage}" Route="TasksPage" />
         </Tab>
-        <Tab Title="Hábitos" Icon="{StaticResource IconHabits}">
+        <Tab Title="Hábitos"
+             Icon="{StaticResource IconHabits}"
+             FlyoutIcon="{StaticResource IconHabits}">
             <ShellContent ContentTemplate="{DataTemplate habits:HabitsPage}" Route="HabitsPage" />
         </Tab>
-        <Tab Title="Ajustes" Icon="{StaticResource IconSettings}">
+        <Tab Title="Ajustes"
+             Icon="{StaticResource IconSettings}"
+             FlyoutIcon="{StaticResource IconSettings}">
             <ShellContent ContentTemplate="{DataTemplate settings:SettingsPage}" Route="SettingsPage" />
         </Tab>
+    </FlyoutItem>
+
+    <!-- ===== Galería del Design System (solo sidebar, sin tab inferior):
+         entrada adicional del Flyout que no participa del TabBar. ===== -->
+    <FlyoutItem Title="Componentes"
+                FlyoutDisplayOptions="AsMultipleItems"
+                Shell.TabBarIsVisible="False">
+        <ShellContent Title="Componentes"
+                      Icon="{StaticResource IconDesign}"
+                      FlyoutIcon="{StaticResource IconDesign}"
+                      ContentTemplate="{DataTemplate ds:DesignSystemPage}"
+                      Route="DesignSystemPage" />
     </FlyoutItem>
 </Shell>

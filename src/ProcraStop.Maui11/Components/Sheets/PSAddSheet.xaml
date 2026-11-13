@@ -14,7 +14,7 @@
              x:DataType="vm:AddSheetViewModel"
              IsVisible="False">
 
-    <Grid RowDefinitions="*,Auto">
+    <Grid RowDefinitions="*,Auto" >
 
         <!-- Scrim: tap fuera cierra el sheet -->
         <BoxView x:Name="Scrim"

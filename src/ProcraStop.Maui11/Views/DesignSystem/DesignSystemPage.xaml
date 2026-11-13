@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Galería del Design System (estilo Grial UI Kit): catálogo vivo de
+     componentes PS* con tokens dinámicos (AppThemeBinding) — sirve de
+     referencia visual y de prueba de Light/Dark para todo el sistema.
+     Solo sidebar (Shell.TabBarIsVisible=False, ver AppShell.xaml). -->
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:ProcraStop.Maui11.ViewModels.DesignSystem"
+             xmlns:fonts="clr-namespace:ProcraStop.Maui11.Resources.Fonts"
+             xmlns:cards="clr-namespace:ProcraStop.Maui11.Components.Cards"
+             xmlns:common="clr-namespace:ProcraStop.Maui11.Components.Common"
+             xmlns:inputs="clr-namespace:ProcraStop.Maui11.Components.Inputs"
+             xmlns:indicators="clr-namespace:ProcraStop.Maui11.Components.Indicators"
+             x:Class="ProcraStop.Maui11.Views.DesignSystem.DesignSystemPage"
+             x:DataType="vm:DesignSystemViewModel"
+             x:Name="PageRoot"
+             Title="Componentes"
+            
+             BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}">
+
+    <ScrollView Margin="15,0,15,0">
+        <VerticalStackLayout Padding="{StaticResource ScreenMargin}"
+                             Spacing="{StaticResource SpacingL}">
+
+            <!-- ===== Encabezado ===== -->
+            <VerticalStackLayout Spacing="{StaticResource SpacingXS}">
+                <Label Text="Design System"
+                       FontFamily="MontserratSemiBold" FontSize="28"
+                       TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" />
+                <Label Text="Catálogo vivo de componentes PS* · Light/Dark"
+                       FontFamily="InterRegular" FontSize="14"
+                       TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" />
+            </VerticalStackLayout>
+
+            <!-- ===== Cards ===== -->
+            <Label Text="Cards"
+                   FontFamily="MontserratSemiBold" FontSize="20"
+                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" />
+
+            <!-- Card con degradado (Grial) -->
+            <cards:PSGradientCard
+                Glyph="{x:Static fonts:FluentUI.timer_24_regular}"
+                Title="Sesión de foco"
+                Subtitle="25 min · Técnica Pomodoro"
+                Command="{Binding PrimaryActionCommand}" />
+
+            <!-- StatCard -->
+            <cards:PSStatCard
+                Value="{Binding FocusMinutes}"
+                Label="Minutos de foco esta semana"
+                DeltaText="{Binding FocusDelta}"
+                IsPositive="{Binding FocusDeltaPositive}" />
+
+            <!-- ProgressCard -->
+            <cards:PSProgressCard
+                Title="Hábitos de hoy"
+                Value="{Binding HabitsProgress}"
+                PercentageText="{Binding HabitsProgressText}" />
+
+            <!-- Card base (estilo PSCardStyle sobre Border) -->
+            <Border Style="{StaticResource PSCardStyle}">
+                <Grid ColumnDefinitions="*,Auto">
+                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                        <Label Text="Card base (PSCardStyle)"
+                               FontFamily="InterRegular" FontSize="14"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" />
+                        <Label Text="SurfaceContainer + radius 18 + padding 16"
+                               FontFamily="ManropeRegular" FontSize="12"
+                               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" />
+                    </VerticalStackLayout>
+                    <common:PSBadge Grid.Column="1"
+                                    Text="Estable"
+                                    Style="{StaticResource PSBadgeSuccessStyle}" />
+                </Grid>
+            </Border>
+
+            <!-- ===== Botones ===== -->
+            <Label Text="Botones"
+                   FontFamily="MontserratSemiBold" FontSize="20"
+                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" />
+
+            <Border Style="{StaticResource PSCardStyle}">
+                <VerticalStackLayout Spacing="{StaticResource SpacingM}">
+                    <Button Text="Primaria" Style="{StaticResource PSButtonPrimaryStyle}" Command="{Binding PrimaryActionCommand}" />
+                    <Button Text="Secundaria" Style="{StaticResource PSButtonSecondaryStyle}" Command="{Binding SecondaryActionCommand}" />
+                    <Button Text="Destructiva" Style="{StaticResource PSButtonDestructiveStyle}" Command="{Binding DestructiveActionCommand}" />
+                    <Button Text="Textual" Style="{StaticResource PSButtonTextStyle}" Command="{Binding PrimaryActionCommand}" />
+                    <HorizontalStackLayout Spacing="{StaticResource SpacingM}">
+                        <Button Text="Demo" Style="{StaticResource PSButtonPrimaryStyle}" Command="{Binding PrimaryActionCommand}" />
+                        <Border Style="{StaticResource PSIconButtonStyle}">
+                            <Label Text="{x:Static fonts:FluentUI.add_24_regular}"
+                                   FontFamily="FluentUI" FontSize="24"
+                                   TextColor="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryDark}}"
+                                   HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                            <Border.SemanticProperties>
+                                <SemanticProperties.Description>Agregar</SemanticProperties.Description>
+                            </Border.SemanticProperties>
+                        </Border>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- ===== Chips & Badges ===== -->
+            <Label Text="Chips y badges"
+                   FontFamily="MontserratSemiBold" FontSize="20"
+                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" />
+
+            <Border Style="{StaticResource PSCardStyle}">
+                <VerticalStackLayout Spacing="{StaticResource SpacingM}">
+                    <!-- Chips dinámicos: lista pequeña → BindableLayout en FlexLayout -->
+                    <FlexLayout BindableLayout.ItemsSource="{Binding Chips}"
+                                JustifyContent="Start" Wrap="Wrap">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="vm:ChipDemoModel">
+                                <common:PSChip
+                                    Text="{Binding Label}"
+                                    IsSelected="{Binding IsSelected}"
+                                    Command="{Binding Path=BindingContext.ToggleChipCommand, Source={x:Reference PageRoot}}"
+                                    CommandParameter="{Binding .}" />
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </FlexLayout>
+                    <HorizontalStackLayout Spacing="{StaticResource SpacingS}">
+                        <common:PSBadge Text="Nueva" Style="{StaticResource PSBadgePrimaryStyle}" />
+                        <common:PSBadge Text="En curso" Style="{StaticResource PSBadgeWarningStyle}" />
+                        <common:PSBadge Text="Completada" Style="{StaticResource PSBadgeSuccessStyle}" />
+                        <common:PSBadge Text="Atrasada" Style="{StaticResource PSBadgeErrorStyle}" />
+                    </HorizontalStackLayout>
+                    <Label Text="{Binding LastAction, StringFormat='Última acción: {0}'}"
+                           FontFamily="ManropeRegular" FontSize="12"
+                           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- ===== Inputs (Material 3) ===== -->
+            <Label Text="Inputs"
+                   FontFamily="MontserratSemiBold" FontSize="20"
+                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" />
+
+            <Border Style="{StaticResource PSCardStyle}">
+                <VerticalStackLayout Spacing="{StaticResource SpacingM}">
+                    <inputs:PSInput
+                        Label="Nombre de la tarea"
+                        Placeholder="Estudiar cálculo…"
+                        Text="{Binding DemoName, Mode=TwoWay}"
+                        HasError="{Binding NameHasError}"
+                        ErrorText="{Binding NameError}" />
+                    <HorizontalStackLayout Spacing="{StaticResource SpacingM}">
+                        <Button Text="Alternar error" Style="{StaticResource PSButtonSecondaryStyle}" Command="{Binding ToggleNameErrorCommand}" />
+                    </HorizontalStackLayout>
+                    <Label Text="Filled M3: SurfaceContainerHigh + radius 8 + borde Outline; en error borde Error 1.5"
+                           FontFamily="ManropeRegular" FontSize="12"
+                           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- ===== Estados ===== -->
+            <Label Text="Estados (loading · empty · error)"
+                   FontFamily="MontserratSemiBold" FontSize="20"
+                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" />
+
+            <indicators:PSLoadingState Message="Cargando tus hábitos…" />
+
+            <Border Style="{StaticResource PSCardStyle}">
+                <common:PSEmptyState
+                    Glyph="{x:Static fonts:FluentUI.clipboard_task_24_regular}"
+                    Title="Aún no hay tareas"
+                    Message="Crea tu primera tarea para empezar a construir tu rutina."
+                    ActionText="Crear tarea"
+                    Command="{Binding CreateTaskCommand}" />
+            </Border>
+
+            <Border Style="{StaticResource PSCardStyle}">
+                <common:PSErrorState
+                    Title="No se pudo cargar"
+                    Message="Revisa tu conexión e inténtalo de nuevo."
+                    RetryCommand="{Binding PrimaryActionCommand}" />
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

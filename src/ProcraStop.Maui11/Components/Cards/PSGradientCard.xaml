@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Card hero con degradado del Primary (estilo Grial). Contrato:
+     Glyph (FluentUI) + Title + Subtitle sobre PrimaryGradient; el tap
+     opcional delega en Command del consumidor (view-only).
+     El texto siempre usa OnPrimary: el degradado es primario en ambos
+     temas, así el contraste ≥ 4.5:1 se mantiene en Light y Dark. -->
+<Border xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:fonts="clr-namespace:ProcraStop.Maui11.Resources.Fonts"
+        xmlns:self="clr-namespace:ProcraStop.Maui11.Components.Cards"
+        x:Class="ProcraStop.Maui11.Components.Cards.PSGradientCard"
+        x:Name="Root"
+        x:DataType="self:PSGradientCard"
+        StrokeThickness="0"
+        StrokeShape="RoundRectangle 18"
+        Padding="{StaticResource CardPadding}"
+        Margin="{StaticResource CardMargin}"
+        Background="{AppThemeBinding Light={StaticResource PrimaryGradientLight}, Dark={StaticResource PrimaryGradientDark}}">
+    <Grid ColumnDefinitions="Auto,*"
+          ColumnSpacing="{StaticResource SpacingL}">
+        <!-- Halo del icono: blanco al 20% sobre degradado primario -->
+        <Border Grid.Column="0"
+                WidthRequest="48" HeightRequest="48"
+                StrokeThickness="0" StrokeShape="RoundRectangle 24"
+                BackgroundColor="{StaticResource OnPrimary}"
+                Opacity="0.9">
+            <Label Text="{Binding Glyph, Source={x:Reference Root}}"
+                   FontFamily="FluentUI" FontSize="24"
+                   TextColor="{StaticResource PrimaryLight}"
+                   HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+        </Border>
+        <VerticalStackLayout Grid.Column="1"
+                             Spacing="{StaticResource SpacingXS}"
+                             VerticalOptions="Center">
+            <Label Text="{Binding Title, Source={x:Reference Root}}"
+                   FontFamily="MontserratSemiBold" FontSize="18"
+                   TextColor="{StaticResource OnPrimary}" />
+            <Label Text="{Binding Subtitle, Source={x:Reference Root}}"
+                   FontFamily="InterRegular" FontSize="13"
+                   TextColor="{StaticResource OnPrimary}"
+                   Opacity="0.85" />
+        </VerticalStackLayout>
+    </Grid>
+    <Border.GestureRecognizers>
+        <TapGestureRecognizer NumberOfTapsRequired="1"
+                              Command="{Binding Command, Source={x:Reference Root}}"
+                              CommandParameter="{Binding CommandParameter, Source={x:Reference Root}}" />
+    </Border.GestureRecognizers>
+</Border>

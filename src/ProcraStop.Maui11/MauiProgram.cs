@@ -1,10 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 using ProcraStop.Maui11.ViewModels.Common;
 using ProcraStop.Maui11.ViewModels.Dashboard;
+using ProcraStop.Maui11.ViewModels.DesignSystem;
 using ProcraStop.Maui11.ViewModels.Habits;
 using ProcraStop.Maui11.ViewModels.Settings;
 using ProcraStop.Maui11.ViewModels.Tasks;
 using ProcraStop.Maui11.Views.Dashboard;
+using ProcraStop.Maui11.Views.DesignSystem;
 using ProcraStop.Maui11.Views.Habits;
 using ProcraStop.Maui11.Views.Settings;
 using ProcraStop.Maui11.Views.Tasks;
@@ -38,12 +40,14 @@ public static class MauiProgram
         builder.Services.AddTransient<TasksPage>();
         builder.Services.AddTransient<HabitsPage>();
         builder.Services.AddTransient<SettingsPage>();
+        builder.Services.AddTransient<DesignSystemPage>();
 
         builder.Services.AddTransient<DashboardViewModel>();
         builder.Services.AddTransient<TasksPageViewModel>();
         builder.Services.AddTransient<HabitsPageViewModel>();
         builder.Services.AddTransient<SettingsPageViewModel>();
         builder.Services.AddTransient<AddSheetViewModel>();
+        builder.Services.AddTransient<DesignSystemViewModel>();
 
 #if DEBUG
         builder.Logging.AddDebug();

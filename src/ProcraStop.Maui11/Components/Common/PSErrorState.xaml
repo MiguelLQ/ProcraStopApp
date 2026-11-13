@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Estado de error (catálogo §2 P0, obligatorio en toda pantalla de
+     datos): mensaje claro + acción de reintento (nunca un toast). -->
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:fonts="clr-namespace:ProcraStop.Maui11.Resources.Fonts"
+             xmlns:self="clr-namespace:ProcraStop.Maui11.Components.Common"
+             x:Class="ProcraStop.Maui11.Components.Common.PSErrorState"
+             x:Name="Root"
+             x:DataType="self:PSErrorState">
+    <VerticalStackLayout Spacing="{StaticResource SpacingM}"
+                         Padding="{StaticResource SpacingXL}"
+                         HorizontalOptions="Center">
+        <Border WidthRequest="64" HeightRequest="64"
+                StrokeThickness="0" StrokeShape="RoundRectangle 32"
+                BackgroundColor="{AppThemeBinding Light={StaticResource ErrorContainerLight}, Dark={StaticResource ErrorContainerDark}}"
+                HorizontalOptions="Center">
+            <Label Text="{x:Static fonts:FluentUI.error_circle_24_regular}"
+                   FontFamily="FluentUI" FontSize="28"
+                   TextColor="{AppThemeBinding Light={StaticResource ErrorLight}, Dark={StaticResource ErrorDark}}"
+                   HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+        </Border>
+        <Label Text="{Binding Title, Source={x:Reference Root}}"
+               FontFamily="MontserratSemiBold" FontSize="18"
+               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}"
+               HorizontalTextAlignment="Center" />
+        <Label Text="{Binding Message, Source={x:Reference Root}}"
+               FontFamily="InterRegular" FontSize="14"
+               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"
+               HorizontalTextAlignment="Center" />
+        <Button Text="{Binding RetryText, Source={x:Reference Root}}"
+                Style="{StaticResource PSButtonSecondaryStyle}"
+                Command="{Binding RetryCommand, Source={x:Reference Root}}"
+                HorizontalOptions="Center" />
+    </VerticalStackLayout>
+</ContentView>

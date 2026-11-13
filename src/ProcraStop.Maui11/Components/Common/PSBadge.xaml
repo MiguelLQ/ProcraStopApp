@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Badge pequeño no interactivo (catálogo §2 P1). Colores por variante:
+     el consumidor aplica PSBadgePrimaryStyle / PSBadgeSuccessStyle /
+     PSBadgeWarningStyle / PSBadgeErrorStyle (tokens con AppThemeBinding
+     definidos en Controls.xaml). -->
+<Border xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:self="clr-namespace:ProcraStop.Maui11.Components.Common"
+        x:Class="ProcraStop.Maui11.Components.Common.PSBadge"
+        x:Name="Root"
+        x:DataType="self:PSBadge"
+        StrokeThickness="0"
+        StrokeShape="RoundRectangle 999"
+        Padding="10,4">
+    <Label Text="{Binding Text, Source={x:Reference Root}}"
+           FontFamily="ManropeRegular" FontSize="11"
+           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}"
+           HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+</Border>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Estado vacío (catálogo §2 P0, obligatorio en toda lista): icono +
+     título + texto empático + acción sugerida opcional. La acción se
+     oculta si ActionText es nulo/vacío. -->
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:fonts="clr-namespace:ProcraStop.Maui11.Resources.Fonts"
+             xmlns:self="clr-namespace:ProcraStop.Maui11.Components.Common"
+             x:Class="ProcraStop.Maui11.Components.Common.PSEmptyState"
+             x:Name="Root"
+             x:DataType="self:PSEmptyState">
+    <VerticalStackLayout Spacing="{StaticResource SpacingM}"
+                         Padding="{StaticResource SpacingXL}"
+                         HorizontalOptions="Center">
+        <!-- Halo del icono -->
+        <Border WidthRequest="64" HeightRequest="64"
+                StrokeThickness="0" StrokeShape="RoundRectangle 32"
+                BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryContainerLight}, Dark={StaticResource PrimaryContainerDark}}"
+                HorizontalOptions="Center">
+            <Label Text="{Binding Glyph, Source={x:Reference Root}}"
+                   FontFamily="FluentUI" FontSize="28"
+                   TextColor="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryDark}}"
+                   HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+        </Border>
+        <Label Text="{Binding Title, Source={x:Reference Root}}"
+               FontFamily="MontserratSemiBold" FontSize="18"
+               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}"
+               HorizontalTextAlignment="Center" />
+        <Label Text="{Binding Message, Source={x:Reference Root}}"
+               FontFamily="InterRegular" FontSize="14"
+               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"
+               HorizontalTextAlignment="Center" />
+        <Button Text="{Binding ActionText, Source={x:Reference Root}}"
+                Style="{StaticResource PSButtonPrimaryStyle}"
+                IsVisible="{Binding HasAction, Source={x:Reference Root}}"
+                Command="{Binding Command, Source={x:Reference Root}}"
+                HorizontalOptions="Center" />
+    </VerticalStackLayout>
+</ContentView>

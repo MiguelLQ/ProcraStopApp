@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Input Material 3 (catálogo §2 P2, estilo Grial): campo "filled" con
+     label fijo, Entry y estado de error (borde Error + mensaje debajo).
+     Text es TwoWay (edición); HasError/ErrorText llegan del VM. -->
+<Border xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:self="clr-namespace:ProcraStop.Maui11.Components.Inputs"
+        x:Class="ProcraStop.Maui11.Components.Inputs.PSInput"
+        x:Name="Root"
+        x:DataType="self:PSInput"
+        StrokeThickness="1"
+        StrokeShape="RoundRectangle 8"
+        Padding="{StaticResource SpacingM}"
+        Margin="0,0,0,0"
+        BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceContainerHighLight}, Dark={StaticResource SurfaceContainerHighDark}}"
+        Stroke="{AppThemeBinding Light={StaticResource OutlineLight}, Dark={StaticResource OutlineDark}}">
+    <Grid RowDefinitions="Auto,Auto,Auto"
+          RowSpacing="{StaticResource SpacingXS}">
+        <Label Grid.Row="0"
+               Text="{Binding Label, Source={x:Reference Root}}"
+               FontFamily="ManropeRegular" FontSize="11"
+               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"
+               IsVisible="{Binding HasLabel, Source={x:Reference Root}}" />
+        <Entry Grid.Row="1"
+               Style="{StaticResource PSInputStyle}"
+               Placeholder="{Binding Placeholder, Source={x:Reference Root}}"
+               Text="{Binding Text, Source={x:Reference Root}, Mode=TwoWay}"
+               IsPassword="{Binding IsPassword, Source={x:Reference Root}}" />
+        <Label Grid.Row="2"
+               Text="{Binding ErrorText, Source={x:Reference Root}}"
+               FontFamily="InterRegular" FontSize="12"
+               IsVisible="{Binding HasError, Source={x:Reference Root}}"
+               TextColor="{AppThemeBinding Light={StaticResource ErrorLight}, Dark={StaticResource ErrorDark}}" />
+    </Grid>
+    <Border.Triggers>
+        <DataTrigger TargetType="Border"
+                     Binding="{Binding IsError, Source={x:Reference Root}}"
+                     Value="True">
+            <Setter Property="Stroke">
+                <Setter.Value>
+                    <AppThemeBinding Light="{StaticResource ErrorLight}" Dark="{StaticResource ErrorDark}" />
+                </Setter.Value>
+            </Setter>
+            <Setter Property="StrokeThickness" Value="1.5" />
+        </DataTrigger>
+    </Border.Triggers>
+</Border>

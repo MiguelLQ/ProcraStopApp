@@ -150,6 +150,42 @@
         </Setter>
     </Style>
 
+    <!-- ===== Badges (no interactivos; variantes semánticas) ===== -->
+    <Style x:Key="PSBadgePrimaryStyle" TargetType="Border">
+        <Setter Property="BackgroundColor">
+            <Setter.Value>
+                <AppThemeBinding Light="{StaticResource PrimaryContainerLight}" Dark="{StaticResource PrimaryContainerDark}" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 999" />
+        <Setter Property="Padding" Value="10,4" />
+    </Style>
+
+    <Style x:Key="PSBadgeSuccessStyle" TargetType="Border" BasedOn="{StaticResource PSBadgePrimaryStyle}">
+        <Setter Property="BackgroundColor">
+            <Setter.Value>
+                <AppThemeBinding Light="{StaticResource SuccessContainerLight}" Dark="{StaticResource SuccessContainerDark}" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="PSBadgeWarningStyle" TargetType="Border" BasedOn="{StaticResource PSBadgePrimaryStyle}">
+        <Setter Property="BackgroundColor">
+            <Setter.Value>
+                <AppThemeBinding Light="{StaticResource WarningContainerLight}" Dark="{StaticResource WarningContainerDark}" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="PSBadgeErrorStyle" TargetType="Border" BasedOn="{StaticResource PSBadgePrimaryStyle}">
+        <Setter Property="BackgroundColor">
+            <Setter.Value>
+                <AppThemeBinding Light="{StaticResource ErrorContainerLight}" Dark="{StaticResource ErrorContainerDark}" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- ===== Inputs ===== -->
     <Style x:Key="PSInputStyle" TargetType="Entry">
         <Setter Property="BackgroundColor" Value="Transparent" />

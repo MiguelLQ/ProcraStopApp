@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Card de estadística (catálogo §2 P1): valor grande + label + delta
+     opcional. Sin lógica: DeltaText e IsPositive llegan calculados.
+     El delta se oculta cuando DeltaText es nulo/vacío y colorea vía
+     DataTrigger (Success default → Error si IsPositive=False). -->
+<Border xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:self="clr-namespace:ProcraStop.Maui11.Components.Cards"
+        x:Class="ProcraStop.Maui11.Components.Cards.PSStatCard"
+        x:Name="Root"
+        x:DataType="self:PSStatCard"
+        Style="{StaticResource PSCardStyle}">
+    <Grid RowDefinitions="Auto,Auto,Auto"
+          RowSpacing="{StaticResource SpacingXS}">
+        <Label Grid.Row="0"
+               Text="{Binding Value, Source={x:Reference Root}}"
+               FontFamily="MontserratSemiBold" FontSize="28"
+               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" />
+        <Label Grid.Row="1"
+               Text="{Binding Label, Source={x:Reference Root}}"
+               FontFamily="ManropeRegular" FontSize="12"
+               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" />
+        <Label Grid.Row="2"
+               Text="{Binding DeltaText, Source={x:Reference Root}}"
+               FontFamily="ManropeRegular" FontSize="12"
+               IsVisible="{Binding ShowDelta, Source={x:Reference Root}}"
+               TextColor="{AppThemeBinding Light={StaticResource SuccessLight}, Dark={StaticResource SuccessDark}}">
+            <Label.Triggers>
+                <DataTrigger TargetType="Label"
+                             Binding="{Binding IsPositive, Source={x:Reference Root}}"
+                             Value="False">
+                    <Setter Property="TextColor">
+                        <Setter.Value>
+                            <AppThemeBinding Light="{StaticResource ErrorLight}" Dark="{StaticResource ErrorDark}" />
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+            </Label.Triggers>
+        </Label>
+    </Grid>
+</Border>

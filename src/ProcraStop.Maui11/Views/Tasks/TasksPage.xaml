@@ -9,14 +9,15 @@
              x:Name="PageRoot"
              Title="Tareas">
 
-    <Grid RowDefinitions="Auto,*" RowSpacing="{StaticResource SpacingXL}">
+    <Grid RowDefinitions="Auto,*" RowSpacing="{StaticResource SpacingXL}" >
 
-        <VerticalStackLayout Grid.Row="0" Spacing="{StaticResource SpacingXS}">
+        <VerticalStackLayout Grid.Row="0" Spacing="{StaticResource SpacingXS}" Margin="15,0,15,0">
             <Label Style="{StaticResource HeadlineLargeStyle}" Text="Mis tareas" />
             <Label Style="{StaticResource BodySmallStyle}" Text="Organiza tu día por prioridad y fecha." />
         </VerticalStackLayout>
 
         <Border Grid.Row="1"
+                Margin="15,0,15,0"
                 Style="{StaticResource PSCardStyle}"
                 VerticalOptions="Center">
             <VerticalStackLayout Spacing="{StaticResource SpacingS}">
@@ -30,7 +31,7 @@
         <components:PSFab Grid.Row="1"
                           HorizontalOptions="End"
                           VerticalOptions="End"
-                          Margin="0,0,0,12"
+                          Margin="0,0,15,5"
                           Command="{Binding OpenAddSheetCommand}"
                           SemanticProperties.Description="Agregar tarea" />
 

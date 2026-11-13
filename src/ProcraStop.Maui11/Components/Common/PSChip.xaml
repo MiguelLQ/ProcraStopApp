@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Chip (catálogo §2 P0): filtro/acción compacta radius 14.
+     IsSelected cambia el fondo vía Trigger (PrimaryContainer); el tap
+     delega en Command del consumidor (view-only). -->
+<Border xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:self="clr-namespace:ProcraStop.Maui11.Components.Common"
+        x:Class="ProcraStop.Maui11.Components.Common.PSChip"
+        x:Name="Root"
+        x:DataType="self:PSChip"
+        Style="{StaticResource PSChipStyle}">
+    <Label Text="{Binding Text, Source={x:Reference Root}}"
+           FontFamily="ManropeRegular" FontSize="12"
+           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" />
+    <Border.Triggers>
+        <DataTrigger TargetType="Border"
+                     Binding="{Binding IsSelected, Source={x:Reference Root}}"
+                     Value="True">
+            <Setter Property="BackgroundColor">
+                <Setter.Value>
+                    <AppThemeBinding Light="{StaticResource PrimaryContainerLight}" Dark="{StaticResource PrimaryContainerDark}" />
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Stroke">
+                <Setter.Value>
+                    <AppThemeBinding Light="{StaticResource PrimaryLight}" Dark="{StaticResource PrimaryDark}" />
+                </Setter.Value>
+            </Setter>
+        </DataTrigger>
+    </Border.Triggers>
+    <Border.GestureRecognizers>
+        <TapGestureRecognizer NumberOfTapsRequired="1"
+                              Command="{Binding Command, Source={x:Reference Root}}"
+                              CommandParameter="{Binding CommandParameter, Source={x:Reference Root}}" />
+    </Border.GestureRecognizers>
+</Border>

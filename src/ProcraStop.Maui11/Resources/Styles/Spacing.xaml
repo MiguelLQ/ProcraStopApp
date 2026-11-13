@@ -14,7 +14,7 @@
     <x:Double x:Key="SpacingScreenBottom">32</x:Double>
 
     <!-- Margen lateral estándar de toda página -->
-    <Thickness x:Key="ScreenMargin">20,12,20,0</Thickness>
+    <Thickness x:Key="ScreenMargin">0,0,0,0</Thickness>
 
     <!-- Margen inferior estándar de card dentro de listas (SpacingM) -->
     <Thickness x:Key="CardMargin">0,0,0,12</Thickness>

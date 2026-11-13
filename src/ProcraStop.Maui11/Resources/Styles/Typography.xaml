@@ -8,7 +8,7 @@
     <!-- Display / Headline / Title (Montserrat) -->
     <Style x:Key="DisplayLargeStyle" TargetType="Label">
         <Setter Property="FontFamily" Value="MontserratSemiBold" />
-        <Setter Property="FontSize" Value="34" />
+        <Setter Property="FontSize" Value="26" />
         <Setter Property="TextColor">
             <Setter.Value>
                 <AppThemeBinding Light="{StaticResource TextPrimaryLight}" Dark="{StaticResource TextPrimaryDark}" />
@@ -37,7 +37,7 @@
     </Style>
 
     <Style x:Key="TitleMediumStyle" TargetType="Label">
-        <Setter Property="FontFamily" Value="MontserratSemiBold" />
+        <Setter Property="FontFamily" Value="MontserratRegular" />
         <Setter Property="FontSize" Value="18" />
         <Setter Property="TextColor">
             <Setter.Value>
@@ -48,8 +48,8 @@
 
     <!-- Body (Inter) -->
     <Style x:Key="BodyLargeStyle" TargetType="Label">
-        <Setter Property="FontFamily" Value="InterRegular" />
-        <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontFamily" Value="InterSemiBold" />
+        <Setter Property="FontSize" Value="15" />
         <Setter Property="TextColor">
             <Setter.Value>
                 <AppThemeBinding Light="{StaticResource TextPrimaryLight}" Dark="{StaticResource TextPrimaryDark}" />

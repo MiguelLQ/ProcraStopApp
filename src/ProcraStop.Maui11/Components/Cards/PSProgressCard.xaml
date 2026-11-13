@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Card de progreso (catálogo §2 P1): título + barra 6dp + porcentaje.
+     Sin lógica: Value (0..1) y PercentageText llegan calculados del VM. -->
+<Border xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:self="clr-namespace:ProcraStop.Maui11.Components.Cards"
+        x:Class="ProcraStop.Maui11.Components.Cards.PSProgressCard"
+        x:Name="Root"
+        x:DataType="self:PSProgressCard"
+        Style="{StaticResource PSCardStyle}">
+    <Grid RowDefinitions="Auto,Auto"
+          RowSpacing="{StaticResource SpacingM}">
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="{StaticResource SpacingM}">
+            <Label Grid.Column="0"
+                   Text="{Binding Title, Source={x:Reference Root}}"
+                   FontFamily="InterRegular" FontSize="14"
+                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}"
+                   VerticalOptions="Center" />
+            <Label Grid.Column="1"
+                   Text="{Binding PercentageText, Source={x:Reference Root}}"
+                   FontFamily="ManropeRegular" FontSize="12"
+                   TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}"
+                   VerticalOptions="Center" />
+        </Grid>
+        <!-- Barra de progreso: track + fill manual (ProgressBar nativa no
+             soporta radius; el ancho del fill se ajusta en code-behind
+             presentacional a partir del ancho real de la pista). -->
+        <Border x:Name="TrackBar"
+                Grid.Row="1"
+                HeightRequest="6"
+                StrokeThickness="0" StrokeShape="RoundRectangle 3"
+                BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceContainerHighLight}, Dark={StaticResource SurfaceContainerHighDark}}">
+            <Grid>
+                <Border x:Name="FillBar"
+                        HorizontalOptions="Start"
+                        HeightRequest="6"
+                        StrokeThickness="0" StrokeShape="RoundRectangle 3"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryDark}}" />
+            </Grid>
+        </Border>
+    </Grid>
+</Border>
