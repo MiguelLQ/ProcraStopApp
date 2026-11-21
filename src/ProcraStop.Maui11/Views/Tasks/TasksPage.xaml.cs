@@ -9,4 +9,11 @@ public partial class TasksPage : ContentPage
         InitializeComponent();
         BindingContext = viewModel;
     }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        if (BindingContext is TasksPageViewModel viewModel)
+            await viewModel.LoadAsync();
+    }
 }

@@ -121,6 +121,7 @@
     </Style>
 
     <Style TargetType="Entry">
+        <Setter Property="BackgroundColor" Value="Transparent" />
         <Setter Property="TextColor">
             <Setter.Value>
                 <AppThemeBinding Light="{StaticResource TextPrimaryLight}" Dark="{StaticResource TextPrimaryDark}" />
@@ -136,6 +137,7 @@
     </Style>
 
     <Style TargetType="Editor">
+        <Setter Property="BackgroundColor" Value="Transparent" />
         <Setter Property="TextColor">
             <Setter.Value>
                 <AppThemeBinding Light="{StaticResource TextPrimaryLight}" Dark="{StaticResource TextPrimaryDark}" />
@@ -144,6 +146,44 @@
         <Setter Property="PlaceholderColor">
             <Setter.Value>
                 <AppThemeBinding Light="{StaticResource TextDisabledLight}" Dark="{StaticResource TextDisabledDark}" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="FontFamily" Value="InterRegular" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
+    <Style TargetType="Picker">
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="TextColor">
+            <Setter.Value>
+                <AppThemeBinding Light="{StaticResource TextPrimaryLight}" Dark="{StaticResource TextPrimaryDark}" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="TitleColor">
+            <Setter.Value>
+                <AppThemeBinding Light="{StaticResource TextDisabledLight}" Dark="{StaticResource TextDisabledDark}" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="FontFamily" Value="InterRegular" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
+    <Style TargetType="DatePicker">
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="TextColor">
+            <Setter.Value>
+                <AppThemeBinding Light="{StaticResource TextPrimaryLight}" Dark="{StaticResource TextPrimaryDark}" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="FontFamily" Value="InterRegular" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
+    <Style TargetType="TimePicker">
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="TextColor">
+            <Setter.Value>
+                <AppThemeBinding Light="{StaticResource TextPrimaryLight}" Dark="{StaticResource TextPrimaryDark}" />
             </Setter.Value>
         </Setter>
         <Setter Property="FontFamily" Value="InterRegular" />

@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Tema Material de Android (Maui.MainTheme): acento de controles
-     nativos (diálogos, checkbox, etc.). NO pinta el splash: el fondo del
-     splash nativo viene de los metadatos Color/DarkColor de
-     <MauiSplashScreen> en ProcraStop.Maui11.csproj.
-     Tokens del Design System ProcraStop (skill procra-uiux §4). -->
+<!-- Roles Material 3 de Android, equivalentes a los tokens Light del
+     Design System. Los alias legacy se conservan para recursos MAUI. -->
 <resources>
-    <color name="colorPrimary">#4075FF</color>
-    <color name="colorPrimaryDark">#1F2845</color>
-    <color name="colorAccent">#4075FF</color>
+    <color name="ps_primary">#4075FF</color>
+    <color name="ps_on_primary">#FFFFFF</color>
+    <color name="ps_primary_container">#D9E3FF</color>
+    <color name="ps_on_primary_container">#1F2845</color>
+    <color name="ps_surface">#F1F3F8</color>
+    <color name="ps_surface_container">#FFFFFF</color>
+    <color name="ps_on_surface">#12141B</color>
+    <color name="ps_on_surface_variant">#6F7A8F</color>
+    <color name="ps_outline">#DBE0ED</color>
+
+    <color name="colorPrimary">@color/ps_primary</color>
+    <color name="colorPrimaryDark">@color/ps_on_primary_container</color>
+    <color name="colorAccent">@color/ps_primary</color>
 </resources>

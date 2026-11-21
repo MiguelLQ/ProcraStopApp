@@ -4,6 +4,9 @@
              xmlns:vm="clr-namespace:ProcraStop.Maui11.ViewModels.Tasks"
              xmlns:components="clr-namespace:ProcraStop.Maui11.Components.Buttons"
              xmlns:sheets="clr-namespace:ProcraStop.Maui11.Components.Sheets"
+             xmlns:common="clr-namespace:ProcraStop.Maui11.Components.Common"
+             xmlns:indicators="clr-namespace:ProcraStop.Maui11.Components.Indicators"
+             xmlns:fonts="clr-namespace:ProcraStop.Maui11.Resources.Fonts"
              x:Class="ProcraStop.Maui11.Views.Tasks.TasksPage"
              x:DataType="vm:TasksPageViewModel"
              x:Name="PageRoot"
@@ -16,16 +19,56 @@
             <Label Style="{StaticResource BodySmallStyle}" Text="Organiza tu día por prioridad y fecha." />
         </VerticalStackLayout>
 
-        <Border Grid.Row="1"
-                Margin="15,0,15,0"
-                Style="{StaticResource PSCardStyle}"
-                VerticalOptions="Center">
-            <VerticalStackLayout Spacing="{StaticResource SpacingS}">
-                <Label Style="{StaticResource TitleMediumStyle}" Text="Lista de tareas en construcción" />
-                <Label Style="{StaticResource BodyMediumStyle}"
-                       Text="Aquí verás tus tarjetas de tarea con filtros, checks y recordatorios de vencimiento." />
-            </VerticalStackLayout>
-        </Border>
+        <Grid Grid.Row="1" Margin="15,0,15,0">
+            <indicators:PSLoadingState IsVisible="{Binding IsLoading}"
+                                       Message="Cargando actividades…"
+                                       VerticalOptions="Start" />
+
+            <common:PSErrorState IsVisible="{Binding HasError}"
+                                 Title="No pudimos cargar tus tareas"
+                                 Message="Revisa la conexión o inténtalo nuevamente."
+                                 RetryText="Reintentar"
+                                 RetryCommand="{Binding LoadCommand}"
+                                 VerticalOptions="Center" />
+
+            <common:PSEmptyState IsVisible="{Binding IsEmpty}"
+                                 Glyph="{x:Static fonts:FluentUI.task_list_add_24_regular}"
+                                 Title="Tu lista está lista"
+                                 Message="Crea una tarea, lectura, examen o entregable sin formularios interminables."
+                                 ActionText="Crear actividad"
+                                 Command="{Binding OpenAddSheetCommand}"
+                                 VerticalOptions="Center" />
+
+            <CollectionView IsVisible="{Binding HasItems}"
+                            ItemsSource="{Binding Items}"
+                            SelectionMode="None"
+                            Margin="0,0,0,72">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:TaskListCard">
+                        <Border Style="{StaticResource PSCardStyle}" Margin="0,0,0,10">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.EditTaskCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="5">
+                                <Label Grid.Row="0" Grid.Column="0"
+                                       Text="{Binding Title}"
+                                       Style="{StaticResource TitleMediumStyle}"
+                                       LineBreakMode="TailTruncation" />
+                                <Label Grid.Row="0" Grid.Column="1"
+                                       Text="{Binding DueLabel}"
+                                       Style="{StaticResource LabelMediumStyle}"
+                                       VerticalOptions="Center" />
+                                <Label Grid.Row="1" Grid.ColumnSpan="2"
+                                       Text="{Binding Meta}"
+                                       Style="{StaticResource BodySmallStyle}" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
 
         <!-- FAB flotante inferior derecho "+" (abre el Bottom Sheet de agregar) -->
         <components:PSFab Grid.Row="1"

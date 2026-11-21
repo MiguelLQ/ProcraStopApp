@@ -22,10 +22,9 @@ public partial class AppShell : Shell
         if (_routesRegistered)
             return;
 
-        // El Bottom Sheet "Agregar" es overlay embebido (Components/Sheets/
-        // PSAddSheet), no requiere ruta. Las primeras páginas apilables
-        // (task-detail, create-task, ...) se registrarán aquí con las
-        // constantes de Routes.
+        // El Bottom Sheet solo selecciona el tipo. El editor es una ruta
+        // global única para creación rápida, opciones avanzadas y edición.
+        Routing.RegisterRoute(Routes.TaskEditor, typeof(Views.Tasks.TaskEditorPage));
         _routesRegistered = true;
     }
 

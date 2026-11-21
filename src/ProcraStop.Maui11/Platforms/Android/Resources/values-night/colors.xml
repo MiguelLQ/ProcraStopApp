@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Roles Material 3 equivalentes a los tokens Dark de ProcraStop. -->
+<resources>
+    <color name="ps_primary">#6590FF</color>
+    <color name="ps_on_primary">#FFFFFF</color>
+    <color name="ps_primary_container">#1F2845</color>
+    <color name="ps_on_primary_container">#D9E2FF</color>
+    <color name="ps_surface">#222631</color>
+    <color name="ps_surface_container">#1F2430</color>
+    <color name="ps_on_surface">#FEFFFF</color>
+    <color name="ps_on_surface_variant">#AAB0C0</color>
+    <color name="ps_outline">#333949</color>
+
+    <color name="colorPrimary">@color/ps_primary</color>
+    <color name="colorPrimaryDark">@color/ps_primary_container</color>
+    <color name="colorAccent">@color/ps_primary</color>
+</resources>

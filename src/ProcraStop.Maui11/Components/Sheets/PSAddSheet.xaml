@@ -61,7 +61,7 @@
                     </Border>
                 </Grid>
 
-                <!-- Acciones rápidas (2×2) -->
+                <!-- Acciones rápidas (2×2) para tareas que sera para abrir tipos de actividades directamente-->
                 <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto"
                       ColumnSpacing="{StaticResource SpacingM}"
                       RowSpacing="{StaticResource SpacingM}">
@@ -85,10 +85,10 @@
                         </VerticalStackLayout>
                     </Border>
 
-                    <!-- Nuevo hábito -->
+                    <!-- Nueva Lectura -->
                     <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource PSCardStyle}" Margin="0">
                         <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding AddHabitCommand}" />
+                            <TapGestureRecognizer Command="{Binding AddReadingCommand}" />
                         </Border.GestureRecognizers>
                         <VerticalStackLayout Spacing="{StaticResource SpacingXS}">
                             <Border Style="{StaticResource PSIconButtonStyle}"
@@ -99,15 +99,15 @@
                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryDark}}"
                                        HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
                             </Border>
-                            <Label Style="{StaticResource BodyMediumStyle}" Text="Nuevo hábito" />
-                            <Label Style="{StaticResource LabelSmallStyle}" Text="Construye disciplina" />
+                            <Label Style="{StaticResource BodyMediumStyle}" Text="Nueva lectura" />
+                            <Label Style="{StaticResource LabelSmallStyle}" Text="Empieza a leer" />
                         </VerticalStackLayout>
                     </Border>
 
-                    <!-- Check-in de estrés -->
+                    <!-- Nuevo examen  -->
                     <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource PSCardStyle}" Margin="0">
                         <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding CheckInStressCommand}" />
+                            <TapGestureRecognizer Command="{Binding AddExamCommand}" />
                         </Border.GestureRecognizers>
                         <VerticalStackLayout Spacing="{StaticResource SpacingXS}">
                             <Border Style="{StaticResource PSIconButtonStyle}"
@@ -118,15 +118,15 @@
                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryDark}}"
                                        HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
                             </Border>
-                            <Label Style="{StaticResource BodyMediumStyle}" Text="Check-in de estrés" />
-                            <Label Style="{StaticResource LabelSmallStyle}" Text="¿Cómo te sientes?" />
+                            <Label Style="{StaticResource BodyMediumStyle}" Text="Nuevo examen" />
+                            <Label Style="{StaticResource LabelSmallStyle}" Text="estudia y prepárate" />
                         </VerticalStackLayout>
                     </Border>
 
-                    <!-- Sesión de estudio -->
+                    <!-- Nuevo entregable o trabajos sea solo o en equipo -->
                     <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource PSCardStyle}" Margin="0">
                         <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding StartStudySessionCommand}" />
+                            <TapGestureRecognizer Command="{Binding AddDeliverableCommand}" />
                         </Border.GestureRecognizers>
                         <VerticalStackLayout Spacing="{StaticResource SpacingXS}">
                             <Border Style="{StaticResource PSIconButtonStyle}"
@@ -137,8 +137,8 @@
                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryDark}}"
                                        HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
                             </Border>
-                            <Label Style="{StaticResource BodyMediumStyle}" Text="Sesión de estudio" />
-                            <Label Style="{StaticResource LabelSmallStyle}" Text="Foco con temporizador" />
+                            <Label Style="{StaticResource BodyMediumStyle}" Text="Nuevo entregable" />
+                            <Label Style="{StaticResource LabelSmallStyle}" Text="Une compañeros y empieza" />
                         </VerticalStackLayout>
                     </Border>
                 </Grid>

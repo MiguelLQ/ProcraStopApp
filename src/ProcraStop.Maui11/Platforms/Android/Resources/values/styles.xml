@@ -5,12 +5,28 @@
      styles.xml) + windowSplashScreenBrandingImage (API 31+, docs
      oficiales de splash screen): muestra splash_branding.png (200x80dp,
      drawable-xxhdpi) en la PARTE INFERIOR del splash nativo.
-     No se inventan APIs: maui_splash, maui_splash_color, maui_splash
-     y el parent Maui.MainTheme.NoActionBar existen en la librería MAUI;
+     No se inventan APIs: maui_splash, maui_splash_color y el parent
+     Maui.Material3.Theme.NoActionBar existen en la librería MAUI 11;
      windowSplashScreenBrandingImage es attr público de la plataforma. -->
 <resources>
-    <style name="Maui.SplashTheme" parent="Maui.MainTheme.NoActionBar">
+    <style name="Maui.SplashTheme" parent="Maui.Material3.Theme.NoActionBar">
         <item name="maui_splash">true</item>
+        <!-- Paleta Material 3 ProcraStop. Estos roles controlan foco de
+             inputs, switches, pickers y diálogos nativos. -->
+        <item name="colorPrimary">@color/ps_primary</item>
+        <item name="colorOnPrimary">@color/ps_on_primary</item>
+        <item name="colorPrimaryContainer">@color/ps_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/ps_on_primary_container</item>
+        <item name="colorSecondary">@color/ps_primary</item>
+        <item name="colorOnSecondary">@color/ps_on_primary</item>
+        <item name="colorSurface">@color/ps_surface</item>
+        <item name="colorOnSurface">@color/ps_on_surface</item>
+        <item name="colorSurfaceVariant">@color/ps_surface_container</item>
+        <item name="colorOnSurfaceVariant">@color/ps_on_surface_variant</item>
+        <item name="colorOutline">@color/ps_outline</item>
+        <item name="colorAccent">@color/ps_primary</item>
+        <item name="colorControlActivated">@color/ps_primary</item>
+        <item name="android:colorAccent">@color/ps_primary</item>
         <!-- Android ≤11: fondo full-bleed con degradado (en 12+ el
              sistema lo ignora y usa windowSplashScreenBackground). -->
         <item name="android:windowBackground">@drawable/splash_bg_pre31</item>

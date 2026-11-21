@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:ProcraStop.Maui11.ViewModels.Tasks"
+             xmlns:inputs="clr-namespace:ProcraStop.Maui11.Components.Inputs"
+             x:Class="ProcraStop.Maui11.Views.Tasks.TaskEditorPage"
+             x:DataType="vm:TaskEditorViewModel"
+             x:Name="PageRoot"
+             Title="{Binding PageTitle}"
+             Shell.TabBarIsVisible="False">
+
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView Grid.Row="0">
+            <VerticalStackLayout Padding="20,12,20,28" Spacing="24">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="{Binding HeaderTitle}"
+                           Style="{StaticResource HeadlineLargeStyle}"
+                           SemanticProperties.HeadingLevel="Level1" />
+                    <Label Text="{Binding HeaderSubtitle}"
+                           Style="{StaticResource BodyMediumStyle}" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Lo esencial" Style="{StaticResource TitleMediumStyle}" />
+                    <inputs:PSInput Label="Título"
+                                    Placeholder="{Binding TitlePlaceholder}"
+                                    Text="{Binding Title, Mode=TwoWay}"
+                                    HasError="{Binding HasTitleError}"
+                                    ErrorText="{Binding TitleError}" />
+
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Curso" Style="{StaticResource LabelLargeStyle}" />
+                        <Border Style="{StaticResource PSInputFrameStyle}">
+                            <Picker ItemsSource="{Binding Courses}"
+                                    SelectedItem="{Binding SelectedCourse, Mode=TwoWay}"
+                                    ItemDisplayBinding="{Binding Name}"
+                                    Title="Sin curso"
+                                    MinimumHeightRequest="48" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout IsVisible="{Binding ShowQuickEstimatedTime}" Spacing="6">
+                        <Label Text="Tiempo estimado" Style="{StaticResource LabelLargeStyle}" />
+                        <Border Style="{StaticResource PSInputFrameStyle}">
+                            <Entry Text="{Binding EstimatedMinutesText, Mode=TwoWay}"
+                                   Placeholder="Minutos (opcional)"
+                                   Keyboard="Numeric"
+                                   Style="{StaticResource PSInputStyle}" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout IsVisible="{Binding ShowRequiredDueDate}" Spacing="8">
+                        <Label Text="Fecha y hora" Style="{StaticResource LabelLargeStyle}" />
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                            <Border Grid.Column="0" Style="{StaticResource PSInputFrameStyle}">
+                                <DatePicker Date="{Binding DueDate, Mode=TwoWay}" MinimumHeightRequest="48" />
+                            </Border>
+                            <Border Grid.Column="1" Style="{StaticResource PSInputFrameStyle}">
+                                <TimePicker Time="{Binding DueTime, Mode=TwoWay}" MinimumHeightRequest="48" />
+                            </Border>
+                        </Grid>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout IsVisible="{Binding IsAdvancedVisible}" Spacing="22">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Detalles" Style="{StaticResource TitleMediumStyle}" />
+                        <Border Style="{StaticResource PSInputFrameStyle}">
+                            <Editor Text="{Binding Description, Mode=TwoWay}"
+                                    Placeholder="Notas o indicaciones (opcional)"
+                                    AutoSize="TextChanges"
+                                    MinimumHeightRequest="88" />
+                        </Border>
+                        <inputs:PSInput Label="Primer paso"
+                                        Placeholder="¿Cuál es la primera acción concreta?"
+                                        Text="{Binding FirstStep, Mode=TwoWay}" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Planificación" Style="{StaticResource TitleMediumStyle}" />
+
+                        <Grid IsVisible="{Binding ShowOptionalDueDate}" ColumnDefinitions="*,Auto" MinimumHeightRequest="48">
+                            <VerticalStackLayout VerticalOptions="Center" Spacing="2">
+                                <Label Text="Fecha límite" Style="{StaticResource LabelLargeStyle}" />
+                                <Label Text="Opcional" Style="{StaticResource LabelMediumStyle}" />
+                            </VerticalStackLayout>
+                            <Switch Grid.Column="1" IsToggled="{Binding HasDueDate, Mode=TwoWay}" />
+                        </Grid>
+                        <Grid IsVisible="{Binding ShowOptionalDueEditors}" ColumnDefinitions="*,*" ColumnSpacing="12">
+                            <Border Grid.Column="0" Style="{StaticResource PSInputFrameStyle}">
+                                <DatePicker Date="{Binding DueDate, Mode=TwoWay}" MinimumHeightRequest="48" />
+                            </Border>
+                            <Border Grid.Column="1" Style="{StaticResource PSInputFrameStyle}">
+                                <TimePicker Time="{Binding DueTime, Mode=TwoWay}" MinimumHeightRequest="48" />
+                            </Border>
+                        </Grid>
+
+                        <Grid ColumnDefinitions="*,Auto" MinimumHeightRequest="48">
+                            <VerticalStackLayout VerticalOptions="Center" Spacing="2">
+                                <Label Text="Inicio planificado" Style="{StaticResource LabelLargeStyle}" />
+                                <Label Text="Reserva cuándo comenzar" Style="{StaticResource LabelMediumStyle}" />
+                            </VerticalStackLayout>
+                            <Switch Grid.Column="1" IsToggled="{Binding HasPlannedStart, Mode=TwoWay}" />
+                        </Grid>
+                        <Border IsVisible="{Binding HasPlannedStart}" Style="{StaticResource PSInputFrameStyle}">
+                            <DatePicker Date="{Binding PlannedStartDate, Mode=TwoWay}" MinimumHeightRequest="48" />
+                        </Border>
+
+                        <Grid IsVisible="{Binding IsDeliverable}" ColumnDefinitions="*,Auto" MinimumHeightRequest="48">
+                            <VerticalStackLayout VerticalOptions="Center" Spacing="2">
+                                <Label Text="Revisión final" Style="{StaticResource LabelLargeStyle}" />
+                                <Label Text="Antes de marcarlo como terminado" Style="{StaticResource LabelMediumStyle}" />
+                            </VerticalStackLayout>
+                            <Switch Grid.Column="1" IsToggled="{Binding HasPlannedReview, Mode=TwoWay}" />
+                        </Grid>
+                        <Border IsVisible="{Binding ShowPlannedReviewDate}" Style="{StaticResource PSInputFrameStyle}">
+                            <DatePicker Date="{Binding PlannedReviewDate, Mode=TwoWay}" MinimumHeightRequest="48" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Preferencias" Style="{StaticResource TitleMediumStyle}" />
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Prioridad" Style="{StaticResource LabelLargeStyle}" />
+                            <Border Style="{StaticResource PSInputFrameStyle}">
+                                <Picker ItemsSource="{Binding PriorityOptions}"
+                                        SelectedItem="{Binding SelectedPriority, Mode=TwoWay}"
+                                        ItemDisplayBinding="{Binding Label}"
+                                        MinimumHeightRequest="48" />
+                            </Border>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout IsVisible="{Binding ShowAdvancedEstimatedTime}" Spacing="6">
+                            <Label Text="Tiempo estimado" Style="{StaticResource LabelLargeStyle}" />
+                            <Border Style="{StaticResource PSInputFrameStyle}">
+                                <Entry Text="{Binding EstimatedMinutesText, Mode=TwoWay}"
+                                       Placeholder="Minutos (opcional)"
+                                       Keyboard="Numeric"
+                                       Style="{StaticResource PSInputStyle}" />
+                            </Border>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout IsVisible="{Binding ShowReminderPicker}" Spacing="6">
+                            <Label Text="Recordatorio" Style="{StaticResource LabelLargeStyle}" />
+                            <Border Style="{StaticResource PSInputFrameStyle}">
+                                <Picker ItemsSource="{Binding ReminderOptions}"
+                                        SelectedItem="{Binding SelectedReminder, Mode=TwoWay}"
+                                        ItemDisplayBinding="{Binding Label}"
+                                        MinimumHeightRequest="48" />
+                            </Border>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="{Binding SubtasksTitle}" Style="{StaticResource TitleMediumStyle}" />
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                            <Border Grid.Column="0" Style="{StaticResource PSInputFrameStyle}">
+                                <Entry Text="{Binding NewSubtaskTitle, Mode=TwoWay}"
+                                       Placeholder="{Binding SubtaskPlaceholder}"
+                                       ReturnType="Done"
+                                       ReturnCommand="{Binding AddSubtaskCommand}"
+                                       Style="{StaticResource PSInputStyle}" />
+                            </Border>
+                            <Button Grid.Column="1" Text="Añadir"
+                                    Command="{Binding AddSubtaskCommand}"
+                                    Style="{StaticResource PSButtonSecondaryStyle}" />
+                        </Grid>
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Subtasks}" Spacing="8">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="vm:SubtaskDraft">
+                                    <Border Style="{StaticResource PSCardStyle}" Margin="0" Padding="12">
+                                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                            <Label Text="{Binding Title}" Style="{StaticResource BodyMediumStyle}" VerticalOptions="Center" />
+                                            <Button Grid.Column="1" Text="Quitar"
+                                                    Style="{StaticResource PSButtonTextStyle}"
+                                                    Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RemoveSubtaskCommand}"
+                                                    CommandParameter="{Binding .}" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+
+                <Border IsVisible="{Binding HasError}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource ErrorContainerLight}, Dark={StaticResource ErrorContainerDark}}"
+                        StrokeThickness="0" StrokeShape="RoundRectangle 12" Padding="12">
+                    <Label Text="{Binding ErrorMessage}"
+                           Style="{StaticResource BodyMediumStyle}"
+                           TextColor="{AppThemeBinding Light={StaticResource ErrorLight}, Dark={StaticResource ErrorDark}}" />
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Border Grid.Row="1"
+                BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceContainerLight}, Dark={StaticResource SurfaceContainerDark}}"
+                Stroke="{AppThemeBinding Light={StaticResource OutlineLight}, Dark={StaticResource OutlineDark}}"
+                StrokeThickness="1" Padding="20,12,20,18">
+            <Grid>
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12" IsVisible="{Binding IsQuickMode}">
+                    <Button Text="Más opciones"
+                            Command="{Binding OpenAdvancedCommand}"
+                            Style="{StaticResource PSButtonSecondaryStyle}" />
+                    <Button Grid.Column="1" Text="Guardar"
+                            Command="{Binding SaveCommand}"
+                            Style="{StaticResource PSButtonPrimaryStyle}" />
+                </Grid>
+                <Button Text="{Binding SaveButtonText}"
+                        IsVisible="{Binding IsAdvancedVisible}"
+                        Command="{Binding SaveCommand}"
+                        Style="{StaticResource PSButtonPrimaryStyle}" />
+            </Grid>
+        </Border>
+    </Grid>
+</ContentPage>

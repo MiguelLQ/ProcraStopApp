@@ -14,6 +14,11 @@ public static class Routes
     public const string Settings = "SettingsPage";
 
     // ---- Rutas globales (Routing.RegisterRoute; páginas apilables/modales) ----
-    // public const string TaskDetail = "task-detail";
-    // public const string CreateTask = "create-task";
+    public const string TaskEditor = "task-editor";
+
+    public static string CreateTaskEditor(string activityType)
+        => $"{TaskEditor}?activityType={Uri.EscapeDataString(activityType)}";
+
+    public static string EditTaskEditor(Guid taskId)
+        => $"{TaskEditor}?taskId={taskId:D}";
 }

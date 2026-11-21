@@ -14,6 +14,10 @@ using ProcraStop.Infrastructure.Stress;
 using ProcraStop.Infrastructure.StudyTechniques;
 using ProcraStop.Infrastructure.Tasks;
 #if ANDROID
+using Android.Content.Res;
+using Android.Widget;
+using Google.Android.Material.TextField;
+using Microsoft.Maui.Handlers;
 using ProcraStop.Application.Notifications;
 using ProcraStop.Application.Tasks.Abstractions;
 using ProcraStop.Maui11.Platforms.Android.Services;
@@ -53,6 +57,10 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
+#if ANDROID
+        ConfigureAndroidMaterialInputs();
+#endif
+
         var databasePath = Path.Combine(FileSystem.AppDataDirectory, "procra-v3.db");
         builder.Services
             .AddPersistence(databasePath)
@@ -75,12 +83,14 @@ public static class MauiProgram
         // Transient: cada página recibe su ViewModel por constructor.
         builder.Services.AddTransient<DashboardPage>();
         builder.Services.AddTransient<TasksPage>();
+        builder.Services.AddTransient<TaskEditorPage>();
         builder.Services.AddTransient<HabitsPage>();
         builder.Services.AddTransient<SettingsPage>();
         builder.Services.AddTransient<DesignSystemPage>();
 
         builder.Services.AddTransient<DashboardViewModel>();
         builder.Services.AddTransient<TasksPageViewModel>();
+        builder.Services.AddTransient<TaskEditorViewModel>();
         builder.Services.AddTransient<HabitsPageViewModel>();
         builder.Services.AddTransient<SettingsPageViewModel>();
         builder.Services.AddTransient<AddSheetViewModel>();
@@ -94,4 +104,52 @@ public static class MauiProgram
         PersistenceDependencyInjection.InitializeDatabase(app.Services);
         return app;
     }
+
+#if ANDROID
+    private static void ConfigureAndroidMaterialInputs()
+    {
+        const string mappingName = "ProcraStopMaterialInputColors";
+
+        EntryHandler2.Mapper.AppendToMapping(mappingName,
+            static (handler, _) => ApplyMaterialInputColors(handler.PlatformView));
+        EditorHandler2.Mapper.AppendToMapping(mappingName,
+            static (handler, _) => ApplyMaterialInputColors(handler.PlatformView));
+        PickerHandler2.Mapper.AppendToMapping(mappingName,
+            static (handler, _) => ApplyMaterialInputColors(handler.PlatformView));
+        DatePickerHandler2.Mapper.AppendToMapping(mappingName,
+            static (handler, _) => ApplyMaterialInputColors(handler.PlatformView));
+        TimePickerHandler2.Mapper.AppendToMapping(mappingName,
+            static (handler, _) => ApplyMaterialInputColors(handler.PlatformView));
+    }
+
+    private static void ApplyMaterialInputColors(Android.Views.View platformView)
+    {
+        if (platformView is not TextInputLayout materialInput)
+            return;
+
+        var primary = AndroidX.Core.Content.ContextCompat.GetColor(
+            materialInput.Context, Resource.Color.ps_primary);
+        var outline = AndroidX.Core.Content.ContextCompat.GetColor(
+            materialInput.Context, Resource.Color.ps_outline);
+        var hint = AndroidX.Core.Content.ContextCompat.GetColor(
+            materialInput.Context, Resource.Color.ps_on_surface_variant);
+
+        int[][] states =
+        [
+            [Android.Resource.Attribute.StateFocused, Android.Resource.Attribute.StateEnabled],
+            [-Android.Resource.Attribute.StateEnabled],
+            []
+        ];
+
+        materialInput.SetBoxStrokeColorStateList(
+            new ColorStateList(states, [primary, outline, outline]));
+        materialInput.HintTextColor =
+            new ColorStateList(states, [primary, hint, hint]);
+
+        if (materialInput.EditText is TextView textView && OperatingSystem.IsAndroidVersionAtLeast(29))
+        {
+            textView.TextCursorDrawable?.SetTint(new Android.Graphics.Color(primary));
+        }
+    }
+#endif
 }

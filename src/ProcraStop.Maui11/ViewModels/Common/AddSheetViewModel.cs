@@ -1,5 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using ProcraStop.Domain.Tasks.Enums;
+using ProcraStop.Maui11.Navigation;
 
 namespace ProcraStop.Maui11.ViewModels.Common;
 
@@ -22,30 +24,20 @@ public partial class AddSheetViewModel : ObservableObject
     private void CloseSheet() => IsOpen = false;
 
     [RelayCommand]
-    private void AddTask()
-    {
-        // TODO(navegación): GoToAsync("create-task") cuando exista la página.
-        CloseSheet();
-    }
+    private Task AddTaskAsync() => OpenTaskEditorAsync(AcademicActivityType.Task);
 
     [RelayCommand]
-    private void AddHabit()
-    {
-        // TODO(navegación): GoToAsync("create-habit") cuando exista la página.
-        CloseSheet();
-    }
+    private Task AddReadingAsync() => OpenTaskEditorAsync(AcademicActivityType.Reading);
 
     [RelayCommand]
-    private void CheckInStress()
-    {
-        // TODO(navegación): GoToAsync("stress-checkin") cuando exista la página.
-        CloseSheet();
-    }
+    private Task AddExamAsync() => OpenTaskEditorAsync(AcademicActivityType.Exam);
 
     [RelayCommand]
-    private void StartStudySession()
+    private Task AddDeliverableAsync() => OpenTaskEditorAsync(AcademicActivityType.Deliverable);
+
+    private async Task OpenTaskEditorAsync(AcademicActivityType activityType)
     {
-        // TODO(navegación): GoToAsync("pomodoro") cuando exista la página.
         CloseSheet();
+        await ShellNavigation.GoToAsync(Routes.CreateTaskEditor(activityType.ToString()));
     }
 }

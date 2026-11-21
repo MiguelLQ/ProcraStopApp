@@ -205,18 +205,11 @@
     </Style>
 
     <Style x:Key="PSInputFrameStyle" TargetType="Border">
-        <Setter Property="BackgroundColor">
-            <Setter.Value>
-                <AppThemeBinding Light="{StaticResource SurfaceContainerLight}" Dark="{StaticResource SurfaceContainerDark}" />
-            </Setter.Value>
-        </Setter>
-        <Setter Property="Stroke">
-            <Setter.Value>
-                <AppThemeBinding Light="{StaticResource OutlineLight}" Dark="{StaticResource OutlineDark}" />
-            </Setter.Value>
-        </Setter>
-        <Setter Property="StrokeThickness" Value="1" />
+        <!-- El campo Material 3 nativo dibuja su propio contorno. -->
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="Stroke" Value="Transparent" />
+        <Setter Property="StrokeThickness" Value="0" />
         <Setter Property="StrokeShape" Value="RoundRectangle 8" />
-        <Setter Property="Padding" Value="{StaticResource SpacingM}" />
+        <Setter Property="Padding" Value="0" />
     </Style>
 </ResourceDictionary>
