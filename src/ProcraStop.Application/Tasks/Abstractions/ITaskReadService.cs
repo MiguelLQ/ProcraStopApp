@@ -10,6 +10,11 @@ namespace ProcraStop.Application.Tasks.Abstractions
         Task<IReadOnlyList<TaskListItemDto>> GetListAsync(
                     bool includeArchived,
                     CancellationToken ct);
+        Task<IReadOnlyList<TaskListItemDto>> GetPageAsync(
+                    bool includeArchived,
+                    int skip,
+                    int take,
+                    CancellationToken ct);
         Task<IReadOnlyList<TaskListItemDto>> SearchAsync(
                     string searchText,
                     bool includeArchived,

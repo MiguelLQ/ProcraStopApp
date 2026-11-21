@@ -70,10 +70,21 @@ namespace ProcraStop.Infraestructure.Tasks.Services
         }
 
         public async Task<IReadOnlyList<TaskListItemDto>> GetListAsync(bool includeArchived, CancellationToken ct)
+            => await GetPageAsync(includeArchived, 0, 100, ct);
+
+        public async Task<IReadOnlyList<TaskListItemDto>> GetPageAsync(
+            bool includeArchived,
+            int skip,
+            int take,
+            CancellationToken ct)
         {
+            ArgumentOutOfRangeException.ThrowIfNegative(skip);
+            if (take is < 1 or > 100)
+                throw new ArgumentOutOfRangeException(nameof(take), "El tamaño de página debe estar entre 1 y 100.");
+
             await using var db = await _dbContextFactory.CreateDbContextAsync(ct);
             var query = db.Tasks
-        .AsNoTracking();
+                .AsNoTracking();
 
             if (!includeArchived)
             {
@@ -82,6 +93,8 @@ namespace ProcraStop.Infraestructure.Tasks.Services
 
             return await query
                 .OrderByDescending(x => x.CreatedAtUtc)
+                .Skip(skip)
+                .Take(take)
                 .Select(t => new TaskListItemDto
                 {
                     Id = t.Id,

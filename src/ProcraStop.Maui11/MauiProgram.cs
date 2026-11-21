@@ -1,4 +1,23 @@
 ﻿using Microsoft.Extensions.Logging;
+using ProcraStop.Application.Academic;
+using ProcraStop.Application.Dashboard;
+using ProcraStop.Application.Habits;
+using ProcraStop.Application.Stress;
+using ProcraStop.Application.StudyTechniques;
+using ProcraStop.Application.Tasks;
+using ProcraStop.Core.Decisions;
+using ProcraStop.Infrastructure.Academic;
+using ProcraStop.Infrastructure.Dashboard;
+using ProcraStop.Infrastructure.DBContext;
+using ProcraStop.Infrastructure.Habits;
+using ProcraStop.Infrastructure.Stress;
+using ProcraStop.Infrastructure.StudyTechniques;
+using ProcraStop.Infrastructure.Tasks;
+#if ANDROID
+using ProcraStop.Application.Notifications;
+using ProcraStop.Application.Tasks.Abstractions;
+using ProcraStop.Maui11.Platforms.Android.Services;
+#endif
 using ProcraStop.Maui11.ViewModels.Common;
 using ProcraStop.Maui11.ViewModels.Dashboard;
 using ProcraStop.Maui11.ViewModels.DesignSystem;
@@ -34,6 +53,24 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
+        var databasePath = Path.Combine(FileSystem.AppDataDirectory, "procra-v3.db");
+        builder.Services
+            .AddPersistence(databasePath)
+            .AddCoreDependencyInjection()
+            .AddDashboardApplication().AddDashboardInfrastructure()
+            .AddAcademicApplication().AddAcademicInfrastructure()
+            .AddTasksApplication().AddTasksInfrastructure()
+            .AddStressApplication().AddStressInfrastructure()
+            .AddStudyTechniquesApplication().AddStudyTechniquesInfrastructure()
+            .AddHabitsApplication().AddHabitsInfrastructure();
+
+#if ANDROID
+        builder.Services.AddSingleton<AndroidTaskReminderService>();
+        builder.Services.AddSingleton<ITaskReminderService>(services =>
+            services.GetRequiredService<AndroidTaskReminderService>());
+        builder.Services.AddSingleton<IReminderDiagnosticsService, AndroidReminderDiagnosticsService>();
+#endif
+
         // Páginas de tab (Shell las resuelve por DI vía ContentTemplate).
         // Transient: cada página recibe su ViewModel por constructor.
         builder.Services.AddTransient<DashboardPage>();
@@ -53,6 +90,8 @@ public static class MauiProgram
         builder.Logging.AddDebug();
 #endif
 
-        return builder.Build();
+        var app = builder.Build();
+        PersistenceDependencyInjection.InitializeDatabase(app.Services);
+        return app;
     }
 }

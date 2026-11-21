@@ -82,12 +82,11 @@ public sealed class ExamSimulationTests
         services.AddDbContextFactory<AppDbContext>(options => options.UseSqlite(connection));
         using var provider = services.BuildServiceProvider();
 
-        // Simula una base anterior: se crea el esquema y luego se elimina la tabla nueva.
-        PersistenceDependencyInjection.InitializeDatabase(provider);
-        using (var drop = connection.CreateCommand())
+        // Simula una base anterior a las migraciones EF: tiene Tasks pero no historial.
+        using (var legacy = connection.CreateCommand())
         {
-            drop.CommandText = "DROP TABLE \"ExamSimulations\";";
-            drop.ExecuteNonQuery();
+            legacy.CommandText = "CREATE TABLE \"Tasks\" (\"Id\" TEXT NOT NULL PRIMARY KEY);";
+            legacy.ExecuteNonQuery();
         }
 
         PersistenceDependencyInjection.InitializeDatabase(provider);

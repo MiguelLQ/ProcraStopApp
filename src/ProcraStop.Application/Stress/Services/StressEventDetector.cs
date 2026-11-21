@@ -17,10 +17,11 @@ namespace ProcraStop.Application.Stress.Services
 
         public async Task EvaluateAndRegisterAsync(
             TaskSignals tasks,
-            HabitSignals habits)
+            HabitSignals habits,
+            IReadOnlyList<StressRecord>? existingHistory = null,
+            CancellationToken ct = default)
         {
-            // 
-            var history = await _repo.GetRecentAsync(7);
+            var history = existingHistory ?? await _repo.GetRecentAsync(7, ct);
             var last = history
                 .OrderByDescending(x => x.Timestamp)
                 .FirstOrDefault();

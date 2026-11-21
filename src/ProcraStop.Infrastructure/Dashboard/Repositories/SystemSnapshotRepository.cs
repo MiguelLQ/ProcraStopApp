@@ -15,30 +15,30 @@ namespace ProcraStop.Infrastructure.Dashboard.Repositories
             _dbContextFactory = dbContextFactory;
         }
 
-        public async Task<List<SystemSnapshot>> GetLastDays(int days)
+        public async Task<List<SystemSnapshot>> GetLastDays(int days, CancellationToken ct = default)
         {
-            await using var context = await _dbContextFactory.CreateDbContextAsync();
+            await using var context = await _dbContextFactory.CreateDbContextAsync(ct);
             var from = DateTime.UtcNow.AddDays(-days);
 
             var entities = await context.SystemSnapshots
                 .AsNoTracking()
                 .Where(x => x.Timestamp >= from)
                 .OrderBy(x => x.Timestamp)
-                .ToListAsync();
+                .ToListAsync(ct);
 
             return entities
                 .Select(SystemSnapshotMapper.ToDomain)
                 .ToList();
         }
 
-        public async Task SaveAsync(SystemSnapshot snapshot)
+        public async Task SaveAsync(SystemSnapshot snapshot, CancellationToken ct = default)
         {
-            await using var context = await _dbContextFactory.CreateDbContextAsync();
+            await using var context = await _dbContextFactory.CreateDbContextAsync(ct);
             var entity = SystemSnapshotMapper.ToEntity(snapshot);
 
             context.SystemSnapshots.Add(entity);
 
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(ct);
         }
     }
 }

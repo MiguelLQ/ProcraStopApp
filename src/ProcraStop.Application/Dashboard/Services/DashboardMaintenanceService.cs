@@ -34,11 +34,16 @@ public sealed class DashboardMaintenanceService : IDashboardMaintenanceService, 
         await _gate.WaitAsync(cancellationToken);
         try
         {
-            await _stressDetector.EvaluateAndRegisterAsync(taskSignals, habitSignals);
+            await _stressDetector.EvaluateAndRegisterAsync(
+                taskSignals,
+                habitSignals,
+                dashboard.StressHistory,
+                cancellationToken);
 
-            var history = await _historyRepository.GetLastDays(7);
-            if (DashboardSnapshotPolicy.ShouldRecord(history.LastOrDefault(), snapshot))
-                await _historyRepository.SaveAsync(snapshot);
+            var snapshotHistory = dashboard.SnapshotHistory ??
+                await _historyRepository.GetLastDays(7, cancellationToken);
+            if (DashboardSnapshotPolicy.ShouldRecord(snapshotHistory.LastOrDefault(), snapshot))
+                await _historyRepository.SaveAsync(snapshot, cancellationToken);
         }
         finally
         {

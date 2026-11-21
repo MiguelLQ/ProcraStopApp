@@ -8,18 +8,21 @@ namespace ProcraStop.Application.Tasks.Commands.UpdateTask
     {
         private readonly ITaskRepository _repository;
         private readonly ITaskReminderService _reminderService;
+        private readonly TimeProvider _timeProvider;
 
-        public UpdateTaskCommandHandler(ITaskRepository repository, ITaskReminderService reminderService)
+        public UpdateTaskCommandHandler(ITaskRepository repository, ITaskReminderService reminderService,
+            TimeProvider? timeProvider = null)
         {
             _repository = repository;
             _reminderService = reminderService;
+            _timeProvider = timeProvider ?? TimeProvider.System;
         }
         public async Task HandleAsync(UpdateTaskCommand command, CancellationToken ct)
         {
             var task = await _repository.GetByIdAsync(command.Id, ct);
 
             if (task is null)
-                throw new Exception("Task no encontrada");
+                throw new KeyNotFoundException("Tarea no encontrada.");
             // mapeo de subtareas
             var subtasks = command.Subtasks?
             .Select(x => x.ToDomain())
@@ -41,8 +44,12 @@ namespace ProcraStop.Application.Tasks.Commands.UpdateTask
                 command.PlannedReviewDate
             );
 
-            await _repository.UpdateAsync(task, ct);
-            await _reminderService.SyncTaskRemindersAsync(task, ct);
+            var reminderIntents = TaskReminderPlanBuilder.Build(task, _timeProvider);
+            if (_repository is IReliableTaskRepository reliableRepository)
+                await reliableRepository.UpdateWithReminderIntentsAsync(task, reminderIntents, ct);
+            else
+                await _repository.UpdateAsync(task, ct);
+            await _reminderService.SyncTaskRemindersAsync(task, _timeProvider, ct);
         }
     }
 }

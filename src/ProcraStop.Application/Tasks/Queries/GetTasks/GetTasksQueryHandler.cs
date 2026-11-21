@@ -17,8 +17,14 @@ namespace ProcraStop.Application.Tasks.Queries.GetTasks
             GetTasksQuery query,
             CancellationToken cancellationToken = default)
         {
-            return await _readService.GetListAsync(
+            var pageNumber = Math.Max(1, query.PageNumber);
+            var pageSize = Math.Clamp(query.PageSize, 1, 100);
+            var skip = (int)Math.Min((long)(pageNumber - 1) * pageSize, int.MaxValue);
+
+            return await _readService.GetPageAsync(
                 query.IncludeArchived,
+                skip,
+                pageSize,
                 cancellationToken);
         }
     }

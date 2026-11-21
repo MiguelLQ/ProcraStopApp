@@ -8,22 +8,18 @@ namespace ProcraStop.Application.Decisions
 {
     public class DecisionContextBuilder
     {
-        private readonly IStressRepository _stressRepository;
         private readonly StressMetricsService _stressService;
 
-        public DecisionContextBuilder(
-            IStressRepository stressRepository,
-            StressMetricsService stressService)
+        public DecisionContextBuilder(StressMetricsService stressService)
         {
-            _stressRepository = stressRepository;
             _stressService = stressService;
         }
 
-        public async Task<DecisionContext> BuildAsync(
-    TaskSignals taskSignals,
-    HabitSignals habitSignals)
+        public DecisionContext Build(
+            TaskSignals taskSignals,
+            HabitSignals habitSignals,
+            IReadOnlyList<global::ProcraStop.Domain.Stress.Entities.StressRecord> history)
         {
-            var history = await _stressRepository.GetRecentAsync(7);
             var latest = history.FirstOrDefault();
 
             var stressSignals = _stressService.Calculate(

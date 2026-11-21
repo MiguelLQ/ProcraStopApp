@@ -6,6 +6,7 @@ using ProcraStop.Application.Tasks.Commands.UpdateTask;
 using ProcraStop.Application.Tasks.DTOs;
 using ProcraStop.Application.Tasks.Queries.GetTaskById;
 using ProcraStop.Application.Tasks.Queries.GetTasks;
+using ProcraStop.Application.Common;
 
 namespace ProcraStop.Application.Tasks.Facade
 {
@@ -34,24 +35,29 @@ namespace ProcraStop.Application.Tasks.Facade
         }
 
         public Task ArchiveTaskAsync(Guid taskId, CancellationToken ct = default)
-        {
-            throw new NotImplementedException();
-        }
+            => _archiveTaskHandler.HandleAsync(
+                new ArchiveTaskCommand { TaskId = taskId },
+                ct);
 
         public Task CompleteTaskAsync(Guid taskId, CancellationToken ct = default)
+            => _completeTaskHandler.HandleAsync(
+                new CompleteTaskCommand { TaskId = taskId },
+                ct);
+
+        public async Task<OperationResult<Guid>> CreateTaskAsync(
+            CreateTaskCommand command, CancellationToken ct = default)
         {
-            throw new NotImplementedException();
+            try { return OperationResult<Guid>.Success(await _createTaskHandler.HandleAsync(command, ct)); }
+            catch (Exception ex) { return OperationResultMapper.From<Guid>(ex); }
         }
 
         public Task<TaskDetailDto?> GetTaskByIdAsync(Guid taskId, bool includeArchived = false)
-        {
-            throw new NotImplementedException();
-        }
+            => GetTaskByIdAsync(taskId, CancellationToken.None);
 
         public Task<TaskDetailDto?> GetTaskByIdAsync(Guid taskId, CancellationToken ct = default)
-        {
-            throw new NotImplementedException();
-        }
+            => _getTaskByIdHandler.HandleAsync(
+                new GetTaskByIdQuery { TaskId = taskId },
+                ct);
 
         public Task<IReadOnlyList<TaskListItemDto>> GetTasksAsync(
            bool includeArchived = false,
@@ -60,9 +66,34 @@ namespace ProcraStop.Application.Tasks.Facade
                new GetTasksQuery { IncludeArchived = includeArchived },
                ct);
 
-        public Task UpdateTaskAsync(Guid taskId, UpdateTaskCommand request, CancellationToken ct = default)
+        public async Task<OperationResult> UpdateTaskAsync(Guid taskId, UpdateTaskCommand request,
+            CancellationToken ct = default)
         {
-            throw new NotImplementedException();
+            if (request is null)
+                return OperationResult.Failure(OperationError.ValidationError, "La solicitud es obligatoria.");
+
+            try
+            {
+                await _updateTaskHandler.HandleAsync(new UpdateTaskCommand
+                {
+                    Id = taskId,
+                    Title = request.Title,
+                    Description = request.Description,
+                    DueDate = request.DueDate,
+                    ReminderDate = request.ReminderDate,
+                    ReminderOffset = request.ReminderOffset,
+                    Priority = request.Priority,
+                    CourseId = request.CourseId,
+                    EstimatedMinutes = request.EstimatedMinutes,
+                    Subtasks = request.Subtasks,
+                    ActivityType = request.ActivityType,
+                    PlannedStartDate = request.PlannedStartDate,
+                    FirstStep = request.FirstStep,
+                    PlannedReviewDate = request.PlannedReviewDate
+                }, ct);
+                return OperationResult.Success();
+            }
+            catch (Exception ex) { return OperationResultMapper.From(ex); }
         }
     }
 }

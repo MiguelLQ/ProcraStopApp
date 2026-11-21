@@ -7,7 +7,7 @@ namespace ProcraStop.Application.Dashboard.Abstractions
 {
     public interface ISystemSnapshotRepository
     {
-        Task<List<SystemSnapshot>> GetLastDays(int days);
-        Task SaveAsync(SystemSnapshot snapshot);
+        Task<List<SystemSnapshot>> GetLastDays(int days, CancellationToken ct = default);
+        Task SaveAsync(SystemSnapshot snapshot, CancellationToken ct = default);
     }
 }

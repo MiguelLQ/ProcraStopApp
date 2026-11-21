@@ -25,6 +25,8 @@ namespace ProcraStop.Infrastructure.DBContext
         public DbSet<ClassScheduleEntity> ClassSchedules => Set<ClassScheduleEntity>();
         // DbSet para las subtareas
         public DbSet<SubtaskEntity> Subtasks => Set<SubtaskEntity>();
+        public DbSet<ReminderHistoryEntity> ReminderHistory => Set<ReminderHistoryEntity>();
+        public DbSet<ReminderScheduleEntity> ReminderSchedules => Set<ReminderScheduleEntity>();
         // para habits
         public DbSet<HabitEntity> Habits => Set<HabitEntity>();
         public DbSet<HabitLogEntity> HabitLogs => Set<HabitLogEntity>();
@@ -220,6 +222,28 @@ namespace ProcraStop.Infrastructure.DBContext
 
                 entity.HasIndex(x => x.Timestamp)
                     .HasDatabaseName("IX_SystemSnapshots_Timestamp");
+            });
+            modelBuilder.Entity<ReminderHistoryEntity>(entity =>
+            {
+                entity.ToTable("ReminderHistory");
+                entity.HasKey(x => x.Id);
+                entity.Property(x => x.Kind).IsRequired().HasMaxLength(40);
+                entity.Property(x => x.Status).IsRequired();
+                entity.Property(x => x.Title).IsRequired().HasMaxLength(200);
+                entity.Property(x => x.Details).HasMaxLength(500);
+                entity.Property(x => x.OccurredAtUtc).IsRequired();
+                entity.HasIndex(x => new { x.TaskId, x.OccurredAtUtc });
+                entity.HasIndex(x => x.OccurredAtUtc);
+            });
+            modelBuilder.Entity<ReminderScheduleEntity>(entity =>
+            {
+                entity.ToTable("ReminderSchedules");
+                entity.HasKey(x => new { x.TaskId, x.Kind });
+                entity.Property(x => x.Kind).HasMaxLength(40);
+                entity.Property(x => x.Title).IsRequired().HasMaxLength(200);
+                entity.Property(x => x.Description).HasMaxLength(1000);
+                entity.Property(x => x.LastError).HasMaxLength(500);
+                entity.HasIndex(x => new { x.Status, x.ScheduledForUtc });
             });
 
             modelBuilder.Entity<StudyTechniqueSessionEntity>(entity =>

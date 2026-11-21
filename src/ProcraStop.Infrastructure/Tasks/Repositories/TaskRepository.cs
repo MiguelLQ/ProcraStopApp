@@ -5,20 +5,24 @@ using ProcraStop.Infrastructure.Tasks.Persistence.Mappings;
 using ProcraStop.Application.Tasks.Abstractions;
 using ProcraStop.Domain.Tasks.Entities;
 using ProcraStop.Application.Dashboard.Interfaces;
+using ProcraStop.Application.Notifications;
 
 namespace ProcraStop.Infrastructure.Tasks.Repositories
 {
-    internal class TaskRepository : ITaskRepository
+    internal class TaskRepository : ITaskRepository, IReliableTaskRepository
     {
         private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
         private readonly IDashboardCacheInvalidator _dashboardCache;
+        private readonly TimeProvider _timeProvider;
 
         public TaskRepository(
             IDbContextFactory<AppDbContext> dbContextFactory,
-            IDashboardCacheInvalidator dashboardCache)
+            IDashboardCacheInvalidator dashboardCache,
+            TimeProvider? timeProvider = null)
         {
             _dbContextFactory = dbContextFactory;
             _dashboardCache = dashboardCache;
+            _timeProvider = timeProvider ?? TimeProvider.System;
         }
         public async Task<StudyTask?> GetByIdAsync(
     Guid id,
@@ -45,7 +49,26 @@ namespace ProcraStop.Infrastructure.Tasks.Repositories
             await dbContext.SaveChangesAsync(cancellationToken);
             _dashboardCache.Invalidate();
         }
-        public async Task UpdateAsync(StudyTask task, CancellationToken cancellationToken = default)
+
+        public async Task AddWithReminderIntentsAsync(StudyTask task,
+            IReadOnlyList<ReminderSchedule> reminders, CancellationToken ct = default)
+        {
+            await using var db = await _dbContextFactory.CreateDbContextAsync(ct);
+            await db.Tasks.AddAsync(task.ToEntity(), ct);
+            await SyncReminderIntentsAsync(db, task.Id, reminders, ct);
+            await db.SaveChangesAsync(ct);
+            _dashboardCache.Invalidate();
+        }
+
+        public Task UpdateAsync(StudyTask task, CancellationToken cancellationToken = default) =>
+            UpdateCoreAsync(task, null, cancellationToken);
+
+        public Task UpdateWithReminderIntentsAsync(StudyTask task,
+            IReadOnlyList<ReminderSchedule> reminders, CancellationToken ct = default) =>
+            UpdateCoreAsync(task, reminders, ct);
+
+        private async Task UpdateCoreAsync(StudyTask task,
+            IReadOnlyList<ReminderSchedule>? reminders, CancellationToken cancellationToken)
         {
             try
             {
@@ -146,6 +169,9 @@ namespace ProcraStop.Infrastructure.Tasks.Repositories
                     Console.WriteLine($"TRACKING -> {entry.Entity.Id} | State: {entry.State}");
                 }
 
+                if (reminders is not null)
+                    await SyncReminderIntentsAsync(dbContext, task.Id, reminders, cancellationToken);
+
                 await dbContext.SaveChangesAsync(cancellationToken);
                 _dashboardCache.Invalidate();
 
@@ -156,6 +182,45 @@ namespace ProcraStop.Infrastructure.Tasks.Repositories
                 Console.WriteLine("🔥 ERROR REAL EN REPOSITORY:");
                 Console.WriteLine(ex.ToString());
                 throw;
+            }
+        }
+
+        private async Task SyncReminderIntentsAsync(AppDbContext db, Guid taskId,
+            IReadOnlyList<ReminderSchedule> reminders, CancellationToken ct)
+        {
+            var existing = await db.ReminderSchedules.Where(x => x.TaskId == taskId).ToListAsync(ct);
+            var desiredKinds = reminders.Select(x => x.Kind).ToHashSet(StringComparer.Ordinal);
+            foreach (var stale in existing.Where(x => !desiredKinds.Contains(x.Kind)))
+            {
+                stale.Status = (int)ReminderScheduleStatus.Cancelled;
+                stale.UpdatedAtUtc = _timeProvider.GetUtcNow();
+                stale.NextAttemptUtc = null;
+            }
+
+            foreach (var reminder in reminders)
+            {
+                var row = existing.FirstOrDefault(x => x.Kind == reminder.Kind);
+                if (row is null)
+                {
+                    db.ReminderSchedules.Add(new ReminderScheduleEntity
+                    {
+                        TaskId = reminder.TaskId, Kind = reminder.Kind, Title = reminder.Title,
+                        Description = reminder.Description, ScheduledForUtc = reminder.ScheduledForUtc,
+                        DueDateUtc = reminder.DueDateUtc, Priority = reminder.Priority,
+                        Status = (int)ReminderScheduleStatus.Pending, UpdatedAtUtc = reminder.UpdatedAtUtc
+                    });
+                    continue;
+                }
+
+                row.Title = reminder.Title;
+                row.Description = reminder.Description;
+                row.ScheduledForUtc = reminder.ScheduledForUtc;
+                row.DueDateUtc = reminder.DueDateUtc;
+                row.Priority = reminder.Priority;
+                row.Status = (int)ReminderScheduleStatus.Pending;
+                row.UpdatedAtUtc = reminder.UpdatedAtUtc;
+                row.NextAttemptUtc = null;
+                row.LastError = null;
             }
         }
     }

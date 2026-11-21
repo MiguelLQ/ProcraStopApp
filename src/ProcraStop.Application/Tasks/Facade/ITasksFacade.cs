@@ -1,5 +1,7 @@
 ﻿
 using ProcraStop.Application.Tasks.Commands.UpdateTask;
+using ProcraStop.Application.Tasks.Commands.CreateTask;
+using ProcraStop.Application.Common;
 using ProcraStop.Application.Tasks.DTOs;
 
 namespace ProcraStop.Application.Tasks.Facade
@@ -13,13 +15,16 @@ namespace ProcraStop.Application.Tasks.Facade
         Task CompleteTaskAsync(
             Guid taskId,
             CancellationToken ct = default);
+        Task<OperationResult<Guid>> CreateTaskAsync(
+            CreateTaskCommand command,
+            CancellationToken ct = default);
         Task ArchiveTaskAsync(
            Guid taskId,
            CancellationToken ct = default);
         Task<TaskDetailDto?> GetTaskByIdAsync(
             Guid taskId,
             CancellationToken ct = default);
-        Task UpdateTaskAsync(
+        Task<OperationResult> UpdateTaskAsync(
             Guid taskId,
             UpdateTaskCommand request,
             CancellationToken ct = default);

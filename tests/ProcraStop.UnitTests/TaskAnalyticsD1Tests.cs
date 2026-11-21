@@ -80,6 +80,8 @@ public sealed class TaskAnalyticsD1Tests
         public Task<TaskDetailDto?> GetByIdAsync(Guid id, CancellationToken ct) => throw new NotSupportedException();
         public Task<IReadOnlyList<TaskListItemDto>> GetListAsync(bool includeArchived, CancellationToken ct)
             => throw new NotSupportedException();
+        public Task<IReadOnlyList<TaskListItemDto>> GetPageAsync(bool includeArchived, int skip, int take,
+            CancellationToken ct) => throw new NotSupportedException();
         public Task<IReadOnlyList<TaskListItemDto>> SearchAsync(string searchText, bool includeArchived,
             DateTime? dueDate, bool withoutDueDate, int maxResults, CancellationToken ct)
             => throw new NotSupportedException();

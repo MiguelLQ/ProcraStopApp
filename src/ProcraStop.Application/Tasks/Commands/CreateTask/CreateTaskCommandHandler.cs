@@ -12,29 +12,22 @@ public sealed class CreateTaskCommandHandler
 {
     private readonly ITaskRepository _repository;
     private readonly ITaskReminderService _reminderService;
+    private readonly TimeProvider _timeProvider;
 
     public CreateTaskCommandHandler(
         ITaskRepository repository,
-        ITaskReminderService reminderService)
+        ITaskReminderService reminderService,
+        TimeProvider? timeProvider = null)
     {
         _repository = repository;
         _reminderService = reminderService;
+        _timeProvider = timeProvider ?? TimeProvider.System;
     }
 
-    public async Task<Guid> HandleAsync(
+    public Task<Guid> HandleAsync(
         CreateTaskCommand command,
         CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            return await HandleAsyncCore(command, cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            // Red de seguridad: nunca dejar caer la app al crear una tarea.
-            throw new InvalidOperationException($"No se pudo crear la tarea: {ex.Message}", ex);
-        }
-    }
+        => HandleAsyncCore(command, cancellationToken);
 
     private async Task<Guid> HandleAsyncCore(
         CreateTaskCommand command,
@@ -92,12 +85,16 @@ public sealed class CreateTaskCommandHandler
             }
         }
         // Persistir
-        await _repository.AddAsync(task, cancellationToken);
+        var reminderIntents = TaskReminderPlanBuilder.Build(task, _timeProvider);
+        if (_repository is IReliableTaskRepository reliableRepository)
+            await reliableRepository.AddWithReminderIntentsAsync(task, reminderIntents, cancellationToken);
+        else
+            await _repository.AddAsync(task, cancellationToken);
 
         // Integración externa: vencimiento + aviso de inicio previsto (EPA D1).
         try
         {
-            await _reminderService.SyncTaskRemindersAsync(task, cancellationToken);
+            await _reminderService.SyncTaskRemindersAsync(task, _timeProvider, cancellationToken);
         }
         catch (Exception ex)
         {

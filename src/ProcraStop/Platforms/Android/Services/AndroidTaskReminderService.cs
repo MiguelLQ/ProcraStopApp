@@ -7,6 +7,7 @@ using ProcraStop.Domain.Tasks.Enums;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using AndroidApp = Android.App.Application;
+using ProcraStop.Application.Notifications;
 
 namespace ProcraStop.Platforms.Android.Services;
 
@@ -16,7 +17,9 @@ public sealed class AndroidTaskReminderService : ITaskReminderService
     private const string DueKeyPrefix = "task_";
     private const string StartKeyPrefix = "task_start_";
     private const string AlarmAction = "com.companyname.procrastop.TASK_REMINDER";
-    internal const string ChannelId = "task_reminders_v2";
+    internal const string DueChannelId = "task_due_reminders_v3";
+    internal const string StartChannelId = "task_start_reminders_v3";
+    internal const string SummaryChannelId = "task_summary_v1";
     private static int _permissionScreenOpened;
 
     private static Context Context => AndroidApp.Context;
@@ -30,7 +33,7 @@ public sealed class AndroidTaskReminderService : ITaskReminderService
         DateTime plannedStartDate, TaskPriority priority, CancellationToken cancellationToken = default)
         => Schedule(taskId, ReminderKind.StartReminder, title, description, plannedStartDate, null, priority, cancellationToken);
 
-    private static Task Schedule(Guid taskId, ReminderKind kind, string title, string? description,
+    private static async Task Schedule(Guid taskId, ReminderKind kind, string title, string? description,
         DateTime reminderDate, DateTime? dueDate, TaskPriority priority, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -41,56 +44,72 @@ public sealed class AndroidTaskReminderService : ITaskReminderService
 
         var localTime = reminderDate.Kind == DateTimeKind.Utc ? reminderDate.ToLocalTime() : reminderDate;
         localTime = DateTime.SpecifyKind(localTime, DateTimeKind.Unspecified);
+        var record = new ReminderRecord(taskId, kind, title, description, localTime, dueDate, priority);
         if (localTime <= DateTime.Now)
         {
             Store.Edit()!.Remove(key).Apply();
-            return Task.CompletedTask;
+            await AuditAsync(record, ReminderEventStatus.Failed, "La fecha del recordatorio ya pasó");
+            return;
         }
 
-        var record = new ReminderRecord(taskId, kind, title, description, localTime, dueDate, priority);
         Store.Edit()!.PutString(key,
             JsonSerializer.Serialize(record, ReminderJsonContext.Default.ReminderRecord)).Commit();
-        Arm(record);
+        bool exact;
+        try
+        {
+            exact = Arm(record);
+        }
+        catch (Exception ex)
+        {
+            await AuditAsync(record, ReminderEventStatus.Failed, ex.Message);
+            throw;
+        }
+        await AuditAsync(
+            record,
+            exact ? ReminderEventStatus.ScheduledExact : ReminderEventStatus.ScheduledInexact,
+            exact ? "AlarmManager exacto" : "Permiso exacto ausente; programación aproximada");
         RequestExactAlarmAccessIfNeeded();
-        return Task.CompletedTask;
     }
 
-    public Task CancelDueReminderAsync(Guid taskId, CancellationToken cancellationToken = default)
+    public async Task CancelDueReminderAsync(Guid taskId, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        CancelKind(taskId, ReminderKind.DueReminder);
+        await CancelKindAsync(taskId, ReminderKind.DueReminder);
         CancelLegacyWork(taskId);
-        return Task.CompletedTask;
     }
 
-    public Task CancelStartReminderAsync(Guid taskId, CancellationToken cancellationToken = default)
+    public async Task CancelStartReminderAsync(Guid taskId, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        CancelKind(taskId, ReminderKind.StartReminder);
-        return Task.CompletedTask;
+        await CancelKindAsync(taskId, ReminderKind.StartReminder);
     }
 
-    public Task CancelAsync(Guid taskId, CancellationToken cancellationToken = default)
+    public async Task CancelAsync(Guid taskId, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        CancelKind(taskId, ReminderKind.DueReminder);
-        CancelKind(taskId, ReminderKind.StartReminder);
+        await CancelKindAsync(taskId, ReminderKind.DueReminder);
+        await CancelKindAsync(taskId, ReminderKind.StartReminder);
         CancelLegacyWork(taskId);
-        return Task.CompletedTask;
     }
 
-    private static void CancelKind(Guid taskId, ReminderKind kind)
+    private static async Task CancelKindAsync(Guid taskId, ReminderKind kind)
     {
+        var record = ReadRecord(taskId, kind);
         Store.Edit()!.Remove(Key(taskId, kind)).Commit();
         CancelAlarm(taskId, kind);
         ((NotificationManager?)Context.GetSystemService(Context.NotificationService))
             ?.Cancel(taskId.ToString("D"), NotificationId(kind));
+        if (record is not null)
+            await AuditAsync(record, ReminderEventStatus.Cancelled, "Cancelado por la aplicación");
     }
 
-    internal static void ReArmAll()
+    internal static async Task ReArmAllAsync(
+        bool recordAudit = false,
+        CancellationToken ct = default)
     {
         foreach (var entry in Store.All!)
         {
+            ct.ThrowIfCancellationRequested();
             if (!entry.Key.StartsWith(DueKeyPrefix, StringComparison.Ordinal) || entry.Value is not string json)
                 continue;
 
@@ -101,7 +120,14 @@ public sealed class AndroidTaskReminderService : ITaskReminderService
                 if (record.ReminderDate <= DateTime.Now)
                     Store.Edit()!.Remove(entry.Key).Apply();
                 else
-                    Arm(record);
+                {
+                    var exact = Arm(record);
+                    if (recordAudit)
+                        await AuditAsync(
+                            record,
+                            ReminderEventStatus.Reconciled,
+                            exact ? "Reprogramado exacto" : "Reprogramado aproximado");
+                }
             }
             catch (Exception ex)
             {
@@ -110,7 +136,11 @@ public sealed class AndroidTaskReminderService : ITaskReminderService
         }
     }
 
-    internal static void Deliver(Context context, Guid taskId, ReminderKind kind, long expectedTicks)
+    internal static async Task DeliverAsync(
+        Context context,
+        Guid taskId,
+        ReminderKind kind,
+        long expectedTicks)
     {
         var key = Key(taskId, kind);
         var json = Store.GetString(key, null);
@@ -126,10 +156,17 @@ public sealed class AndroidTaskReminderService : ITaskReminderService
         Store.Edit()!.Remove(key).Commit();
         if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu &&
             context.CheckSelfPermission("android.permission.POST_NOTIFICATIONS") != global::Android.Content.PM.Permission.Granted)
+        {
+            await AuditAsync(record, ReminderEventStatus.PermissionMissing, "POST_NOTIFICATIONS no autorizado");
             return;
+        }
 
         var manager = (NotificationManager?)context.GetSystemService(Context.NotificationService);
-        if (manager is null) return;
+        if (manager is null)
+        {
+            await AuditAsync(record, ReminderEventStatus.Failed, "NotificationManager no disponible");
+            return;
+        }
 
         var openIntent = OpenTaskIntent(context, taskId);
         var isStartReminder = kind == ReminderKind.StartReminder;
@@ -140,8 +177,9 @@ public sealed class AndroidTaskReminderService : ITaskReminderService
             : record.DueDate is { } due
                 ? $"Vence: {due:dd/MM HH:mm}"
                 : string.IsNullOrWhiteSpace(record.Description) ? "Tienes una tarea pendiente." : record.Description;
+        var channelId = isStartReminder ? StartChannelId : DueChannelId;
         var builder = Build.VERSION.SdkInt >= BuildVersionCodes.O
-            ? new Notification.Builder(context, ChannelId)
+            ? new Notification.Builder(context, channelId)
             : new Notification.Builder(context);
         builder.SetSmallIcon(Resource.Drawable.ic_task_reminder)
             .SetContentTitle(isStartReminder ? $"🚀 ¿Empezamos? {record.Title}" : $"⏰ {record.Title}")
@@ -149,25 +187,31 @@ public sealed class AndroidTaskReminderService : ITaskReminderService
             .SetAutoCancel(true)
             .SetContentIntent(openIntent)
             .SetCategory(Notification.CategoryReminder)
-            .SetVisibility(NotificationVisibility.Private)
+            .SetVisibility(NotificationVisibility.Public)
             .SetPriority((int)NotificationPriority.High);
         manager.Notify(taskId.ToString("D"), NotificationId(kind), builder.Build());
+        await AuditAsync(record, ReminderEventStatus.Delivered,
+            $"Entregado con desfase de {(DateTime.Now - record.ReminderDate).TotalSeconds:F0} segundos");
     }
 
-    private static void Arm(ReminderRecord record)
+    private static bool Arm(ReminderRecord record)
     {
         var alarm = (AlarmManager?)Context.GetSystemService(Context.AlarmService);
         if (alarm is null) throw new InvalidOperationException("AlarmManager no está disponible.");
         var pending = AlarmIntent(record.TaskId, record.Kind, record.ReminderDate.Ticks, PendingIntentFlags.UpdateCurrent)!;
         var at = new DateTimeOffset(record.ReminderDate).ToUnixTimeMilliseconds();
         if (Build.VERSION.SdkInt >= BuildVersionCodes.S && !alarm.CanScheduleExactAlarms())
+        {
             alarm.SetAndAllowWhileIdle(AlarmType.RtcWakeup, at, pending);
+            return false;
+        }
         else if (record.Kind == ReminderKind.DueReminder && record.Priority == TaskPriority.High)
             alarm.SetAlarmClock(new AlarmManager.AlarmClockInfo(at, OpenTaskIntent(Context, record.TaskId)), pending);
         else if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
             alarm.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, at, pending);
         else
             alarm.SetExact(AlarmType.RtcWakeup, at, pending);
+        return true;
     }
 
     private static void CancelAlarm(Guid taskId, ReminderKind kind)
@@ -207,6 +251,27 @@ public sealed class AndroidTaskReminderService : ITaskReminderService
             : $"procrastop://reminder/{taskId:D}";
 
     private static int NotificationId(ReminderKind kind) => (int)kind;
+
+    private static ReminderRecord? ReadRecord(Guid taskId, ReminderKind kind)
+    {
+        var json = Store.GetString(Key(taskId, kind), null);
+        if (json is null) return null;
+        try { return JsonSerializer.Deserialize(json, ReminderJsonContext.Default.ReminderRecord); }
+        catch (JsonException) { return null; }
+    }
+
+    private static Task AuditAsync(
+        ReminderRecord record,
+        ReminderEventStatus status,
+        string? details) => ReminderRuntime.RecordAsync(new ReminderHistoryItem(
+            Guid.NewGuid(),
+            record.TaskId,
+            record.Kind.ToString(),
+            status,
+            record.Title,
+            TimeZoneInfo.ConvertTimeToUtc(record.ReminderDate),
+            DateTime.UtcNow,
+            details));
 
     private static void CancelLegacyWork(Guid taskId) =>
         WorkManager.GetInstance(Context).CancelUniqueWork(taskId.ToString());

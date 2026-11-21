@@ -23,8 +23,12 @@ public sealed class GetTodayHabitsHandler
         CancellationToken ct = default)
     {
         var date = query.Date.Date;
-        var habits = await _habitRepository.GetActiveAsync(ct);
-        var logs = await _logRepository.GetRangeAsync(date.AddDays(-90), date, ct);
+        var habitsTask = _habitRepository.GetActiveAsync(ct);
+        var logsTask = _logRepository.GetRangeAsync(date.AddDays(-90), date, ct);
+        await Task.WhenAll(habitsTask, logsTask);
+
+        var habits = await habitsTask;
+        var logs = await logsTask;
         var logsByHabit = logs
             .GroupBy(x => x.HabitId)
             .ToDictionary(x => x.Key, x => (IReadOnlyList<HabitLog>)x.ToList());
@@ -67,9 +71,10 @@ public sealed class GetTodayHabitsHandler
         IReadOnlyList<HabitLog> logs,
         DateTime date)
     {
-        var currentValue = logs
-            .Where(log => log.Date.Date == date.Date)
-            .Sum(log => log.Value);
+        var valuesByDate = logs
+            .GroupBy(log => log.Date.Date)
+            .ToDictionary(group => group.Key, group => group.Sum(log => log.Value));
+        valuesByDate.TryGetValue(date.Date, out var currentValue);
 
         return new HabitTodayItemDto
         {
@@ -79,32 +84,48 @@ public sealed class GetTodayHabitsHandler
             TrackingType = habit.TrackingType,
             TargetValue = habit.Target.Value,
             CurrentValue = currentValue,
-            Progress = habit.CalculateProgress(logs, date),
-            IsCompleted = habit.IsCompleted(logs, date),
-            CurrentStreak = CalculateStreak(habit, logs, date),
+            Progress = habit.Target.Value == 0
+                ? 0
+                : Math.Min((double)currentValue / habit.Target.Value, 1.0),
+            IsCompleted = habit.IsCompleted(currentValue),
+            CurrentStreak = CalculateStreak(habit, valuesByDate, date),
             ScheduleText = BuildScheduleText(habit)
         };
     }
 
-    private static int CalculateStreak(Habit habit, IReadOnlyList<HabitLog> logs, DateTime date)
+    private static int CalculateStreak(
+        Habit habit,
+        IReadOnlyDictionary<DateTime, int> valuesByDate,
+        DateTime date)
     {
         var streak = 0;
         var cursor = date.Date;
 
         // editbycodex: el dia actual incompleto no rompe una racha mientras aun puede cumplirse.
-        if (cursor == DateTime.Today && habit.IsScheduledFor(cursor) && !habit.IsCompleted(logs, cursor))
+        if (cursor == DateTime.Today &&
+            habit.IsScheduledFor(cursor) &&
+            !IsCompleted(habit, valuesByDate, cursor))
             cursor = cursor.AddDays(-1);
 
         for (var inspected = 0; inspected < 90; inspected++, cursor = cursor.AddDays(-1))
         {
             if (!habit.IsScheduledFor(cursor))
                 continue;
-            if (!habit.IsCompleted(logs, cursor))
+            if (!IsCompleted(habit, valuesByDate, cursor))
                 break;
             streak++;
         }
 
         return streak;
+    }
+
+    private static bool IsCompleted(
+        Habit habit,
+        IReadOnlyDictionary<DateTime, int> valuesByDate,
+        DateTime date)
+    {
+        valuesByDate.TryGetValue(date.Date, out var value);
+        return habit.IsCompleted(value);
     }
 
     private static string BuildScheduleText(Habit habit)

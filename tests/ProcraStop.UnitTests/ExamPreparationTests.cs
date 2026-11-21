@@ -136,6 +136,10 @@ public sealed class ExamPreparationTests
         public Task<IReadOnlyList<TaskListItemDto>> GetListAsync(bool includeArchived, CancellationToken ct)
             => Task.FromResult<IReadOnlyList<TaskListItemDto>>(Array.Empty<TaskListItemDto>());
 
+        public Task<IReadOnlyList<TaskListItemDto>> GetPageAsync(
+            bool includeArchived, int skip, int take, CancellationToken ct)
+            => GetListAsync(includeArchived, ct);
+
         public Task<IReadOnlyList<TaskListItemDto>> SearchAsync(
             string searchText, bool includeArchived, DateTime? dueDate, bool withoutDueDate,
             int maxResults, CancellationToken ct)

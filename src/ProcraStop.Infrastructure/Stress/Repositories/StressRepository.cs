@@ -32,16 +32,16 @@ namespace ProcraStop.Infrastructure.Stress.Repositories
             _dashboardCache.Invalidate();
         }
 
-        public async Task<List<StressRecord>> GetRecentAsync(int days)
+        public async Task<List<StressRecord>> GetRecentAsync(int days, CancellationToken ct = default)
         {
-            await using var context = await _dbContextFactory.CreateDbContextAsync();
+            await using var context = await _dbContextFactory.CreateDbContextAsync(ct);
             var cutoff = DateTime.UtcNow.AddDays(-days);
 
             var entities = await context.StressRecords
                 .AsNoTracking()
                 .Where(x => x.Timestamp >= cutoff)
                 .OrderByDescending(x => x.Timestamp)
-                .ToListAsync();
+                .ToListAsync(ct);
 
             return entities
                 .Select(StressMapper.ToDomain)

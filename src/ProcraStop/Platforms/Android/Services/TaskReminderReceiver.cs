@@ -12,6 +12,23 @@ public sealed class TaskReminderReceiver : BroadcastReceiver
             !Guid.TryParse(intent.GetStringExtra("taskId"), out var taskId)) return;
 
         var kind = (AndroidTaskReminderService.ReminderKind)intent.GetIntExtra("kind", 0);
-        AndroidTaskReminderService.Deliver(context, taskId, kind, intent.GetLongExtra("ticks", 0));
+        var pendingResult = GoAsync();
+        _ = DeliverAndFinishAsync(
+            context,
+            taskId,
+            kind,
+            intent.GetLongExtra("ticks", 0),
+            pendingResult);
+    }
+
+    private static async Task DeliverAndFinishAsync(
+        Context context,
+        Guid taskId,
+        AndroidTaskReminderService.ReminderKind kind,
+        long ticks,
+        PendingResult pendingResult)
+    {
+        try { await AndroidTaskReminderService.DeliverAsync(context, taskId, kind, ticks); }
+        finally { pendingResult.Finish(); }
     }
 }

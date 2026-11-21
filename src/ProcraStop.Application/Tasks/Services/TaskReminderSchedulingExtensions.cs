@@ -10,15 +10,18 @@ namespace ProcraStop.Application.Tasks.Services
         public static async Task SyncTaskRemindersAsync(
             this ITaskReminderService reminders,
             StudyTask task,
+            TimeProvider? timeProvider = null,
             CancellationToken cancellationToken = default)
         {
+            timeProvider ??= TimeProvider.System;
+            var localNow = timeProvider.GetLocalNow().DateTime;
             if (task.IsArchived || task.IsCompleted)
             {
                 await reminders.CancelAsync(task.Id, cancellationToken);
                 return;
             }
 
-            if (task.ReminderDate is { } dueReminder && dueReminder > DateTime.Now)
+            if (task.ReminderDate is { } dueReminder && dueReminder > localNow)
             {
                 await reminders.ScheduleAsync(
                     task.Id,
@@ -34,7 +37,7 @@ namespace ProcraStop.Application.Tasks.Services
                 await reminders.CancelDueReminderAsync(task.Id, cancellationToken);
             }
 
-            var startAt = TaskStartReminderPolicy.ResolveNotificationTime(task, DateTime.Now);
+            var startAt = TaskStartReminderPolicy.ResolveNotificationTime(task, localNow);
             if (startAt is { } scheduledStart)
             {
                 await reminders.ScheduleStartReminderAsync(

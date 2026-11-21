@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.Extensions.DependencyInjection;
 using ProcraStop.Application.Tasks.Abstractions;
+using ProcraStop.Application.Notifications;
 using ProcraStop.Infraestructure.Tasks.Services;
 using ProcraStop.Infrastructure.Tasks.Repositories;
 using ProcraStop.Infrastructure.Tasks.Services;
@@ -15,6 +16,8 @@ namespace ProcraStop.Infrastructure.Tasks
 
             // servicio de notificaciones
             services.AddSingleton<ITaskReminderService, TaskReminderService>();
+            services.AddSingleton<IReminderHistoryRepository, ReminderHistoryRepository>();
+            services.AddSingleton<IReminderScheduleRepository, ReminderScheduleRepository>();
             
             // Repositorio real con EF Core
             services.AddScoped<ITaskRepository, TaskRepository>();

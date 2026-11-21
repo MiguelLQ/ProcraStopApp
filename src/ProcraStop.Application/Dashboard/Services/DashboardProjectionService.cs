@@ -10,6 +10,7 @@ using ProcraStop.Application.Habits.Abstractions;
 using ProcraStop.Application.Habits.Interfaces;
 using ProcraStop.Application.Tasks.Abstractions;
 using ProcraStop.Application.Tasks.EngineTask.Signals;
+using ProcraStop.Application.Stress.Abstractions;
 using ProcraStop.Core.Decisions.Context;
 using ProcraStop.Core.Decisions.Engine;
 
@@ -31,6 +32,7 @@ namespace ProcraStop.Application.Dashboard.Services
         private readonly ISignalProjectionService _signalProjection;
 
         private readonly ISystemSnapshotRepository _historyService;
+        private readonly IStressRepository _stressRepository;
         private readonly TrendEngine _trendEngine;
 
         private readonly CategoryBalanceBuilder _categoryBalanceBuilder;
@@ -45,6 +47,7 @@ namespace ProcraStop.Application.Dashboard.Services
             DecisionEngine engine,
             ISignalProjectionService signalProjection,
             ISystemSnapshotRepository historyService,
+            IStressRepository stressRepository,
             TrendEngine trendEngine,
             CategoryBalanceBuilder categoryBalanceBuilder,
             SystemStateBuilder systemStateBuilder)
@@ -58,6 +61,7 @@ namespace ProcraStop.Application.Dashboard.Services
             _engine = engine;
             _signalProjection = signalProjection;
             _historyService = historyService;
+            _stressRepository = stressRepository;
             _trendEngine = trendEngine;
             _categoryBalanceBuilder = categoryBalanceBuilder;
             _systemStateBuilder = systemStateBuilder;
@@ -71,17 +75,21 @@ namespace ProcraStop.Application.Dashboard.Services
             var tasksTask = _taskReadService.GetDashboardDataAsync(cancellationToken);
             var habitsTask = _habitRepo.GetActiveAsync(cancellationToken);
             var logsTask = _habitLogRepo.GetRangeAsync(historyWindowStart, now.Date, cancellationToken);
+            var stressHistoryTask = _stressRepository.GetRecentAsync(7, cancellationToken);
+            var snapshotHistoryTask = _historyService.GetLastDays(7, cancellationToken);
 
-            await Task.WhenAll(tasksTask, habitsTask, logsTask);
+            await Task.WhenAll(tasksTask, habitsTask, logsTask, stressHistoryTask, snapshotHistoryTask);
 
             var tasks = await tasksTask;
             var habits = await habitsTask;
             var logs = await logsTask;
+            var stressHistory = await stressHistoryTask;
+            var snapshotHistory = await snapshotHistoryTask;
             // 2. SIGNALS
             var taskSignals = _taskSignals.Build(tasks);
             var habitSignals = _habitMetrics.Calculate(habits, logs, now);
             // 3. context
-            var context = await _contextBuilder.BuildAsync(taskSignals, habitSignals);
+            var context = _contextBuilder.Build(taskSignals, habitSignals, stressHistory);
 
             var balance = _categoryBalanceBuilder.Build(context);
 
@@ -96,7 +104,7 @@ namespace ProcraStop.Application.Dashboard.Services
                 Behavior = context.Habits.ConsistencyScore
             };
             // 5. historial (ultimos 7 dias)
-            var history = await _historyService.GetLastDays(7);
+            var history = snapshotHistory.ToList();
             if (DashboardSnapshotPolicy.ShouldRecord(history.LastOrDefault(), snapshot))
                 history.Add(snapshot);
             // 5. TENDENCIA
@@ -126,6 +134,8 @@ namespace ProcraStop.Application.Dashboard.Services
                 TaskSignals = taskSignals,
                 HabitSignals = habitSignals,
                 CurrentSnapshot = snapshot,
+                StressHistory = stressHistory,
+                SnapshotHistory = snapshotHistory,
             };
         }
         private double NormalizePerformance(DecisionContext ctx)

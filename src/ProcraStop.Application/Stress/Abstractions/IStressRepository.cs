@@ -8,7 +8,7 @@ namespace ProcraStop.Application.Stress.Abstractions
         public interface IStressRepository
         {
             Task AddAsync(StressRecord record);
-            Task<List<StressRecord>> GetRecentAsync(int days);
+            Task<List<StressRecord>> GetRecentAsync(int days, CancellationToken ct = default);
             Task<StressRecord?> GetLatestAsync();
             Task<bool> ExistsTodayAsync(StressSource source);
             Task UpdateTodayAsync(double level, StressSource source);

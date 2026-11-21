@@ -8,9 +8,6 @@
       <Deploy />
     </Project>
     <Project Path="src/ProcraStop.Shared/ProcraStop.Shared.csproj" Id="010d4205-b83f-47a5-905e-b65cc48e0eba" />
-    <Project Path="src/ProcraStop/ProcraStopApp.csproj">
-      <Deploy Solution="Debug|*" />
-    </Project>
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/ProcraStop.UnitTests/ProcraStop.UnitTests.csproj" />

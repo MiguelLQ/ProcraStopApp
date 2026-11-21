@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Runtime;
+using ProcraStop.Platforms.Android.Services;
 
 namespace ProcraStop.Platforms.Android
 {
@@ -11,6 +12,11 @@ namespace ProcraStop.Platforms.Android
         {
         }
 
-        protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
+        protected override MauiApp CreateMauiApp()
+        {
+            var app = MauiProgram.CreateMauiApp();
+            ReminderRuntime.Initialize(app.Services);
+            return app;
+        }
     }
 }

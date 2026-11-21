@@ -22,12 +22,19 @@ namespace ProcraStop.Application.Habits.Queries.GetHabitSignals
             _metricsService = metricsService;
         }
 
-        public async Task<HabitSignals> Handle(GetHabitSignalsQuery query)
+        public async Task<HabitSignals> Handle(
+            GetHabitSignalsQuery query,
+            CancellationToken ct = default)
         {
-            var habits = await _habitRepository.GetAllAsync();
-            var logs = await _logRepository.GetAllAsync();
+            var today = DateTime.UtcNow.Date;
+            var habitsTask = _habitRepository.GetActiveAsync(ct);
+            var logsTask = _logRepository.GetRangeAsync(today.AddDays(-6), today, ct);
+            await Task.WhenAll(habitsTask, logsTask);
 
-            return _metricsService.Calculate(habits, logs, DateTime.UtcNow);
+            return _metricsService.Calculate(
+                await habitsTask,
+                await logsTask,
+                today);
         }
     }
 }

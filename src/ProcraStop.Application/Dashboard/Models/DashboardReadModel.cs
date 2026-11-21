@@ -2,6 +2,7 @@
 
 using ProcraStop.Application.Dashboard.Models.Historial;
 using ProcraStop.Core.Decisions.Signals;
+using ProcraStop.Domain.Stress.Entities;
 
 namespace ProcraStop.Application.Dashboard.Models
 {
@@ -19,5 +20,7 @@ namespace ProcraStop.Application.Dashboard.Models
         internal TaskSignals? TaskSignals { get; set; }
         internal HabitSignals? HabitSignals { get; set; }
         internal SystemSnapshot? CurrentSnapshot { get; set; }
+        internal IReadOnlyList<StressRecord>? StressHistory { get; set; }
+        internal IReadOnlyList<SystemSnapshot>? SnapshotHistory { get; set; }
     }
 }
